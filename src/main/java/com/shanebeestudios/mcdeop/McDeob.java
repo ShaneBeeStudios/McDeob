@@ -12,6 +12,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Scanner;
 
 @SuppressWarnings("ResultOfMethodCallIgnored")
 public class McDeob {
@@ -27,10 +28,9 @@ public class McDeob {
 
     public McDeob(Version version) {
         this.version = version;
-        String type = version.isServer() ? "server" : "client";
-        MINECRAFT_JAR_NAME = "minecraft_" + type + "_" + version.getVersion() + ".jar";
-        MAPPINGS_NAME = "mappings_" + type + "_" + version.getVersion() + ".txt";
-        MAPPED_JAR_NAME = "remapped_" + type;
+        MINECRAFT_JAR_NAME = "minecraft_" + version.getType() + "_" + version.getVersion() + ".jar";
+        MAPPINGS_NAME = "mappings_" + version.getType() + "_" + version.getVersion() + ".txt";
+        MAPPED_JAR_NAME = "remapped_" + version.getType() + ".jar";
         this.reconstruct = new Reconstruct();
     }
 
@@ -39,7 +39,14 @@ public class McDeob {
             downloadJar();
             downloadMappings();
             remapJar();
-            decompileJar();
+            Scanner scanner = new Scanner(System.in);
+            Logger.info("Do you want to decompile? Type yes to continue!");
+            if (scanner.next().equalsIgnoreCase("yes")) {
+                decompileJar();
+            } else {
+                Logger.info("Ok.... fine then.... I didn't want to do it anyways!");
+                Logger.info("Please enjoy your new, deobfuscated Minecraft jar.");
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -91,20 +98,19 @@ public class McDeob {
 
     public void remapJar() {
         Logger.info("Remapping jar file.");
-        String[] clientArgs = new String[] {"-jar", JAR_FILE.getAbsolutePath(), "-mapping", MAPPINGS_FILE.getAbsolutePath(), "-output", "final_product.jar"};
-        String[] serverArgs = new String[] {"-jar", JAR_FILE.getAbsolutePath(), "-mapping", MAPPINGS_FILE.getAbsolutePath(), "-output", "final_product.jar",
+        String[] clientArgs = new String[] {"-jar", JAR_FILE.getAbsolutePath(), "-mapping", MAPPINGS_FILE.getAbsolutePath(), "-output", MAPPED_JAR_NAME};
+        String[] serverArgs = new String[] {"-jar", JAR_FILE.getAbsolutePath(), "-mapping", MAPPINGS_FILE.getAbsolutePath(), "-output", MAPPED_JAR_NAME,
                 "-exclude", "com.google.,io.netty.,it.unimi.dsi.fastutil.,javax.,joptsimple.,org.apache."};
         try {
             JCommander.newBuilder()
                     .addObject(reconstruct.getArguments())
                     .build()
-                    .parse(version.isServer() ? serverArgs : clientArgs);
+                    .parse(version.getType() == Version.Type.SERVER ? serverArgs : clientArgs);
         } catch (Exception ex) {
             reconstruct.getLogger().error("Encountered an error while parsing arguments", ex);
             Runtime.getRuntime().exit(-1);
             return;
         }
-
         reconstruct.load();
         Logger.info("Remapping complete!");
     }
@@ -116,8 +122,8 @@ public class McDeob {
         if (!DIR.exists()) {
             DIR.mkdirs();
         }
-        String[] args = new String[] {"-dgs=1", "-hdc=0", "-rbr=0", "-asc=1", "-udv=0",
-                REMAPPED_JAR.getAbsolutePath(), DIR.getAbsolutePath()};
+        // Setup FernFlower to properly decompile the jar file
+        String[] args = new String[] {"-dgs=1", "-hdc=0", "-rbr=0", "-asc=1", "-udv=0", REMAPPED_JAR.getAbsolutePath(), DIR.getAbsolutePath()};
         ConsoleDecompiler.main(args);
         Logger.info("Decompiling complete!");
     }
