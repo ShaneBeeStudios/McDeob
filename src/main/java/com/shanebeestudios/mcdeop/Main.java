@@ -9,19 +9,27 @@ public class Main {
             String t = args[1];
             if (!t.equalsIgnoreCase("server") && !t.equalsIgnoreCase("client")) {
                 Logger.info("Type: " + t + " not recognized... please use 'server' or 'client'");
-                System.exit(0);
             }
             Version.Type type = Version.Type.valueOf(t.toUpperCase());
             Version version = Version.getByVersion(ver, type);
             if (version == null) {
-                System.exit(0);
+                Logger.info("Version " + ver + " is not available!!!");
+                printVersions();
+                return;
             }
             Logger.info("Loading version: " + version.getVersion());
             McDeob mcDeob = new McDeob(version);
             mcDeob.init();
         } else {
             Logger.info("Please enter a version (ex: 1.15.2) and type (server or client)!");
-            System.exit(0);
+            printVersions();
+        }
+    }
+
+    private static void printVersions() {
+        Logger.info("Available versions:");
+        for (Version vers : Version.values()) {
+            Logger.info(" - " + vers.getVersion() + " (" + vers.getType().toString().toLowerCase() + ")");
         }
     }
 
