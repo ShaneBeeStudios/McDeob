@@ -36,6 +36,7 @@ public class McDeob {
 
     public void init() {
         try {
+            long start = System.currentTimeMillis();
             downloadJar();
             downloadMappings();
             remapJar();
@@ -47,12 +48,15 @@ public class McDeob {
                 Logger.info("Ok.... fine then.... I didn't want to do it anyways!");
                 Logger.info("Please enjoy your new, deobfuscated Minecraft jar.");
             }
+            long finish = System.currentTimeMillis() - start;
+            Logger.info("Process finished in " + finish + " milliseconds!");
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     public void downloadJar() throws IOException {
+        long start = System.currentTimeMillis();
         Logger.info("Downloading jar file from Mojang.");
         JAR_FILE = new File(MINECRAFT_JAR_NAME);
         if (JAR_FILE.exists()) {
@@ -71,10 +75,12 @@ public class McDeob {
         }
         inputStream.close();
         jar_out.close();
-        Logger.info("Successfully downloaded jar file!");
+        long finish = System.currentTimeMillis() - start;
+        Logger.info("Successfully downloaded jar file in " + finish + " milliseconds");
     }
 
     public void downloadMappings() throws IOException {
+        long start = System.currentTimeMillis();
         Logger.info("Downloading mappings file from Mojang.");
         MAPPINGS_FILE = new File(MAPPINGS_NAME);
         if (MAPPINGS_FILE.exists()) {
@@ -93,10 +99,12 @@ public class McDeob {
         }
         inputStream.close();
         mapping_out.close();
-        Logger.info("Successfully downloaded mappings file!");
+        long finish = System.currentTimeMillis() - start;
+        Logger.info("Successfully downloaded mappings file in " + finish + " milliseconds");
     }
 
     public void remapJar() {
+        long start = System.currentTimeMillis();
         Logger.info("Remapping jar file.");
         String[] clientArgs = new String[] {"-jar", JAR_FILE.getAbsolutePath(), "-mapping", MAPPINGS_FILE.getAbsolutePath(), "-output", MAPPED_JAR_NAME};
         String[] serverArgs = new String[] {"-jar", JAR_FILE.getAbsolutePath(), "-mapping", MAPPINGS_FILE.getAbsolutePath(), "-output", MAPPED_JAR_NAME,
@@ -112,10 +120,12 @@ public class McDeob {
             return;
         }
         reconstruct.load();
-        Logger.info("Remapping complete!");
+        long finish = System.currentTimeMillis() - start;
+        Logger.info("Remapping completed in " + finish + " milliseconds");
     }
 
     public void decompileJar() {
+        long start = System.currentTimeMillis();
         Logger.info("Decompiling final jar file.");
         File REMAPPED_JAR = new File(MAPPED_JAR_NAME);
         File DIR = new File(REMAPPED_JAR.getAbsoluteFile().getParent() + "/final-decompile");
@@ -125,7 +135,8 @@ public class McDeob {
         // Setup FernFlower to properly decompile the jar file
         String[] args = new String[] {"-dgs=1", "-hdc=0", "-rbr=0", "-asc=1", "-udv=0", REMAPPED_JAR.getAbsolutePath(), DIR.getAbsolutePath()};
         ConsoleDecompiler.main(args);
-        Logger.info("Decompiling complete!");
+        long finish = System.currentTimeMillis() - start;
+        Logger.info("Decompiling completed in " + finish + " milliseconds");
     }
 
 }
