@@ -8,12 +8,12 @@ public class Main {
             String ver = args[0];
             String t = args[1];
             if (!t.equalsIgnoreCase("server") && !t.equalsIgnoreCase("client")) {
-                Logger.info("Type: " + t + " not recognized... please use 'server' or 'client'");
+                Logger.error("Type: " + t + " not recognized... please use 'server' or 'client'");
             }
             Version.Type type = Version.Type.valueOf(t.toUpperCase());
             Version version = Version.getByVersion(ver, type);
             if (version == null) {
-                Logger.info("Version " + ver + " is not available!!!");
+                Logger.error("Version " + ver + " is not available!!!");
                 printVersions();
                 return;
             }
@@ -21,7 +21,7 @@ public class Main {
             McDeob mcDeob = new McDeob(version);
             mcDeob.init();
         } else {
-            Logger.info("Please enter a version (ex: 1.15.2) and type (server or client)!");
+            Logger.warn("Please enter a version (ex: 1.15.2) and type (server or client)!");
             printVersions();
         }
     }
