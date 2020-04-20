@@ -126,7 +126,7 @@ public class McDeob {
             long finish = System.currentTimeMillis() - start;
             Logger.info("Remapping completed in " + finish + " milliseconds");
         } else {
-            Logger.info(MAPPED_JAR_NAME + " already remaped... skipping mapping!");
+            Logger.info(MAPPED_JAR_NAME + " already remapped... skipping mapping!");
         }
     }
 
