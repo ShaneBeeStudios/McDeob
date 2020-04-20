@@ -28,9 +28,9 @@ public class McDeob {
 
     public McDeob(Version version) {
         this.version = version;
-        MINECRAFT_JAR_NAME = "minecraft_" + version.getType() + "_" + version.getVersion() + ".jar";
-        MAPPINGS_NAME = "mappings_" + version.getType() + "_" + version.getVersion() + ".txt";
-        MAPPED_JAR_NAME = "remapped_" + version.getType() + ".jar";
+        MINECRAFT_JAR_NAME = "minecraft_" + version.getType().toString().toLowerCase() + "_" + version.getVersion() + ".jar";
+        MAPPINGS_NAME = "mappings_" + version.getType().toString().toLowerCase() + "_" + version.getVersion() + ".txt";
+        MAPPED_JAR_NAME = "remapped_" + version.getType().toString().toLowerCase() + "_" + version.getVersion() + ".jar";
         this.reconstruct = new Reconstruct();
     }
 
@@ -105,23 +105,29 @@ public class McDeob {
 
     public void remapJar() {
         long start = System.currentTimeMillis();
-        Logger.info("Remapping jar file.");
-        String[] clientArgs = new String[] {"-jar", JAR_FILE.getAbsolutePath(), "-mapping", MAPPINGS_FILE.getAbsolutePath(), "-output", MAPPED_JAR_NAME};
-        String[] serverArgs = new String[] {"-jar", JAR_FILE.getAbsolutePath(), "-mapping", MAPPINGS_FILE.getAbsolutePath(), "-output", MAPPED_JAR_NAME,
-                "-exclude", "com.google.,io.netty.,it.unimi.dsi.fastutil.,javax.,joptsimple.,org.apache."};
-        try {
-            JCommander.newBuilder()
-                    .addObject(reconstruct.getArguments())
-                    .build()
-                    .parse(version.getType() == Version.Type.SERVER ? serverArgs : clientArgs);
-        } catch (Exception ex) {
-            reconstruct.getLogger().error("Encountered an error while parsing arguments", ex);
-            Runtime.getRuntime().exit(-1);
-            return;
+        File REMAPPED_JAR = new File(MAPPED_JAR_NAME);
+
+        if (!REMAPPED_JAR.exists()) {
+            Logger.info("Remapping " + MINECRAFT_JAR_NAME + " file...");
+            String[] clientArgs = new String[]{"-jar", JAR_FILE.getAbsolutePath(), "-mapping", MAPPINGS_FILE.getAbsolutePath(), "-output", MAPPED_JAR_NAME};
+            String[] serverArgs = new String[]{"-jar", JAR_FILE.getAbsolutePath(), "-mapping", MAPPINGS_FILE.getAbsolutePath(), "-output", MAPPED_JAR_NAME,
+                    "-exclude", "com.google.,io.netty.,it.unimi.dsi.fastutil.,javax.,joptsimple.,org.apache."};
+            try {
+                JCommander.newBuilder()
+                        .addObject(reconstruct.getArguments())
+                        .build()
+                        .parse(version.getType() == Version.Type.SERVER ? serverArgs : clientArgs);
+            } catch (Exception ex) {
+                reconstruct.getLogger().error("Encountered an error while parsing arguments", ex);
+                Runtime.getRuntime().exit(-1);
+                return;
+            }
+            reconstruct.load();
+            long finish = System.currentTimeMillis() - start;
+            Logger.info("Remapping completed in " + finish + " milliseconds");
+        } else {
+            Logger.info(MAPPED_JAR_NAME + " already remaped... skipping mapping!");
         }
-        reconstruct.load();
-        long finish = System.currentTimeMillis() - start;
-        Logger.info("Remapping completed in " + finish + " milliseconds");
     }
 
     public void decompileJar() {
