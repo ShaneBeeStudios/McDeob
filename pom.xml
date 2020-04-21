@@ -79,6 +79,7 @@
                 </configuration>
             </plugin>
             <!-- This is for packaging a macOS app -->
+            <!--
             <plugin>
                 <groupId>sh.tak.appbundler</groupId>
                 <artifactId>appbundle-maven-plugin</artifactId>
@@ -99,6 +100,7 @@
                     </execution>
                 </executions>
             </plugin>
+            -->
         </plugins>
     </build>
 
