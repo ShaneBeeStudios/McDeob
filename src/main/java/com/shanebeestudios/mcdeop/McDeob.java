@@ -28,9 +28,9 @@ public class McDeob {
 
     public McDeob(Version version) {
         this.version = version;
-        MINECRAFT_JAR_NAME = "minecraft_" + version.getType().toString().toLowerCase() + "_" + version.getVersion() + ".jar";
-        MAPPINGS_NAME = "mappings_" + version.getType().toString().toLowerCase() + "_" + version.getVersion() + ".txt";
-        MAPPED_JAR_NAME = "remapped_" + version.getType().toString().toLowerCase() + "_" + version.getVersion() + ".jar";
+        MINECRAFT_JAR_NAME = "minecraft_" + version.getType().getName() + "_" + version.getVersion() + ".jar";
+        MAPPINGS_NAME = "mappings_" + version.getType().getName() + "_" + version.getVersion() + ".txt";
+        MAPPED_JAR_NAME = "remapped_" + version.getType().getName() + "_" + version.getVersion() + ".jar";
         this.reconstruct = new Reconstruct();
     }
 

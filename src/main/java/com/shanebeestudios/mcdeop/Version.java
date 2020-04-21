@@ -75,7 +75,18 @@ public enum Version {
     }
 
     public enum Type {
-        SERVER, CLIENT
+        SERVER("server"), CLIENT("client");
+
+        private final String name;
+
+        Type(String name) {
+           this.name = name;
+        }
+
+        public String getName() {
+            return name;
+        }
+
     }
 
 }
