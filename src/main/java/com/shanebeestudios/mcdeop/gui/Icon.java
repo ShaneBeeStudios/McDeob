@@ -1,6 +1,6 @@
 package com.shanebeestudios.mcdeop.gui;
 
-import com.shanebeestudios.mcdeop.Main;
+import com.shanebeestudios.mcdeop.McDeob;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,7 +10,7 @@ public class Icon {
     public static final ImageIcon DOCK_LOGO = getScaledIcon("images/1024.png", "main logo", 1024, 1024);
 
     private static ImageIcon createImageIcon(String path, String description) {
-        java.net.URL imgURL = Main.class.getClassLoader().getResource(path);
+        java.net.URL imgURL = McDeob.class.getClassLoader().getResource(path);
         if (imgURL != null) {
             return new ImageIcon(imgURL, description);
         } else {
@@ -20,7 +20,7 @@ public class Icon {
     }
 
     private static ImageIcon getScaledIcon(String path, String description, int w, int h) {
-        java.net.URL imgURL = Main.class.getClassLoader().getResource(path);
+        java.net.URL imgURL = McDeob.class.getClassLoader().getResource(path);
         if (imgURL != null) {
             ImageIcon i = new ImageIcon(imgURL, description);
             Image image = i.getImage();
