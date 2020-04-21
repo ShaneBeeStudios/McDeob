@@ -1,4 +1,4 @@
-package com.shanebeestudios.mcdeop.gui;
+package com.shanebeestudios.mcdeop.app;
 
 import com.apple.eawt.Application;
 import com.shanebeestudios.mcdeop.Version;
