@@ -4,10 +4,31 @@ import com.shanebeestudios.mcdeop.McDeob;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
+@SuppressWarnings({"unused", "ConstantConditions"})
 public class Icon {
 
-    public static final ImageIcon DOCK_LOGO = getScaledIcon("images/1024.png", "main logo", 1024, 1024);
+    public static final ImageIcon DOCK_LOGO_1024 = getScaledIcon("images/1024.png", "main logo", 1024, 1024);
+    public static final ImageIcon DOCK_LOGO_512 = getScaledIcon("images/1024.png", "main logo", 512, 512);
+    public static final ImageIcon DOCK_LOGO_256 = getScaledIcon("images/1024.png", "main logo", 256, 256);
+    public static final ImageIcon DOCK_LOGO_128 = getScaledIcon("images/1024.png", "main logo", 128, 128);
+    public static final ImageIcon DOCK_LOGO_64 = getScaledIcon("images/1024.png", "main logo", 64, 64);
+    public static final ImageIcon DOCK_LOGO_32 = getScaledIcon("images/1024.png", "main logo", 32, 32);
+    public static final ImageIcon DOCK_LOGO_16 = getScaledIcon("images/1024.png", "main logo", 16, 16);
+
+    public static final List<Image> LOGO_IMAGES = new ArrayList<>();
+
+    static {
+        LOGO_IMAGES.add(DOCK_LOGO_1024.getImage());
+        LOGO_IMAGES.add(DOCK_LOGO_512.getImage());
+        LOGO_IMAGES.add(DOCK_LOGO_256.getImage());
+        LOGO_IMAGES.add(DOCK_LOGO_128.getImage());
+        LOGO_IMAGES.add(DOCK_LOGO_64.getImage());
+        LOGO_IMAGES.add(DOCK_LOGO_32.getImage());
+        LOGO_IMAGES.add(DOCK_LOGO_16.getImage());
+    }
 
     private static ImageIcon createImageIcon(String path, String description) {
         java.net.URL imgURL = McDeob.class.getClassLoader().getResource(path);

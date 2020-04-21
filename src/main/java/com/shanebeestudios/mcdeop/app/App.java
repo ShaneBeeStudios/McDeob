@@ -28,10 +28,10 @@ public class App extends JFrame {
         try {
             // If we're running on mac, set the logo
             Application application = Application.getApplication();
-            application.setDockIconImage(Icon.DOCK_LOGO.getImage());
+            application.setDockIconImage(Icon.DOCK_LOGO_1024.getImage());
         } catch (Throwable ignore) {
             // Else we set it this way
-            setIconImage(Icon.DOCK_LOGO.getImage());
+            setIconImages(Icon.LOGO_IMAGES);
         }
 
         setupWindow(500, 300);
