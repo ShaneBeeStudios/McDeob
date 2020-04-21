@@ -1,6 +1,7 @@
 package com.shanebeestudios.mcdeop;
 
 import com.beust.jcommander.JCommander;
+import com.shanebeestudios.mcdeop.util.Logger;
 import io.github.lxgaming.reconstruct.Reconstruct;
 import org.jetbrains.java.decompiler.main.decompiler.ConsoleDecompiler;
 

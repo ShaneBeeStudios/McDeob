@@ -1,9 +1,7 @@
 package com.shanebeestudios.mcdeop;
 
 import com.shanebeestudios.mcdeop.gui.App;
-
-import javax.swing.*;
-import java.io.IOException;
+import com.shanebeestudios.mcdeop.util.Logger;
 
 public class McDeob {
 

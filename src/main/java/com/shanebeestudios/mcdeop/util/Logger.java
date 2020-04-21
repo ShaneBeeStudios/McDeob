@@ -1,4 +1,4 @@
-package com.shanebeestudios.mcdeop;
+package com.shanebeestudios.mcdeop.util;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
