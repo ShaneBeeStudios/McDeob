@@ -52,6 +52,14 @@ public enum Version {
         return type;
     }
 
+    @Override
+    public String toString() {
+        return "Version{" +
+                "type=" + type +
+                ", version='" + version + '\'' +
+                '}';
+    }
+
     private static final String OBJECTS = "https://launcher.mojang.com/v1/objects/";
     private static final Map<String, Version> SERVER_VERSION_MAP = new HashMap<>();
     private static final Map<String, Version> CLIENT_VERSION_MAP = new HashMap<>();
