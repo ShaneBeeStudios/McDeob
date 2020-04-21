@@ -23,9 +23,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.github.LXGaming</groupId>
+            <groupId>com.github.ShaneBeeStudios</groupId>
             <artifactId>Reconstruct</artifactId>
-            <version>v1.0.0</version>
+            <version>1.0.3</version>
         </dependency>
         <dependency>
             <groupId>com.github.fesh0r</groupId>
@@ -79,7 +79,6 @@
                 </configuration>
             </plugin>
             <!-- This is for packaging a macOS app -->
-            <!--
             <plugin>
                 <groupId>sh.tak.appbundler</groupId>
                 <artifactId>appbundle-maven-plugin</artifactId>
@@ -88,7 +87,10 @@
                     <mainClass>com.shanebeestudios.mcdeop.McDeob</mainClass>
                     <jrePath>/Library/Java/JavaVirtualMachines/adoptopenjdk-8.jdk</jrePath>
                     <generateDiskImageFile>true</generateDiskImageFile>
-                    <bundleName>McDeob</bundleName>
+                    <diskImageFile>${project.build.directory}/${project.build.finalName}/${project.build.finalName}.dmg</diskImageFile>
+                    <diskImageInternetEnable>true</diskImageInternetEnable>
+                    <includeApplicationsSymlink>true</includeApplicationsSymlink>
+                    <dictionaryFile>Info.plist</dictionaryFile>
                     <iconFile>images/1024.icns</iconFile>
                 </configuration>
                 <executions>
@@ -100,7 +102,6 @@
                     </execution>
                 </executions>
             </plugin>
-            -->
         </plugins>
     </build>
 
