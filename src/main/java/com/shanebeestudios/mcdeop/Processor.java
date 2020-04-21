@@ -7,7 +7,6 @@ import io.github.lxgaming.reconstruct.Reconstruct;
 import org.jetbrains.java.decompiler.main.decompiler.ConsoleDecompiler;
 
 import java.io.BufferedOutputStream;
-import java.io.Console;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -29,6 +28,7 @@ public class Processor {
     private final Reconstruct reconstruct;
     private File JAR_FILE;
     private File MAPPINGS_FILE;
+    private File REMAPPED_JAR;
 
     private final String MINECRAFT_JAR_NAME;
     private final String MAPPINGS_NAME;
@@ -49,7 +49,7 @@ public class Processor {
         MAPPINGS_NAME = "mappings_" + version.getType().getName() + "_" + version.getVersion() + ".txt";
         MAPPED_JAR_NAME = "remapped_" + version.getType().getName() + "_" + version.getVersion() + ".jar";
         this.decompile = decompile;
-        this.reconstruct = new Reconstruct();
+        this.reconstruct = new Reconstruct(app);
     }
 
     public void init() {
@@ -123,7 +123,7 @@ public class Processor {
     public void remapJar() {
         long start = System.currentTimeMillis();
         app.updateStatusBox("Remapping...");
-        File REMAPPED_JAR = new File(DATA_FOLDER_PATH.toString(), MAPPED_JAR_NAME);
+        REMAPPED_JAR = new File(DATA_FOLDER_PATH.toString(), MAPPED_JAR_NAME);
 
         if (!REMAPPED_JAR.exists()) {
             Logger.info("Remapping " + MINECRAFT_JAR_NAME + " file...");
@@ -153,8 +153,7 @@ public class Processor {
         long start = System.currentTimeMillis();
         Logger.info("Decompiling final jar file.");
         app.updateStatusBox("Decompiling...");
-        File REMAPPED_JAR = new File(MAPPED_JAR_NAME);
-        File DIR = new File(REMAPPED_JAR.getAbsoluteFile().getParent() + "/final-decompile");
+        File DIR = new File(DATA_FOLDER_PATH.toString(), "final-decompile");
         if (!DIR.exists()) {
             DIR.mkdirs();
         }
