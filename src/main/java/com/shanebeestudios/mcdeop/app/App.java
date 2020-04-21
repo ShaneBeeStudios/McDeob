@@ -1,6 +1,7 @@
 package com.shanebeestudios.mcdeop.app;
 
 import com.apple.eawt.Application;
+import com.shanebeestudios.mcdeop.Processor;
 import com.shanebeestudios.mcdeop.Version;
 
 import javax.swing.*;
@@ -14,7 +15,9 @@ public class App extends JFrame {
     private JButton startButton;
     private JRadioButton server;
     private JRadioButton client;
+    private JCheckBox decompile;
     private JComboBox<String> versionBox;
+    private JTextField statusBox;
 
     public App() {
         init();
@@ -35,6 +38,8 @@ public class App extends JFrame {
         createTitle();
         createTypeButton();
         createVersionPopup();
+        createDeobOption();
+        createStatusBox();
         createStartButton();
     }
 
@@ -60,8 +65,8 @@ public class App extends JFrame {
         server = new JRadioButton("Server");
         client = new JRadioButton("Client");
         int center = getSize().width / 2;
-        server.setBounds(center + 10, 100, 100, 20);
-        client.setBounds(center - (100 - 10), 100, 100, 20);
+        server.setBounds(center + 10, 60, 100, 20);
+        client.setBounds(center - (100 - 10), 60, 100, 20);
         client.setSelected(true);
         ButtonGroup typeGroup = new ButtonGroup();
         typeGroup.add(server);
@@ -78,8 +83,26 @@ public class App extends JFrame {
                 versionBox.addItem(version.getVersion());
             }
         }
-        versionBox.setBounds((getSize().width / 2) - 110, 140, 220, 20);
+        versionBox.setBounds((getSize().width / 2) - 110, 95, 220, 20);
         add(versionBox);
+    }
+
+    private void createDeobOption() {
+        decompile = new JCheckBox("Decompile?");
+        decompile.setBounds((getSize().width / 2) - 60, 115, 120, 40);
+        decompile.setSelected(false);
+        add(decompile);
+    }
+
+    private void createStatusBox() {
+        statusBox = new JTextField("Status!");
+        int width = (int) (getSize().width * 0.90);
+        statusBox.setBounds((getSize().width / 2) - (width / 2), 150,width, 30);
+        add(statusBox);
+    }
+
+    public void updateStatusBox(String string) {
+        statusBox.setText(string);
     }
 
     private void createStartButton() {
@@ -91,6 +114,18 @@ public class App extends JFrame {
         add(startButton);
     }
 
+    private void start(Version version, boolean decomp) {
+        App app = this;
+        Thread thread = new Thread("Processor") {
+            @Override
+            public void run() {
+                Processor processor = new Processor(version, decomp, app);
+                processor.init();
+            }
+        };
+        thread.start();
+    }
+
     class ButtonListener implements ActionListener {
 
         @Override
@@ -98,6 +133,7 @@ public class App extends JFrame {
             if (e.getSource() == startButton) {
                 Version.Type type = server.isSelected() ? Version.Type.SERVER : Version.Type.CLIENT;
                 Version version = Version.getByVersion((String) versionBox.getSelectedItem(), type);
+                if (!startButton.getText().equalsIgnoreCase("Start!")) return;
                 if (version == null) {
                     startButton.setText("INVALID VERSION!");
                     startButton.setForeground(Color.RED);
@@ -108,9 +144,12 @@ public class App extends JFrame {
                     timer.setRepeats(false);
                     timer.start();
                 } else {
+                    boolean decomp = decompile.isSelected();
                     startButton.setText("Starting...");
                     startButton.setForeground(Color.BLUE);
-                    // TODO process jar
+                    startButton.setEnabled(false);
+
+                    start(version, decomp);
                 }
             }
         }
