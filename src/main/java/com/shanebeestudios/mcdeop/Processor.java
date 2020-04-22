@@ -63,7 +63,7 @@ public class Processor {
             }
             long finish = System.currentTimeMillis() - start;
             Logger.info("Process finished in " + finish + " milliseconds!");
-            //app.updateStatusBox("Completed!");
+            app.updateStatusBox("Completed in " + finish + " milliseconds!");
         } catch (IOException e) {
             e.printStackTrace();
         }
