@@ -107,11 +107,21 @@ public class App extends JFrame {
 
     private void createStartButton() {
         startButton = new JButton("Start!");
-        int w = 150;
+        startButton.setToolTipText("test");
+        int w = 200;
         int h = 50;
         startButton.setBounds((getSize().width / 2) - (w / 2), ((getSize().height / 5) * 4) - (h / 2), w, h);
         startButton.addActionListener(new ButtonListener());
         add(startButton);
+    }
+
+    public void updateButton(String string) {
+        updateButton(string, Color.BLACK);
+    }
+
+    public void updateButton(String string, Color color) {
+        startButton.setText(string);
+        startButton.setForeground(color);
     }
 
     private void start(Version version, boolean decomp) {
@@ -135,20 +145,14 @@ public class App extends JFrame {
                 Version version = Version.getByVersion((String) versionBox.getSelectedItem(), type);
                 if (!startButton.getText().equalsIgnoreCase("Start!")) return;
                 if (version == null) {
-                    startButton.setText("INVALID VERSION!");
-                    startButton.setForeground(Color.RED);
-                    Timer timer = new Timer(1000, e1 -> {
-                        startButton.setText("Start!");
-                        startButton.setForeground(Color.BLACK);
-                    });
+                    updateButton("INVALID VERSION!", Color.RED);
+                    getToolkit().beep();
+                    Timer timer = new Timer(1000, e1 -> updateButton("Start!"));
                     timer.setRepeats(false);
                     timer.start();
                 } else {
                     boolean decomp = decompile.isSelected();
-                    startButton.setText("Starting...");
-                    startButton.setForeground(Color.BLUE);
-                    startButton.setEnabled(false);
-
+                    updateButton("Starting...", Color.BLUE);
                     start(version, decomp);
                 }
             }

@@ -6,6 +6,7 @@ import com.shanebeestudios.mcdeop.util.Logger;
 import io.github.lxgaming.reconstruct.Reconstruct;
 import org.jetbrains.java.decompiler.main.decompiler.ConsoleDecompiler;
 
+import java.awt.*;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -64,6 +65,7 @@ public class Processor {
             long finish = System.currentTimeMillis() - start;
             Logger.info("Process finished in " + finish + " milliseconds!");
             app.updateStatusBox("Completed in " + finish + " milliseconds!");
+            app.updateButton("Start!");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -73,6 +75,7 @@ public class Processor {
         long start = System.currentTimeMillis();
         Logger.info("Downloading jar file from Mojang.");
         app.updateStatusBox("Downloading jar");
+        app.updateButton("Downloading jar", Color.BLUE);
         JAR_FILE = new File(DATA_FOLDER_PATH.toString(), MINECRAFT_JAR_NAME);
         if (JAR_FILE.exists()) {
             JAR_FILE.delete();
@@ -97,7 +100,8 @@ public class Processor {
     public void downloadMappings() throws IOException {
         long start = System.currentTimeMillis();
         Logger.info("Downloading mappings file from Mojang.");
-        app.updateStatusBox("Downloading map");
+        app.updateStatusBox("Downloading mappings");
+        app.updateButton("Downloading mappings", Color.BLUE);
         MAPPINGS_FILE = new File(DATA_FOLDER_PATH.toString(), MAPPINGS_NAME);
         if (MAPPINGS_FILE.exists()) {
             MAPPINGS_FILE.delete();
@@ -123,6 +127,7 @@ public class Processor {
     public void remapJar() {
         long start = System.currentTimeMillis();
         app.updateStatusBox("Remapping...");
+        app.updateButton("Remapping...", Color.BLUE);
         REMAPPED_JAR = new File(DATA_FOLDER_PATH.toString(), MAPPED_JAR_NAME);
 
         if (!REMAPPED_JAR.exists()) {
@@ -152,7 +157,8 @@ public class Processor {
     public void decompileJar() {
         long start = System.currentTimeMillis();
         Logger.info("Decompiling final jar file.");
-        app.updateStatusBox("Decompiling...");
+        app.updateStatusBox("Decompiling... This will take a while!");
+        app.updateButton("Decompiling...", Color.BLUE);
         File DIR = new File(DATA_FOLDER_PATH.toString(), "final-decompile");
         if (!DIR.exists()) {
             DIR.mkdirs();
