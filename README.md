@@ -1,4 +1,13 @@
 # McDeob
+
+![Java CI with Maven](https://github.com/ShaneBeeStudios/McDeob/workflows/Java%20CI%20with%20Maven/badge.svg)
+![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/ShaneBeeStudios/McDeob?include_prereleases)
+![GitHub All Releases](https://img.shields.io/github/downloads/ShaneBeeStudios/McDeob/total)
+![GitHub issues](https://img.shields.io/github/issues/ShaneBeeStudios/McDeob)
+![GitHub closed issues](https://img.shields.io/github/issues-closed/ShaneBeeStudios/McDeob)
+![GitHub pull requests](https://img.shields.io/github/issues-pr/ShaneBeeStudios/McDeob)
+![GitHub](https://img.shields.io/github/license/ShaneBeeStudios/McDeob)
+
 **McDeob** is a re-mapping and deobfuscation tool for Minecraft server/client jars.   
 This tool will download the appropriate Minecraft server/client jar along with the mappings for that version, 
 then it will proceed to remap the jar and optionally decompile it. The decompile output will be a jar file.
