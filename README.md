@@ -1,12 +1,12 @@
 # McDeob
 
-![Java CI with Maven](https://github.com/ShaneBeeStudios/McDeob/workflows/Java%20CI%20with%20Maven/badge.svg)
-![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/ShaneBeeStudios/McDeob?include_prereleases)
-![GitHub All Releases](https://img.shields.io/github/downloads/ShaneBeeStudios/McDeob/total)
-![GitHub issues](https://img.shields.io/github/issues/ShaneBeeStudios/McDeob)
+[![Java CI with Maven](https://github.com/ShaneBeeStudios/McDeob/workflows/Java%20CI%20with%20Maven/badge.svg)](https://github.com/ShaneBeeStudios/McDeob/actions)
+[![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/ShaneBeeStudios/McDeob?include_prereleases)](https://github.com/ShaneBeeStudios/McDeob/releases/latest)
+[![GitHub All Releases](https://img.shields.io/github/downloads/ShaneBeeStudios/McDeob/total)](https://github.com/ShaneBeeStudios/McDeob/releases)
+[![GitHub issues](https://img.shields.io/github/issues/ShaneBeeStudios/McDeob)](https://github.com/ShaneBeeStudios/McDeob/issues)
 ![GitHub closed issues](https://img.shields.io/github/issues-closed/ShaneBeeStudios/McDeob)
-![GitHub pull requests](https://img.shields.io/github/issues-pr/ShaneBeeStudios/McDeob)
-![GitHub](https://img.shields.io/github/license/ShaneBeeStudios/McDeob)
+[![GitHub pull requests](https://img.shields.io/github/issues-pr/ShaneBeeStudios/McDeob)](https://github.com/ShaneBeeStudios/McDeob/pulls)
+[![GitHub](https://img.shields.io/github/license/ShaneBeeStudios/McDeob)](https://github.com/ShaneBeeStudios/McDeob/blob/master/LICENSE)
 
 **McDeob** is a re-mapping and deobfuscation tool for Minecraft server/client jars.   
 This tool will download the appropriate Minecraft server/client jar along with the mappings for that version, 
