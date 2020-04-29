@@ -21,6 +21,8 @@ public enum Version {
     CLIENT_20w16a(Type.CLIENT, "20w16a", "5edab2c289420b7201b8f780c2dc4669b77fcd1e/client.jar", "1f6a60bcbdc5f35d7c03093c09a3f92f119c04a5/client.txt"),
     SERVER_20w17a(Type.SERVER, "20w17a", "0b7e36b084577fb26148c6341d590ac14606db21/server.jar", "073daf6a9d136b57c63a11460761d59ec8ed93f4/server.txt"),
     CLIENT_20w17a(Type.CLIENT, "20w17a", "0f9a4d6f9bc5b8fe3a3b5e1d6787f856de3d4f72/client.jar", "4154bab4c16af203c027c51646a87e17034cd096/client.txt"),
+    SERVER_20w18a(Type.SERVER, "20w18a", "4d84832bdc7f62aa96b0d5d5a73b1272e8c474b5/server.jar", "a35a93d06fb0d36f77c0c49901a8c9d4b9901c84/server.txt"),
+    CLIENT_20w18a(Type.CLIENT, "20w18a", "472c80b7df1ef0818da70ef7d13ad512866afd09/client.jar", "b93fd42cb6d6666accd68b786051b607876e8e1c/client.txt"),
 
     // Combat Test
     SERVER_COMBAT_TEST_5(Type.SERVER, "combat_test_5", "0cc9a1582949297c8f1ca83b937c8d84ad295ffe/server.jar", "44b2ca1d4677f3fffaa0333c87a42a9449e0bc52/server.txt"),
