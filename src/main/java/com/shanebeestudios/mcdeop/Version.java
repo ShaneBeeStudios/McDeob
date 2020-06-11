@@ -39,6 +39,8 @@ public enum Version {
     CLIENT_1_16_pre_2(Type.CLIENT, "1.16-pre2", "a1382f4cf8815e3085efb1782cf32ed5cb621b86", "b7b693fc488eb874f3597648b6fe02182d56f467"),
     SERVER_1_16_pre_3(Type.SERVER, "1.16-pre3", "0b5653b65bc494fa55349682cebf50abf0d72ad9", "c1323c8127c52e228918e82fd4b74d40fb2897a2"),
     CLIENT_1_16_pre_3(Type.CLIENT, "1.16-pre3", "0d7c195c685f8a6172696c9a7f8f4e5d76185528", "5be40d7307349ae9d8a7cb3066d0bb5b4817226d"),
+    SERVER_1_16_pre_4(Type.SERVER, "1.16-pre4", "018cdde89f8ff3831ce27c6c8dbf6831e99e0e75", "78ec69bde1ba4a229b2aafe1bc5c749d9cfee963"),
+    CLIENT_1_16_pre_4(Type.CLIENT, "1.16-pre4", "67bd747f23f658a442766588d044074c65c41332", "16f51796f36dffb414086b46ac9dbb1d3e885d02"),
 
     // Combat Test
     SERVER_COMBAT_TEST_5(Type.SERVER, "combat_test_5", "0cc9a1582949297c8f1ca83b937c8d84ad295ffe", "44b2ca1d4677f3fffaa0333c87a42a9449e0bc52"),
