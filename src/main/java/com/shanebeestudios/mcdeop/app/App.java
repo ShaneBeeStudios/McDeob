@@ -9,7 +9,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-@SuppressWarnings({"SameParameterValue", "unchecked", "rawtypes", "FieldCanBeLocal", "ConstantConditions"})
+@SuppressWarnings({"SameParameterValue", "unchecked", "rawtypes", "FieldCanBeLocal"})
 public class App extends JFrame {
 
     private JButton startButton;
@@ -35,6 +35,13 @@ public class App extends JFrame {
         }
 
         setupWindow(500, 300);
+        try {
+            // makes the window prettier on other systems than macs
+            // swing's look and feel is ew
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
+            throw new RuntimeException(e);
+        }
         createTitle();
         createTypeButton();
         createVersionPopup();
@@ -89,13 +96,21 @@ public class App extends JFrame {
 
     private void createDeobOption() {
         decompile = new JCheckBox("Decompile?");
-        decompile.setBounds((getSize().width / 2) - 60, 115, 120, 40);
+        int decompileHeight;
+        if (isWindows()) {
+            // fixes some weird overlap with the status box
+            decompileHeight = 30;
+        } else {
+            decompileHeight = 40;
+        }
+        decompile.setBounds((getSize().width / 2) - 60, 115, 120, decompileHeight);
         decompile.setSelected(false);
         add(decompile);
     }
 
     private void createStatusBox() {
         statusBox = new JTextField("Status!");
+        statusBox.setEditable(false);
         int width = (int) (getSize().width * 0.90);
         statusBox.setBounds((getSize().width / 2) - (width / 2), 150,width, 30);
         add(statusBox);
@@ -110,9 +125,20 @@ public class App extends JFrame {
         startButton.setToolTipText("test");
         int w = 200;
         int h = 50;
-        startButton.setBounds((getSize().width / 2) - (w / 2), ((getSize().height / 5) * 4) - (h / 2), w, h);
+        int hDivided;
+        if (isWindows()) {
+            // makes the spacing of the button look better on windows
+            hDivided = Math.round(h / 1.25F);
+        } else {
+            hDivided = h / 2;
+        }
+        startButton.setBounds((getSize().width / 2) - (w / 2), ((getSize().height / 5) * 4) - hDivided, w, h);
         startButton.addActionListener(new ButtonListener());
         add(startButton);
+    }
+
+    private boolean isWindows() {
+        return System.getProperty("os.name").contains("Windows");
     }
 
     public void updateButton(String string) {

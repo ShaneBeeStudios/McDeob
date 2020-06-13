@@ -35,7 +35,7 @@ public class Processor {
     private final String MAPPINGS_NAME;
     private final String MAPPED_JAR_NAME;
 
-    private final Path DATA_FOLDER_PATH = Paths.get(System.getProperty("user.home"), "McDeob");
+    private final Path DATA_FOLDER_PATH = Paths.get(".", "deobf-work");
 
     public Processor(Version version, boolean decompile, App app) {
         this.version = version;
@@ -64,8 +64,10 @@ public class Processor {
             }
             long finish = System.currentTimeMillis() - start;
             Logger.info("Process finished in " + finish + " milliseconds!");
-            app.updateStatusBox("Completed in " + finish + " milliseconds!");
-            app.updateButton("Start!");
+            if (app != null) {
+                app.updateStatusBox("Completed in " + finish + " milliseconds!");
+                app.updateButton("Start!");
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -74,8 +76,10 @@ public class Processor {
     public void downloadJar() throws IOException {
         long start = System.currentTimeMillis();
         Logger.info("Downloading jar file from Mojang.");
-        app.updateStatusBox("Downloading jar");
-        app.updateButton("Downloading jar", Color.BLUE);
+        if (app != null) {
+            app.updateStatusBox("Downloading jar");
+            app.updateButton("Downloading jar", Color.BLUE);
+        }
         JAR_FILE = new File(DATA_FOLDER_PATH.toString(), MINECRAFT_JAR_NAME);
         if (JAR_FILE.exists()) {
             JAR_FILE.delete();
@@ -100,8 +104,10 @@ public class Processor {
     public void downloadMappings() throws IOException {
         long start = System.currentTimeMillis();
         Logger.info("Downloading mappings file from Mojang.");
-        app.updateStatusBox("Downloading mappings");
-        app.updateButton("Downloading mappings", Color.BLUE);
+        if (app != null) {
+            app.updateStatusBox("Downloading mappings");
+            app.updateButton("Downloading mappings", Color.BLUE);
+        }
         MAPPINGS_FILE = new File(DATA_FOLDER_PATH.toString(), MAPPINGS_NAME);
         if (MAPPINGS_FILE.exists()) {
             MAPPINGS_FILE.delete();
@@ -126,8 +132,10 @@ public class Processor {
 
     public void remapJar() {
         long start = System.currentTimeMillis();
-        app.updateStatusBox("Remapping...");
-        app.updateButton("Remapping...", Color.BLUE);
+        if (app != null) {
+            app.updateStatusBox("Remapping...");
+            app.updateButton("Remapping...", Color.BLUE);
+        }
         REMAPPED_JAR = new File(DATA_FOLDER_PATH.toString(), MAPPED_JAR_NAME);
 
         if (!REMAPPED_JAR.exists()) {
@@ -142,7 +150,9 @@ public class Processor {
                         .parse(version.getType() == Version.Type.SERVER ? serverArgs : clientArgs);
             } catch (Exception ex) {
                 reconstruct.getLogger().error("Encountered an error while parsing arguments", ex);
-                app.updateStatusBox("fail");
+                if (app != null) {
+                    app.updateStatusBox("fail");
+                }
                 Runtime.getRuntime().exit(-1);
                 return;
             }
@@ -157,8 +167,10 @@ public class Processor {
     public void decompileJar() {
         long start = System.currentTimeMillis();
         Logger.info("Decompiling final jar file.");
-        app.updateStatusBox("Decompiling... This will take a while!");
-        app.updateButton("Decompiling...", Color.BLUE);
+        if (app != null) {
+            app.updateStatusBox("Decompiling... This will take a while!");
+            app.updateButton("Decompiling...", Color.BLUE);
+        }
         File DIR = new File(DATA_FOLDER_PATH.toString(), "final-decompile");
         if (!DIR.exists()) {
             DIR.mkdirs();
