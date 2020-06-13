@@ -3,6 +3,7 @@ package com.shanebeestudios.mcdeop.app;
 import com.apple.eawt.Application;
 import com.shanebeestudios.mcdeop.Processor;
 import com.shanebeestudios.mcdeop.Version;
+import com.shanebeestudios.mcdeop.util.Util;
 
 import javax.swing.*;
 import java.awt.*;
@@ -28,6 +29,7 @@ public class App extends JFrame {
         try {
             // If we're running on mac, set the logo
             Application application = Application.getApplication();
+            assert Icon.DOCK_LOGO_1024 != null;
             application.setDockIconImage(Icon.DOCK_LOGO_1024.getImage());
         } catch (Throwable ignore) {
             // Else we set it this way
@@ -97,11 +99,11 @@ public class App extends JFrame {
     private void createDeobOption() {
         decompile = new JCheckBox("Decompile?");
         int decompileHeight;
-        if (isWindows()) {
+        if (Util.isRunningMacOS()) {
+            decompileHeight = 40;
+        } else {
             // fixes some weird overlap with the status box
             decompileHeight = 30;
-        } else {
-            decompileHeight = 40;
         }
         decompile.setBounds((getSize().width / 2) - 60, 115, 120, decompileHeight);
         decompile.setSelected(false);
@@ -126,19 +128,15 @@ public class App extends JFrame {
         int w = 200;
         int h = 50;
         int hDivided;
-        if (isWindows()) {
+        if (Util.isRunningMacOS()) {
+            hDivided = h / 2;
+        } else {
             // makes the spacing of the button look better on windows
             hDivided = Math.round(h / 1.25F);
-        } else {
-            hDivided = h / 2;
         }
         startButton.setBounds((getSize().width / 2) - (w / 2), ((getSize().height / 5) * 4) - hDivided, w, h);
         startButton.addActionListener(new ButtonListener());
         add(startButton);
-    }
-
-    private boolean isWindows() {
-        return System.getProperty("os.name").contains("Windows");
     }
 
     public void updateButton(String string) {

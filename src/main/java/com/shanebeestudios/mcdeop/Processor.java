@@ -3,6 +3,7 @@ package com.shanebeestudios.mcdeop;
 import com.beust.jcommander.JCommander;
 import com.shanebeestudios.mcdeop.app.App;
 import com.shanebeestudios.mcdeop.util.Logger;
+import com.shanebeestudios.mcdeop.util.Util;
 import io.github.lxgaming.reconstruct.Reconstruct;
 import org.jetbrains.java.decompiler.main.decompiler.ConsoleDecompiler;
 
@@ -35,11 +36,16 @@ public class Processor {
     private final String MAPPINGS_NAME;
     private final String MAPPED_JAR_NAME;
 
-    private final Path DATA_FOLDER_PATH = Paths.get(".", "deobf-work");
+    private Path DATA_FOLDER_PATH = Paths.get(".", "deobf-work");
 
     public Processor(Version version, boolean decompile, App app) {
         this.version = version;
         this.app = app;
+        if (Util.isRunningMacOS()) {
+            // If running on macOS, put the decompile folder in the user's home folder
+            // This is mainly due to how the Mac APP works
+            DATA_FOLDER_PATH = Paths.get(System.getProperty("user.home"), "McDeob");
+        }
         if (Files.notExists(DATA_FOLDER_PATH)) {
             try {
                 Files.createDirectory(DATA_FOLDER_PATH);
