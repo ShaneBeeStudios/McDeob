@@ -14,15 +14,17 @@ then it will proceed to remap the jar and optionally decompile it. The decompile
 Simply unzip that jar file to find all your remapped/decompiled Minecraft code.
 
 ## Running
-Here is how to run **McDeob**:
-1) Download the jar from [**Releases**](https://github.com/ShaneBeeStudios/McDeob/releases) and place it wherever you want to run it. Like an applications folder, or your desktop.
-2) Run the app.
-3) Choose your options like server/client, Minecraft version and whether or not to decompile after remapping.
-4) Click start. All files will be put into your user's home directory in a new directory called "McDeop"
-5) Enjoy!
+Details for installing and running **McDeob** can be found on the [**WIKI**](https://github.com/ShaneBeeStudios/McDeob/wiki)
+
 ### Note:
 The remapping process takes around 5 minutes (give or take). Whilst its remapping you will see the progress in the app.   
 The decompiling process on the other hand takes about 12 minutes. Currently there is no progress in the app, so just wait til the app says its completed. 
+
+### SUPER IMPORTANT NOTE
+The files output by this app are for your own personal use only.   
+The mappings used to decompile are provided by Mojang, but come with a hefty copyright from Microsoft.   
+You can use these files personally however you see fit, but you are not permitted to distribute them, since they do contain proprietery Minecraft code.    
+That said, you may **NOT** upload the resulting files to something like GitHub.
 
 ## Preview
 ![](https://i.imgur.com/eOSuIGr.png)
