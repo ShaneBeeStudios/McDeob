@@ -2,11 +2,10 @@ package com.shanebeestudios.mcdeop;
 
 import com.shanebeestudios.mcdeop.app.App;
 import com.shanebeestudios.mcdeop.util.Logger;
-
-import java.io.IOException;
-
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
+
+import java.io.IOException;
 
 public class McDeob {
 
@@ -17,7 +16,7 @@ public class McDeob {
         }
 
         OptionParser parser = new OptionParser();
-        parser.accepts("help", "Shows help and exists");
+        parser.accepts("help", "Shows help and exits");
         parser.accepts("version", "Minecraft version for which we're deobfuscating")
                 .withRequiredArg()
                 .ofType(String.class);
