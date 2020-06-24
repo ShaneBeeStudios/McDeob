@@ -13,6 +13,8 @@ public enum Version {
     CLIENT_1_15_1(Type.CLIENT, "1.15.1", "8b11614bea9293592a947ea8f4fd72981ea66677", "cc77cb804c2cc0fa151b0745df4c5de8e64d1bb5"),
     SERVER_1_15_2(Type.SERVER, "1.15.2", "bb2b6b1aefcd70dfd1892149ac3a215f6c636b07", "59c55ae6c2a7c28c8ec449824d9194ff21dc7ff1"),
     CLIENT_1_15_2(Type.CLIENT, "1.15.2", "e3f78cd16f9eb9a52307ed96ebec64241cc5b32d", "bd9efb5f556f0e44f04adde7aeeba219421585c2"),
+    SERVER_1_16(Type.SERVER, "1.16", "a0d03225615ba897619220e256a266cb33a44b6b", "618315f1fc2f56fe003612bb1fee1ad4060768a0"),
+    CLIENT_1_16(Type.CLIENT, "1.16", "228fdf45541c4c2fe8aec4f20e880cb8fcd46621", "800eb4264594307d026ff911eabd1ee6fc9265f8"),
 
     // Snapshot
     SERVER_20w14infinite(Type.SERVER, "20w14infinite", "c0711cd9608d1af3d6f05ac423dd8f4199780225", "428c32326e6fd1e4a2bade80e6f277b75e497eee"),
