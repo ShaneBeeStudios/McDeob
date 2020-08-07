@@ -35,10 +35,16 @@ public enum Version {
     CLIENT_1_16_2_pre_1(Type.CLIENT, "1.16.2-pre1", "18caa7718c665b6d8597f7979bbdcb078ea117a0", "3e9070cb333fbf94d81019fd9732f33fa3bab1e7"),
     SERVER_1_16_2_pre_2(Type.SERVER, "1.16.2-pre2", "d2cae287324631b2b4bfa609dd01c63cd6d4b78d", "544cc22c04e4d104535a596289c4bf08c7c0efa5"),
     CLIENT_1_16_2_pre_2(Type.CLIENT, "1.16.2-pre2", "ce5762620a698b464d07a6c733cd66c7fa8072a1", "bb48f3ad38b3a3f174ff9fbf70dda00a66dd71da"),
+    SERVER_1_16_2_pre_3(Type.SERVER, "1.16.2-pre3", "bd47f78f185a525388e446aa44975c147057ebbd", "e28d7c32ce06496a284819467add0f021eebaea7"),
+    CLIENT_1_16_2_pre_3(Type.CLIENT, "1.16.2-pre3", "8cfa861961862c263ff80f2f6478535fd1ed7d8b", "e912e5eda715f1b65ce7c23a7825ea9024cf1c35"),
+    SERVER_1_16_2_rc_1(Type.SERVER, "1.16.2-rc1", "203e18d79201b5e8c46019074b07e1c3b4c75f57", "3405a0f2c0ccacd36a8158ae29b16eaa915b5d28"),
+    CLIENT_1_16_2_rc_1(Type.CLIENT, "1.16.2-rc1", "dd4982bb447c1d2c7c03419b90dbe8f017c47311", "0eb95ed9d2231b960cce3369aa562cf42e4722fc"),
 
     // Combat Test
     SERVER_COMBAT_TEST_5(Type.SERVER, "combat_test_5", "0cc9a1582949297c8f1ca83b937c8d84ad295ffe", "44b2ca1d4677f3fffaa0333c87a42a9449e0bc52"),
     CLIENT_COMBAT_TEST_5(Type.CLIENT, "combat_test_5", "0ad80b317873e1f64a9a79af09a02ddef62ce67c", "5c9745ba8db67bcc95e6de65a3a6dd1d4c655726"),
+    SERVER_COMBAT_TEST_6(Type.SERVER, "combat_test_6", "1c35c493ade7a39e2d02bcc326498aaab96f1a09", "6ddb98ca992d93fd654bf89f801223b1c4d98695"),
+    CLIENT_COMBAT_TEST_6(Type.CLIENT, "combat_test_6", "4f08b4667575cbfc35e44c9556a0667bd3d0f5cc", "185a362b6b301bfb71e12f788ce8fb998b806217"),
 
     // April Fools
     SERVER_20w14infinite(Type.SERVER, "20w14infinite", "c0711cd9608d1af3d6f05ac423dd8f4199780225", "428c32326e6fd1e4a2bade80e6f277b75e497eee"),
