@@ -25,6 +25,8 @@ public enum Version {
     CLIENT_1_16_3(Type.CLIENT, "1.16.3", "1321521b2caf934f7fc9665aab7e059a7b2bfcdf", "faac5028fbca3859db970cc4ca041aeec55f6d9d"),
 
     // Snapshot
+    SERVER_1_16_4_PRE_1(Type.SERVER, "1.16.4-pre1", "28eb6f8c4c05eec278e3e7f9f0379a16adbfb91d", "cf2fa1a00c551d5a3d4d448f1beb7562abd66c47"),
+    CLIENT_1_16_4_PRE_1(Type.CLIENT, "1.16.4-pre1", "44745d09a0c6b8faca3989274996d5193cdc1560", "6366c7397087acc8f021401afd4c23220ad06197"),
 
     // Combat Test
     SERVER_COMBAT_TEST_5(Type.SERVER, "combat_test_5", "0cc9a1582949297c8f1ca83b937c8d84ad295ffe", "44b2ca1d4677f3fffaa0333c87a42a9449e0bc52"),
