@@ -27,10 +27,8 @@ public enum Version {
     CLIENT_1_16_4(Type.CLIENT, "1.16.4", "1952d94a0784e7abda230aae6a1e8fc0522dba99", "0837de813d1a6b67e23da3c520a84e872c8d2f0e"),
 
     // Snapshot
-    SERVER_1_16_4_PRE_1(Type.SERVER, "1.16.4-pre1", "28eb6f8c4c05eec278e3e7f9f0379a16adbfb91d", "cf2fa1a00c551d5a3d4d448f1beb7562abd66c47"),
-    CLIENT_1_16_4_PRE_1(Type.CLIENT, "1.16.4-pre1", "44745d09a0c6b8faca3989274996d5193cdc1560", "6366c7397087acc8f021401afd4c23220ad06197"),
-    SERVER_1_16_4_RC_1(Type.SERVER, "1.16.4-rc1", "daf2d997bd6b1725b6d59b48f533a6804d43db33", "0413b5c8bb13c62f81c1336c58c09e29d8b43cb6"),
-    CLIENT_1_16_4_RC_1(Type.CLIENT, "1.16.4-rc1", "1fcf6ddd5ee925d19eadc4b7ef7278365979c7fd", "23a0bc36490545566a79ea5345f37283f61eeaa5"),
+    SERVER_20w45a(Type.SERVER, "20w45a", "043ec38297d0ec58abd6f636bc92f5664a8ccecb", "e13520140ed6bdbe2ca05f59ce12700e9081a8cf"),
+    CLIENT_20w45a(Type.CLIENT, "20w45a", "cf2cd62dfc63fc1a79061a3964d82bf26e0fd208", "ce69af77a39c4e1802b1aebac2f86d867bd71c5c"),
 
     // Combat Test
     SERVER_COMBAT_TEST_5(Type.SERVER, "combat_test_5", "0cc9a1582949297c8f1ca83b937c8d84ad295ffe", "44b2ca1d4677f3fffaa0333c87a42a9449e0bc52"),
