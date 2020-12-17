@@ -25,7 +25,8 @@
         <dependency>
             <groupId>com.github.ShaneBeeStudios</groupId>
             <artifactId>Reconstruct</artifactId>
-            <version>1.0.3</version>
+            <!--suppress MavenModelInspection -->
+            <version>master-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.github.fesh0r</groupId>
