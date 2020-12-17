@@ -5,6 +5,7 @@ import com.shanebeestudios.mcdeop.app.App;
 import com.shanebeestudios.mcdeop.util.Logger;
 import com.shanebeestudios.mcdeop.util.Util;
 import io.github.lxgaming.reconstruct.Reconstruct;
+import io.github.lxgaming.reconstruct.manager.TransformerManager;
 import org.jetbrains.java.decompiler.main.decompiler.ConsoleDecompiler;
 
 import java.awt.*;
@@ -19,6 +20,7 @@ import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Duration;
 
 @SuppressWarnings("ResultOfMethodCallIgnored")
 public class Processor {
@@ -27,7 +29,7 @@ public class Processor {
     private final boolean decompile;
     private final App app;
 
-    private final Reconstruct reconstruct;
+    private Reconstruct reconstruct;
     private File JAR_FILE;
     private File MAPPINGS_FILE;
     private File REMAPPED_JAR;
@@ -52,9 +54,9 @@ public class Processor {
             } catch (IOException ignore) {}
         }
 
-        MINECRAFT_JAR_NAME = "minecraft_" + version.getType().getName() + "_" + version.getVersion() + ".jar";
-        MAPPINGS_NAME = "mappings_" + version.getType().getName() + "_" + version.getVersion() + ".txt";
-        MAPPED_JAR_NAME = "remapped_" + version.getType().getName() + "_" + version.getVersion() + ".jar";
+        MINECRAFT_JAR_NAME = String.format("minecraft_%s_%s.jar", version.getType().getName(), version.getVersion());
+        MAPPINGS_NAME = String.format("mappings_%s_%s.txt", version.getType().getName(), version.getVersion());
+        MAPPED_JAR_NAME = String.format("remapped_%s_%s.jar", version.getType().getName(), version.getVersion());
         this.decompile = decompile;
         this.reconstruct = new Reconstruct(app);
     }
@@ -68,10 +70,12 @@ public class Processor {
             if (decompile) {
                 decompileJar();
             }
-            long finish = System.currentTimeMillis() - start;
-            Logger.info("Process finished in " + finish + " milliseconds!");
+            cleanup();
+
+            long finish = Duration.ofMillis(System.currentTimeMillis() - start).toMinutes();
+            Logger.info("Process finished in %s minutes!", finish);
             if (app != null) {
-                app.updateStatusBox("Completed in " + finish + " milliseconds!");
+                app.updateStatusBox(String.format("Completed in %s minutes!", finish));
                 app.updateButton("Start!");
             }
         } catch (IOException e) {
@@ -103,8 +107,9 @@ public class Processor {
         }
         inputStream.close();
         jar_out.close();
-        long finish = System.currentTimeMillis() - start;
-        Logger.info("Successfully downloaded jar file in " + finish + " milliseconds");
+
+        long finish = Duration.ofMillis( System.currentTimeMillis() - start).getSeconds();
+        Logger.info("Successfully downloaded jar file in %s seconds", finish);
     }
 
     public void downloadMappings() throws IOException {
@@ -132,8 +137,9 @@ public class Processor {
         }
         inputStream.close();
         mapping_out.close();
-        long finish = System.currentTimeMillis() - start;
-        Logger.info("Successfully downloaded mappings file in " + finish + " milliseconds");
+
+        long finish = Duration.ofMillis(System.currentTimeMillis() - start).getSeconds();
+        Logger.info("Successfully downloaded mappings file in %s seconds", finish);
     }
 
     public void remapJar() {
@@ -145,7 +151,7 @@ public class Processor {
         REMAPPED_JAR = new File(DATA_FOLDER_PATH.toString(), MAPPED_JAR_NAME);
 
         if (!REMAPPED_JAR.exists()) {
-            Logger.info("Remapping " + MINECRAFT_JAR_NAME + " file...");
+            Logger.info("Remapping %s file...", MINECRAFT_JAR_NAME);
             String[] clientArgs = new String[]{"-jar", JAR_FILE.getAbsolutePath(), "-mapping", MAPPINGS_FILE.getAbsolutePath(), "-output", REMAPPED_JAR.getAbsolutePath(), "-agree"};
             String[] serverArgs = new String[]{"-jar", JAR_FILE.getAbsolutePath(), "-mapping", MAPPINGS_FILE.getAbsolutePath(), "-output", REMAPPED_JAR.getAbsolutePath(),
                     "-exclude", "com.google.,io.netty.,it.unimi.dsi.fastutil.,javax.,joptsimple.,org.apache.", "-agree"};
@@ -163,10 +169,11 @@ public class Processor {
                 return;
             }
             reconstruct.load();
-            long finish = System.currentTimeMillis() - start;
-            Logger.info("Remapping completed in " + finish + " milliseconds");
+
+            long finish = Duration.ofMillis(System.currentTimeMillis() - start).toMinutes();
+            Logger.info("Remapping completed in %s minutes", finish);
         } else {
-            Logger.info(MAPPED_JAR_NAME + " already remapped... skipping mapping!");
+            Logger.info("%s already remapped... skipping mapping!", MAPPED_JAR_NAME);
         }
     }
 
@@ -184,8 +191,18 @@ public class Processor {
         // Setup FernFlower to properly decompile the jar file
         String[] args = new String[] {"-dgs=1", "-hdc=0", "-rbr=0", "-asc=1", "-udv=0", REMAPPED_JAR.getAbsolutePath(), DIR.getAbsolutePath()};
         ConsoleDecompiler.main(args);
-        long finish = System.currentTimeMillis() - start;
-        Logger.info("Decompiling completed in " + finish + " milliseconds");
+
+        long finish = Duration.ofMillis(System.currentTimeMillis() - start).toMinutes();
+        Logger.info("Decompiling completed in %s minutes", finish);
+    }
+
+    private void cleanup() {
+        JAR_FILE = null;
+        MAPPINGS_FILE = null;
+        REMAPPED_JAR = null;
+        reconstruct = null;
+        TransformerManager.reset(); // Clears static transformers if this program is run more than once
+        System.gc();
     }
 
 }
