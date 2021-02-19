@@ -148,6 +148,14 @@ public class App extends JFrame {
         startButton.setForeground(color);
     }
 
+    public void toggleControls() {
+        startButton.setEnabled(!startButton.isEnabled());
+        decompile.setEnabled(!decompile.isEnabled());
+        versionBox.setEnabled(!versionBox.isEnabled());
+        server.setEnabled(!server.isEnabled());
+        client.setEnabled(!client.isEnabled());
+    }
+
     private void start(Version version, boolean decomp) {
         App app = this;
         Thread thread = new Thread("Processor") {

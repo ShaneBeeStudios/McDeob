@@ -64,6 +64,10 @@ public class Processor {
     public void init() {
         try {
             long start = System.currentTimeMillis();
+            if (app != null) {
+                app.toggleControls();
+            }
+
             downloadJar();
             downloadMappings();
             remapJar();
@@ -75,6 +79,7 @@ public class Processor {
             long finish = Duration.ofMillis(System.currentTimeMillis() - start).toMinutes();
             Logger.info("Process finished in %s minutes!", finish);
             if (app != null) {
+                app.toggleControls();
                 app.updateStatusBox(String.format("Completed in %s minutes!", finish));
                 app.updateButton("Start!");
             }
