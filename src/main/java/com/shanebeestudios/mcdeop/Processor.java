@@ -79,12 +79,15 @@ public class Processor {
             long finish = Duration.ofMillis(System.currentTimeMillis() - start).toMinutes();
             Logger.info("Process finished in %s minutes!", finish);
             if (app != null) {
-                app.toggleControls();
                 app.updateStatusBox(String.format("Completed in %s minutes!", finish));
                 app.updateButton("Start!");
             }
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            if (app != null) {
+                app.toggleControls();
+            }
         }
     }
 
