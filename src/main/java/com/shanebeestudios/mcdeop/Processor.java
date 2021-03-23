@@ -64,6 +64,10 @@ public class Processor {
     public void init() {
         try {
             long start = System.currentTimeMillis();
+            if (app != null) {
+                app.toggleControls();
+            }
+
             downloadJar();
             downloadMappings();
             remapJar();
@@ -80,6 +84,10 @@ public class Processor {
             }
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            if (app != null) {
+                app.toggleControls();
+            }
         }
     }
 
