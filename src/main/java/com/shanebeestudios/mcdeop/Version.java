@@ -42,6 +42,8 @@ public enum Version {
     CLIENT_1_17_pre_5(Type.CLIENT, "1.17 Pre-release 5", "ad51f4efbc250c15d84eaf07f600787246fa6cd6", "d1ddc678fa5d248aa855cf4723089ef6f7624b67"),
     SERVER_1_17_rc_1(Type.SERVER, "1.17 Release Candidate 1", "4de310c8c4f4a8ab4574246c1d63e3de3af1444d", "98a1398dc4144f92e10dd6967a231763741952e7"),
     CLIENT_1_17_rc_1(Type.CLIENT, "1.17 Release Candidate 1", "006320ab2a9969f0e0d3dc64a463e1816be5e225", "f98bcfe6126153d862d072c574dbe48af778f5d9"),
+    SERVER_1_17_rc_2(Type.SERVER, "1.17 Release Candidate 2", "1b6e0511e1e419fdcf5a81e53e36b5558032ee79", "4a643e9c4b7b607da9c93f3f8a81d87a08b9ac34"),
+    CLIENT_1_17_rc_2(Type.CLIENT, "1.17 Release Candidate 2", "fe88ac6c8a0bedc9a48e5c9b48eb0f4dc24ccc79", "cb05fa784d1c99357cc5702a9df4daaf6ed58b9b"),
 
     // Combat Test
     SERVER_COMBAT_TEST_5(Type.SERVER, "combat_test_5", "0cc9a1582949297c8f1ca83b937c8d84ad295ffe", "44b2ca1d4677f3fffaa0333c87a42a9449e0bc52"),
