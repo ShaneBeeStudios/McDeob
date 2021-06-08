@@ -23,10 +23,10 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.github.ShaneBeeStudios</groupId>
+            <groupId>com.github.terminalsin</groupId>
             <artifactId>Reconstruct</artifactId>
             <!--suppress MavenModelInspection -->
-            <version>master-SNAPSHOT</version>
+            <version>1.0.6-temp</version>
         </dependency>
         <dependency>
             <groupId>com.github.fesh0r</groupId>
@@ -95,7 +95,7 @@
                 </configuration>
             </plugin>
             <!-- This is for packaging a macOS app -->
-            <plugin>
+            <!--<plugin>
                 <groupId>sh.tak.appbundler</groupId>
                 <artifactId>appbundle-maven-plugin</artifactId>
                 <version>1.2.0</version>
@@ -117,7 +117,7 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
+            </plugin>-->
         </plugins>
         <extensions>
             <extension>
