@@ -27,23 +27,10 @@ public enum Version {
     CLIENT_1_16_4(Type.CLIENT, "1.16.4", "1952d94a0784e7abda230aae6a1e8fc0522dba99", "0837de813d1a6b67e23da3c520a84e872c8d2f0e"),
     SERVER_1_16_5(Type.SERVER, "1.16.5", "1b557e7b033b583cd9f66746b7a9ab1ec1673ced", "41285beda6d251d190f2bf33beadd4fee187df7a"),
     CLIENT_1_16_5(Type.CLIENT, "1.16.5", "37fd3c903861eeff3bc24b71eed48f828b5269c8", "374c6b789574afbdc901371207155661e0509e17"),
+    SERVER_1_17(Type.SERVER, "1.17", "0a269b5f2c5b93b1712d0f5dc43b6182b9ab254e", "84d80036e14bc5c7894a4fad9dd9f367d3000334"),
+    CLIENT_1_17(Type.CLIENT, "1.17", "1cf89c77ed5e72401b869f66410934804f3d6f52", "227d16f520848747a59bef6f490ae19dc290a804"),
 
     // Snapshot
-    // PreRelease
-    SERVER_1_17_pre_1(Type.SERVER, "1.17 Pre-release 1", "80a01a1178bcfb67b42636df3a9cdd275f3cc4d4", "1f6f65434a5ac334607a1141d676f7974308ae36"),
-    CLIENT_1_17_pre_1(Type.CLIENT, "1.17 Pre-release 1", "940af6eda421da56e3bf9c390df65ba713cc8f7f", "7310449e6c7bdd202e4f2cd6bd7ad177357f473c"),
-    SERVER_1_17_pre_2(Type.SERVER, "1.17 Pre-release 2", "d8756c67ce3b3fe20d0510afb3e22fa16310b2e6", "f79c9cad034152d13c8fab69c441eb06138aacc6"),
-    CLIENT_1_17_pre_2(Type.CLIENT, "1.17 Pre-release 2", "72ebf53f36151a9c2657dca80f72a97c0917d3ce", "c3fc5f17f6a63498078cbcc72872e78c500120f6"),
-    SERVER_1_17_pre_3(Type.SERVER, "1.17 Pre-release 3", "18abbb3f980fc9b05188535db45a67276ea41f90", "394bffe6a0ba2ee2eaeb7163b0184afc533c704c"),
-    CLIENT_1_17_pre_3(Type.CLIENT, "1.17 Pre-release 3", "3d587b97faf19d4c2fa63e03d1920eb37a95920b", "33e1b9881086dab9e89e919797fbf323870d2469"),
-    SERVER_1_17_pre_4(Type.SERVER, "1.17 Pre-release 4", "528f491660bc5dc94c0d7911345a97438e5c1d86", "0bdafb07d9b092dec693b3a7181504ed4bc4f5c4"),
-    CLIENT_1_17_pre_4(Type.CLIENT, "1.17 Pre-release 4", "de8e68ea23f837f9ab628cda7b16ba3de4b79153", "6be34fd616ed3f57869fb92df860d5c2d90e681c"),
-    SERVER_1_17_pre_5(Type.SERVER, "1.17 Pre-release 5", "31bb40019e8d6e64299abafd743f4d3e1a1a68b2", "4fd01412588c91fbc94fb36eb9b57275de0f6be9"),
-    CLIENT_1_17_pre_5(Type.CLIENT, "1.17 Pre-release 5", "ad51f4efbc250c15d84eaf07f600787246fa6cd6", "d1ddc678fa5d248aa855cf4723089ef6f7624b67"),
-    SERVER_1_17_rc_1(Type.SERVER, "1.17 Release Candidate 1", "4de310c8c4f4a8ab4574246c1d63e3de3af1444d", "98a1398dc4144f92e10dd6967a231763741952e7"),
-    CLIENT_1_17_rc_1(Type.CLIENT, "1.17 Release Candidate 1", "006320ab2a9969f0e0d3dc64a463e1816be5e225", "f98bcfe6126153d862d072c574dbe48af778f5d9"),
-    SERVER_1_17_rc_2(Type.SERVER, "1.17 Release Candidate 2", "1b6e0511e1e419fdcf5a81e53e36b5558032ee79", "4a643e9c4b7b607da9c93f3f8a81d87a08b9ac34"),
-    CLIENT_1_17_rc_2(Type.CLIENT, "1.17 Release Candidate 2", "fe88ac6c8a0bedc9a48e5c9b48eb0f4dc24ccc79", "cb05fa784d1c99357cc5702a9df4daaf6ed58b9b"),
 
     // Combat Test
     SERVER_COMBAT_TEST_5(Type.SERVER, "combat_test_5", "0cc9a1582949297c8f1ca83b937c8d84ad295ffe", "44b2ca1d4677f3fffaa0333c87a42a9449e0bc52"),
