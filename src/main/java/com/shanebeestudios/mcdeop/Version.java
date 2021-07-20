@@ -46,7 +46,11 @@ public enum Version {
 
     // April Fools
     SERVER_20w14infinite(Type.SERVER, "20w14infinite", "c0711cd9608d1af3d6f05ac423dd8f4199780225", "a94a32e698caff0f5c5762b3dca045ddcd587071"),
-    CLIENT_20w14infinite(Type.CLIENT, "20w14infinite", "cc5cb23748614a6396ffb77427b4f11f4b6ae99b", "3d91233a24c5de720f0eb41927a0b00e45e89caa");
+    CLIENT_20w14infinite(Type.CLIENT, "20w14infinite", "cc5cb23748614a6396ffb77427b4f11f4b6ae99b", "3d91233a24c5de720f0eb41927a0b00e45e89caa"),
+
+    //1.18 snapshots
+    SERVER_1_18_EXPERIMENTAL_1(Type.SERVER, "1.18_Experimental_1", "83a3c2e94b744ad8f0c8bc373dd70a85da59babf", "3842b0e3eef95054f464d5de410f774ecead9f0f"),
+    CLIENT_1_18_EXPERIMENTAL_1(Type.CLIENT, "1.18_Experimental_1", "b230ccffcf332c9d3619af85727d02e284ff4903", "117c5938948fb482bffb72e9ebf6f2f77a6d733d");
 
     private final Type type;
     private final String version;
