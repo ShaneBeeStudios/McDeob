@@ -6,6 +6,12 @@ import java.util.Map;
 @SuppressWarnings("unused")
 public enum Version {
 
+    // Latest
+    SERVER_LATEST_RELEASE(Type.SERVER, "Latest_Release", null, null),
+    CLIENT_LATEST_RELEASE(Type.CLIENT, "Latest_Release", null, null),
+    SERVER_LATEST_SNAPSHOT(Type.SERVER, "Latest_Snapshot", null, null),
+    CLIENT_LATEST_SNAPSHOT(Type.CLIENT, "Latest_Snapshot", null, null),
+
     // Release
     SERVER_1_14_4(Type.SERVER, "1.14.4", "3dc3d84a581f14691199cf6831b71ed1296a9fdf", "46a7ba37c15820f00d49eafb38afb4a9bb64a0be"),
     CLIENT_1_14_4(Type.CLIENT, "1.14.4", "8c325a0c5bd674dd747d6ebaa4c791fd363ad8a9", "3a0e42172d082f18c4ee0b4561a6a2ecc9868a58"),
@@ -39,16 +45,16 @@ public enum Version {
     CLIENT_1_18_EXP_2(Type.CLIENT, "1.18_Experimental_2", "1108159d2734fda202c782ff08e74bf1e399bad4", "e40574bb0e42a3a2e9fd486db7f7dcd5e5d0c165"),
 
     // Combat Test
-    SERVER_COMBAT_TEST_5(Type.SERVER, "combat_test_5", "0cc9a1582949297c8f1ca83b937c8d84ad295ffe", "44b2ca1d4677f3fffaa0333c87a42a9449e0bc52"),
-    CLIENT_COMBAT_TEST_5(Type.CLIENT, "combat_test_5", "0ad80b317873e1f64a9a79af09a02ddef62ce67c", "5c9745ba8db67bcc95e6de65a3a6dd1d4c655726"),
-    SERVER_COMBAT_TEST_6(Type.SERVER, "combat_test_6", "1c35c493ade7a39e2d02bcc326498aaab96f1a09", "6ddb98ca992d93fd654bf89f801223b1c4d98695"),
-    CLIENT_COMBAT_TEST_6(Type.CLIENT, "combat_test_6", "4f08b4667575cbfc35e44c9556a0667bd3d0f5cc", "185a362b6b301bfb71e12f788ce8fb998b806217"),
-    SERVER_COMBAT_TEST_7c(Type.SERVER, "combat_test_7c", "53c43fdae7d2ed01bbb31a82d99e31b9348e2a4b", "7f1369734e3e5585d44b211812274f2ad7ac160d"),
-    CLIENT_COMBAT_TEST_7c(Type.CLIENT, "combat_test_7c", "14991d31f1002e5cbd97e62310cba614666f876b", "907af4fb6a7d676921f9bcb7aa80f8749bf03592"),
-    SERVER_COMBAT_TEST_8b(Type.SERVER, "combat_test_8b", "635866257b4fc1ade528db8bd53ebbebb4816e5e", "57882209cb9b4e10303e7a7a2b3b3f93ae32bb8f"),
-    CLIENT_COMBAT_TEST_8b(Type.CLIENT, "combat_test_8b", "123cf1bd6736a3c1a47e8c1727a3db18e3c9cace", "8d09f244923d77e27493038e02d926d401122f03"),
-    SERVER_COMBAT_TEST_8c(Type.SERVER, "combat_cest_8c", "b707c44ac1503ad179fde86c78d41aa4d0cc78a5", "d89f9e0eb8fbe6f2c91e749e8b59391cd0dd96d4"),
-    CLIENT_COMBAT_TEST_8c(Type.CLIENT, "combat_test_8c", "177472ace3ff5d98fbd63b4bcd5bbef5b035a018", "5ea38a7b8d58837c97214f2a46e5e12151d51f83"),
+    SERVER_COMBAT_TEST_5(Type.SERVER, "Combat_Test_5", "0cc9a1582949297c8f1ca83b937c8d84ad295ffe", "44b2ca1d4677f3fffaa0333c87a42a9449e0bc52"),
+    CLIENT_COMBAT_TEST_5(Type.CLIENT, "Combat_Test_5", "0ad80b317873e1f64a9a79af09a02ddef62ce67c", "5c9745ba8db67bcc95e6de65a3a6dd1d4c655726"),
+    SERVER_COMBAT_TEST_6(Type.SERVER, "Combat_Test_6", "1c35c493ade7a39e2d02bcc326498aaab96f1a09", "6ddb98ca992d93fd654bf89f801223b1c4d98695"),
+    CLIENT_COMBAT_TEST_6(Type.CLIENT, "Combat_Test_6", "4f08b4667575cbfc35e44c9556a0667bd3d0f5cc", "185a362b6b301bfb71e12f788ce8fb998b806217"),
+    SERVER_COMBAT_TEST_7c(Type.SERVER, "Combat_Test_7c", "53c43fdae7d2ed01bbb31a82d99e31b9348e2a4b", "7f1369734e3e5585d44b211812274f2ad7ac160d"),
+    CLIENT_COMBAT_TEST_7c(Type.CLIENT, "Combat_Test_7c", "14991d31f1002e5cbd97e62310cba614666f876b", "907af4fb6a7d676921f9bcb7aa80f8749bf03592"),
+    SERVER_COMBAT_TEST_8b(Type.SERVER, "Combat_Test_8b", "635866257b4fc1ade528db8bd53ebbebb4816e5e", "57882209cb9b4e10303e7a7a2b3b3f93ae32bb8f"),
+    CLIENT_COMBAT_TEST_8b(Type.CLIENT, "Combat_Test_8b", "123cf1bd6736a3c1a47e8c1727a3db18e3c9cace", "8d09f244923d77e27493038e02d926d401122f03"),
+    SERVER_COMBAT_TEST_8c(Type.SERVER, "Combat_Test_8c", "b707c44ac1503ad179fde86c78d41aa4d0cc78a5", "d89f9e0eb8fbe6f2c91e749e8b59391cd0dd96d4"),
+    CLIENT_COMBAT_TEST_8c(Type.CLIENT, "Combat_Test_8c", "177472ace3ff5d98fbd63b4bcd5bbef5b035a018", "5ea38a7b8d58837c97214f2a46e5e12151d51f83"),
 
     // April Fools
     SERVER_20w14infinite(Type.SERVER, "20w14infinite", "c0711cd9608d1af3d6f05ac423dd8f4199780225", "a94a32e698caff0f5c5762b3dca045ddcd587071"),
@@ -82,6 +88,11 @@ public enum Version {
         return type;
     }
 
+    public boolean isLatest() {
+        return this == CLIENT_LATEST_RELEASE || this == SERVER_LATEST_RELEASE
+                || this == CLIENT_LATEST_SNAPSHOT || this == SERVER_LATEST_SNAPSHOT;
+    }
+
     @Override
     public String toString() {
         return "Version{" +
@@ -97,18 +108,18 @@ public enum Version {
     static {
         for (Version ver : values()) {
             if (ver.type == Type.SERVER) {
-                SERVER_VERSION_MAP.put(ver.getVersion(), ver);
+                SERVER_VERSION_MAP.put(ver.getVersion().toLowerCase(), ver);
             } else {
-                CLIENT_VERSION_MAP.put(ver.getVersion(), ver);
+                CLIENT_VERSION_MAP.put(ver.getVersion().toLowerCase(), ver);
             }
         }
     }
 
     public static Version getByVersion(String ver, Type type) {
         if (type == Type.SERVER) {
-            return SERVER_VERSION_MAP.get(ver);
+            return SERVER_VERSION_MAP.get(ver.toLowerCase());
         } else {
-            return CLIENT_VERSION_MAP.get(ver);
+            return CLIENT_VERSION_MAP.get(ver.toLowerCase());
         }
     }
 
