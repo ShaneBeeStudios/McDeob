@@ -33,10 +33,8 @@ public enum Version {
     CLIENT_1_17_1(Type.CLIENT, "1.17.1", "8d9b65467c7913fcf6f5b2e729d44a1e00fde150", "e4d540e0cba05a6097e885dffdf363e621f87d3f"),
 
     // Snapshot
-    SERVER_1_18_EXP_1(Type.SERVER, "1.18_Experimental_1", "83a3c2e94b744ad8f0c8bc373dd70a85da59babf", "3842b0e3eef95054f464d5de410f774ecead9f0f"),
-    CLIENT_1_18_EXP_1(Type.CLIENT, "1.18_Experimental_1", "b230ccffcf332c9d3619af85727d02e284ff4903", "117c5938948fb482bffb72e9ebf6f2f77a6d733d"),
-    SERVER_1_18_EXP_2(Type.SERVER, "1.18_Experimental_2", "9fa3fd2939f9785bafc6a0a3507c3c967fbeafed", "dde78de8bc0937fa8324efd62d78244febd431e9"),
-    CLIENT_1_18_EXP_2(Type.CLIENT, "1.18_Experimental_2", "1108159d2734fda202c782ff08e74bf1e399bad4", "e40574bb0e42a3a2e9fd486db7f7dcd5e5d0c165"),
+    SERVER_21w42a(Type.SERVER, "21w42a", "cf518e2c80fdaef443d68d50d1ac23a72a0a7d85", "873b38fc13155fa3d2eb7b7f167fdbab5651ad0d"),
+    CLIENT_21w42a(Type.CLIENT, "21w42a", "05781f1ce3749ee0958be1de939d15b8aff1910b", "3941c7f2f5cb768dd16610ec9f834cc01dc1d32b"),
 
     // Combat Test
     SERVER_COMBAT_TEST_5(Type.SERVER, "combat_test_5", "0cc9a1582949297c8f1ca83b937c8d84ad295ffe", "44b2ca1d4677f3fffaa0333c87a42a9449e0bc52"),
