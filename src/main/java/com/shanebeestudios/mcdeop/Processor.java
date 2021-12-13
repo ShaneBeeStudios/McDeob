@@ -19,6 +19,7 @@ import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Objects;
 
 @SuppressWarnings("ResultOfMethodCallIgnored")
 public class Processor {
@@ -185,6 +186,13 @@ public class Processor {
         // Setup FernFlower to properly decompile the jar file
         String[] args = new String[]{"-dgs=1", "-hdc=0", "-rbr=0", "-asc=1", "-udv=0", REMAPPED_JAR.getAbsolutePath(), DIR.getAbsolutePath()};
         ConsoleDecompiler.main(args);
+
+        // Rename jar file to zip
+        for (File file : Objects.requireNonNull(DIR.listFiles())) {
+            int i = file.getName().lastIndexOf(".");
+            String name = file.getName().substring(0, i);
+            file.renameTo(new File(file.getParentFile(), name + ".zip"));
+        }
 
         TimeStamp timeStamp = TimeStamp.fromNow(start);
         Logger.info("Decompiling completed in %s", timeStamp);
