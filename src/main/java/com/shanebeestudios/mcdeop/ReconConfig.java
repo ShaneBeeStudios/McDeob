@@ -72,7 +72,8 @@ public class ReconConfig implements Config {
     @Override
     public Collection<String> getExcludedPackages() {
         List<String> exclude = new ArrayList<>();
-        exclude.add("com.google.,io.netty.");
+        exclude.add("com.google.");
+        exclude.add("io.netty.");
         exclude.add("it.unimi.dsi.fastutil.");
         exclude.add("javax.");
         exclude.add("joptsimple.");
