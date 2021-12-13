@@ -2,6 +2,7 @@ package com.shanebeestudios.mcdeop;
 
 import com.shanebeestudios.mcdeop.app.App;
 import com.shanebeestudios.mcdeop.util.Logger;
+import com.shanebeestudios.mcdeop.util.TimeStamp;
 import com.shanebeestudios.mcdeop.util.Util;
 import io.github.lxgaming.reconstruct.common.Reconstruct;
 import org.jetbrains.java.decompiler.main.decompiler.ConsoleDecompiler;
@@ -18,7 +19,6 @@ import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.Duration;
 
 @SuppressWarnings("ResultOfMethodCallIgnored")
 public class Processor {
@@ -75,10 +75,10 @@ public class Processor {
             }
             cleanup();
 
-            long finish = Duration.ofMillis(System.currentTimeMillis() - start).toMinutes();
-            Logger.info("Process finished in %s minutes!", finish);
+            TimeStamp timeStamp = TimeStamp.fromNow(start);
+            Logger.info("Process finished in %s!", timeStamp);
             if (app != null) {
-                app.updateStatusBox(String.format("Completed in %s minutes!", finish));
+                app.updateStatusBox(String.format("Completed in %s!", timeStamp));
                 app.updateButton("Start!");
             }
         } catch (IOException e) {
@@ -115,8 +115,8 @@ public class Processor {
         inputStream.close();
         jar_out.close();
 
-        long finish = Duration.ofMillis(System.currentTimeMillis() - start).getSeconds();
-        Logger.info("Successfully downloaded jar file in %s seconds", finish);
+        TimeStamp timeStamp = TimeStamp.fromNow(start);
+        Logger.info("Successfully downloaded jar file in %s", timeStamp);
     }
 
     public void downloadMappings() throws IOException {
@@ -145,8 +145,8 @@ public class Processor {
         inputStream.close();
         mapping_out.close();
 
-        long finish = Duration.ofMillis(System.currentTimeMillis() - start).getSeconds();
-        Logger.info("Successfully downloaded mappings file in %s seconds", finish);
+        TimeStamp timeStamp = TimeStamp.fromNow(start);
+        Logger.info("Successfully downloaded mappings file in %s", timeStamp);
     }
 
     public void remapJar() {
@@ -164,8 +164,8 @@ public class Processor {
             reconstruct.getConfig().setOutputPath(REMAPPED_JAR.getAbsoluteFile().toPath());
             reconstruct.load();
 
-            long finish = Duration.ofMillis(System.currentTimeMillis() - start).toMinutes();
-            Logger.info("Remapping completed in %s minutes", finish);
+            TimeStamp timeStamp = TimeStamp.fromNow(start);
+            Logger.info("Remapping completed in %s", timeStamp);
         } else {
             Logger.info("%s already remapped... skipping mapping!", MAPPED_JAR_NAME);
         }
@@ -186,8 +186,8 @@ public class Processor {
         String[] args = new String[]{"-dgs=1", "-hdc=0", "-rbr=0", "-asc=1", "-udv=0", REMAPPED_JAR.getAbsolutePath(), DIR.getAbsolutePath()};
         ConsoleDecompiler.main(args);
 
-        long finish = Duration.ofMillis(System.currentTimeMillis() - start).toMinutes();
-        Logger.info("Decompiling completed in %s minutes", finish);
+        TimeStamp timeStamp = TimeStamp.fromNow(start);
+        Logger.info("Decompiling completed in %s", timeStamp);
     }
 
     private void cleanup() {
