@@ -45,7 +45,7 @@ public enum Version {
     CLIENT_1_19_exp_1(Type.CLIENT, "1.19 Experimental 1", "17f03648f0956343d4ae35260067d200a5aabc56", "668d017c0c3bfc47a7b4c9e75e0841b31123c5e0"),
 
     // Combat Test
-    SERVER_COMBAT_TEST_8c(Type.SERVER, "combat_cest_8c", "b707c44ac1503ad179fde86c78d41aa4d0cc78a5", "d89f9e0eb8fbe6f2c91e749e8b59391cd0dd96d4"),
+    SERVER_COMBAT_TEST_8c(Type.SERVER, "combat_test_8c", "b707c44ac1503ad179fde86c78d41aa4d0cc78a5", "d89f9e0eb8fbe6f2c91e749e8b59391cd0dd96d4"),
     CLIENT_COMBAT_TEST_8c(Type.CLIENT, "combat_test_8c", "177472ace3ff5d98fbd63b4bcd5bbef5b035a018", "5ea38a7b8d58837c97214f2a46e5e12151d51f83"),
 
     // April Fools
