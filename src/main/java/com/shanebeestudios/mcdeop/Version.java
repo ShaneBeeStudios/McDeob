@@ -45,14 +45,6 @@ public enum Version {
     CLIENT_1_19_exp_1(Type.CLIENT, "1.19 Experimental 1", "17f03648f0956343d4ae35260067d200a5aabc56", "668d017c0c3bfc47a7b4c9e75e0841b31123c5e0"),
 
     // Combat Test
-    SERVER_COMBAT_TEST_5(Type.SERVER, "combat_test_5", "0cc9a1582949297c8f1ca83b937c8d84ad295ffe", "44b2ca1d4677f3fffaa0333c87a42a9449e0bc52"),
-    CLIENT_COMBAT_TEST_5(Type.CLIENT, "combat_test_5", "0ad80b317873e1f64a9a79af09a02ddef62ce67c", "5c9745ba8db67bcc95e6de65a3a6dd1d4c655726"),
-    SERVER_COMBAT_TEST_6(Type.SERVER, "combat_test_6", "1c35c493ade7a39e2d02bcc326498aaab96f1a09", "6ddb98ca992d93fd654bf89f801223b1c4d98695"),
-    CLIENT_COMBAT_TEST_6(Type.CLIENT, "combat_test_6", "4f08b4667575cbfc35e44c9556a0667bd3d0f5cc", "185a362b6b301bfb71e12f788ce8fb998b806217"),
-    SERVER_COMBAT_TEST_7c(Type.SERVER, "combat_test_7c", "53c43fdae7d2ed01bbb31a82d99e31b9348e2a4b", "7f1369734e3e5585d44b211812274f2ad7ac160d"),
-    CLIENT_COMBAT_TEST_7c(Type.CLIENT, "combat_test_7c", "14991d31f1002e5cbd97e62310cba614666f876b", "907af4fb6a7d676921f9bcb7aa80f8749bf03592"),
-    SERVER_COMBAT_TEST_8b(Type.SERVER, "combat_test_8b", "635866257b4fc1ade528db8bd53ebbebb4816e5e", "57882209cb9b4e10303e7a7a2b3b3f93ae32bb8f"),
-    CLIENT_COMBAT_TEST_8b(Type.CLIENT, "combat_test_8b", "123cf1bd6736a3c1a47e8c1727a3db18e3c9cace", "8d09f244923d77e27493038e02d926d401122f03"),
     SERVER_COMBAT_TEST_8c(Type.SERVER, "combat_cest_8c", "b707c44ac1503ad179fde86c78d41aa4d0cc78a5", "d89f9e0eb8fbe6f2c91e749e8b59391cd0dd96d4"),
     CLIENT_COMBAT_TEST_8c(Type.CLIENT, "combat_test_8c", "177472ace3ff5d98fbd63b4bcd5bbef5b035a018", "5ea38a7b8d58837c97214f2a46e5e12151d51f83"),
 
