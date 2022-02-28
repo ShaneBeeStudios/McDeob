@@ -35,10 +35,10 @@ public enum Version {
     CLIENT_1_18(Type.CLIENT, "1.18", "d49eb6caed53d23927648c97451503442f9e26fd", "e824c89c612c0b9cb438ef739c44726c59bbf679"),
     SERVER_1_18_1(Type.SERVER, "1.18.1", "125e5adf40c659fd3bce3e66e67a16bb49ecc1b9", "9717df2acd926bd4a9a7b2ce5f981bb7e4f7f04a"),
     CLIENT_1_18_1(Type.CLIENT, "1.18.1", "7e46fb47609401970e2818989fa584fd467cd036", "99ade839eacf69b8bed88c91bd70ca660aee47bb"),
+    SERVER_1_18_2(Type.SERVER, "1.18.2", "c8f83c5655308435b3dcf03c06d9fe8740a77469", "e562f588fea155d96291267465dc3323bfe1551b"),
+    CLIENT_1_18_2(Type.CLIENT, "1.18.2", "2e9a3e3107cca00d6bc9c97bf7d149cae163ef21", "a661c6a55a0600bd391bdbbd6827654c05b2109c"),
 
     // Snapshot
-    SERVER_1_18_2_PRE_2(Type.SERVER, "1.18.2 Pre-Release 2", "888cb380db39a115cfe978c00922d24536bdd2a5", "534b35bb75418d46e8a28c83c175a5cb8193f67a"),
-    CLIENT_1_18_2_PRE_2(Type.CLIENT, "1.18.2 Pre-Release 2", "d0a4d6f3c6ba2232b7e1ac4223f8a93741c8e47a", "18e0d542e7d5b4a1426bed77818b2e3d93dd5dd6"),
 
     // Experimental
     SERVER_1_19_exp_1(Type.SERVER, "1.19 Experimental 1", "973e76b8067bab5410fef92bf4412ada1f7b0f97", "7c6d4d114bfb0cb482a549dda1b587aece9c04af"),
