@@ -39,6 +39,8 @@ public enum Version {
     CLIENT_1_18_2(Type.CLIENT, "1.18.2", "2e9a3e3107cca00d6bc9c97bf7d149cae163ef21", "a661c6a55a0600bd391bdbbd6827654c05b2109c"),
 
     // Snapshot
+    SERVER_1_19_22w12a(Type.SERVER, "1.19 22w12a", "f238cf129a0848effe5037d8aaefe3f1f350b689", "66958fd7cba81700445786fd72af15d7163c0d4a"),
+    CLIENT_1_19_22w12a(Type.CLIENT, "1.19 22w12a", "9638f6997fd59545585242eadab1e5039356e77a", "b439349831e52fb3231c4e6dda4980b105cd8159"),
 
     // Experimental
     SERVER_1_19_exp_1(Type.SERVER, "1.19 Experimental 1", "973e76b8067bab5410fef92bf4412ada1f7b0f97", "7c6d4d114bfb0cb482a549dda1b587aece9c04af"),
