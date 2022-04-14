@@ -32,7 +32,7 @@
             <groupId>com.github.fesh0r</groupId>
             <artifactId>fernflower</artifactId>
             <!--suppress MavenModelInspection -->
-            <version>master-SNAPSHOT</version>
+            <version>e19aab61ce</version>
         </dependency>
         <dependency>
             <groupId>com.apple</groupId>
