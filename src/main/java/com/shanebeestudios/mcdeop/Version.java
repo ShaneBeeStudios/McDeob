@@ -45,6 +45,8 @@ public enum Version {
     CLIENT_1_19_22w15a(Type.CLIENT, "1.19 22w15a", "b5b14c791de1b44ce2d6de13dfd18b9ced843618", "5ca2f62eacc890b09b9b9b45cd1edfe36cdee34a"),
     SERVER_1_19_22w16b(Type.SERVER, "1.19 22w16b", "a54810e8b1a7a043fa54a462309d680ad67da479", "54d27d0b812eab6ffc04e6d3d0236fa7920a5c87"),
     CLIENT_1_19_22w16b(Type.CLIENT, "1.19 22w16b", "8ebd18862d0de2389d1b3dab0bf660f20851bc3e", "b40c6ecf3d0785d109d10eea1814ce11f5ec9da4"),
+    SERVER_1_19_22w19a(Type.SERVER, "1.19 22w19a", "c354ac562b44fe5857535935125942ff89616cab", "b4c5ef273e65f0df3da75378402ef00d638ef4cc"),
+    CLIENT_1_19_22w19a(Type.CLIENT, "1.19 22w19a", "b6f17935359d3a7bc8022eb48e5f3643ede72fd3", "5b76b821c9adfd58612afeababaabe95ffe27e59"),
 
     // Experimental
     SERVER_1_19_exp_1(Type.SERVER, "1.19 Experimental 1", "973e76b8067bab5410fef92bf4412ada1f7b0f97", "7c6d4d114bfb0cb482a549dda1b587aece9c04af"),
