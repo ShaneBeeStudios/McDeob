@@ -1,6 +1,8 @@
 package com.shanebeestudios.mcdeop;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @SuppressWarnings("unused")
@@ -93,11 +95,17 @@ public enum Version {
     private static final String OBJECTS = "https://launcher.mojang.com/v1/objects/";
     private static final Map<String, Version> SERVER_VERSION_MAP = new HashMap<>();
     private static final Map<String, Version> CLIENT_VERSION_MAP = new HashMap<>();
+    private static final List<Version> AVAILABLE_VERSIONS = new ArrayList<>();
+
+    public static List<Version> getVersions() {
+        return AVAILABLE_VERSIONS;
+    }
 
     static {
         for (Version ver : values()) {
             if (ver.type == Type.SERVER) {
                 SERVER_VERSION_MAP.put(ver.getVersion(), ver);
+                AVAILABLE_VERSIONS.add(ver);
             } else {
                 CLIENT_VERSION_MAP.put(ver.getVersion(), ver);
             }
