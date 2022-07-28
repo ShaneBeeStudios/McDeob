@@ -8,6 +8,12 @@ import java.util.Map;
 @SuppressWarnings("unused")
 public enum Version {
 
+    // Latest
+    SERVER_LATEST_RELEASE(Type.SERVER, "Latest_Release", null, null),
+    CLIENT_LATEST_RELEASE(Type.CLIENT, "Latest_Release", null, null),
+    SERVER_LATEST_SNAPSHOT(Type.SERVER, "Latest_Snapshot", null, null),
+    CLIENT_LATEST_SNAPSHOT(Type.CLIENT, "Latest_Snapshot", null, null),
+
     // Release
     SERVER_1_14_4(Type.SERVER, "1.14.4", "3dc3d84a581f14691199cf6831b71ed1296a9fdf", "46a7ba37c15820f00d49eafb38afb4a9bb64a0be"),
     CLIENT_1_14_4(Type.CLIENT, "1.14.4", "8c325a0c5bd674dd747d6ebaa4c791fd363ad8a9", "3a0e42172d082f18c4ee0b4561a6a2ecc9868a58"),
@@ -47,8 +53,8 @@ public enum Version {
     // Snapshot
 
     // Combat Test
-    SERVER_COMBAT_TEST_8c(Type.SERVER, "combat_test_8c", "b707c44ac1503ad179fde86c78d41aa4d0cc78a5", "d89f9e0eb8fbe6f2c91e749e8b59391cd0dd96d4"),
-    CLIENT_COMBAT_TEST_8c(Type.CLIENT, "combat_test_8c", "177472ace3ff5d98fbd63b4bcd5bbef5b035a018", "5ea38a7b8d58837c97214f2a46e5e12151d51f83"),
+    SERVER_COMBAT_TEST_8c(Type.SERVER, "Combat_Test_8c", "b707c44ac1503ad179fde86c78d41aa4d0cc78a5", "d89f9e0eb8fbe6f2c91e749e8b59391cd0dd96d4"),
+    CLIENT_COMBAT_TEST_8c(Type.CLIENT, "Combat_Test_8c", "177472ace3ff5d98fbd63b4bcd5bbef5b035a018", "5ea38a7b8d58837c97214f2a46e5e12151d51f83"),
 
     // April Fools
     SERVER_20w14infinite(Type.SERVER, "20w14infinite", "c0711cd9608d1af3d6f05ac423dd8f4199780225", "a94a32e698caff0f5c5762b3dca045ddcd587071"),
@@ -84,6 +90,11 @@ public enum Version {
         return type;
     }
 
+    public boolean isLatest() {
+        return this == CLIENT_LATEST_RELEASE || this == SERVER_LATEST_RELEASE
+                || this == CLIENT_LATEST_SNAPSHOT || this == SERVER_LATEST_SNAPSHOT;
+    }
+
     @Override
     public String toString() {
         return "Version{" +
@@ -104,19 +115,19 @@ public enum Version {
     static {
         for (Version ver : values()) {
             if (ver.type == Type.SERVER) {
-                SERVER_VERSION_MAP.put(ver.getVersion(), ver);
+                SERVER_VERSION_MAP.put(ver.getVersion().toLowerCase(), ver);
                 AVAILABLE_VERSIONS.add(ver);
             } else {
-                CLIENT_VERSION_MAP.put(ver.getVersion(), ver);
+                CLIENT_VERSION_MAP.put(ver.getVersion().toLowerCase(), ver);
             }
         }
     }
 
     public static Version getByVersion(String ver, Type type) {
         if (type == Type.SERVER) {
-            return SERVER_VERSION_MAP.get(ver);
+            return SERVER_VERSION_MAP.get(ver.toLowerCase());
         } else {
-            return CLIENT_VERSION_MAP.get(ver);
+            return CLIENT_VERSION_MAP.get(ver.toLowerCase());
         }
     }
 

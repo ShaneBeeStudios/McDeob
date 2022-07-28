@@ -89,7 +89,7 @@ public class App extends JFrame {
         versionBox.addItem("Choose Minecraft Version");
         for (Version version : Version.values()) {
             if (version.getType() == Version.Type.SERVER) {
-                versionBox.addItem(version.getVersion());
+                versionBox.addItem(version.getVersion().replace("_", " "));
             }
         }
         versionBox.setBounds((getSize().width / 2) - 110, 95, 220, 20);
@@ -174,7 +174,7 @@ public class App extends JFrame {
         public void actionPerformed(ActionEvent e) {
             if (e.getSource() == startButton) {
                 Version.Type type = server.isSelected() ? Version.Type.SERVER : Version.Type.CLIENT;
-                Version version = Version.getByVersion((String) versionBox.getSelectedItem(), type);
+                Version version = Version.getByVersion(((String) versionBox.getSelectedItem()).replaceAll(" ", "_"), type);
                 if (!startButton.getText().equalsIgnoreCase("Start!")) return;
                 if (version == null) {
                     updateButton("INVALID VERSION!", Color.RED);
