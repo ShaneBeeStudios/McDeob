@@ -1,6 +1,5 @@
 package com.shanebeestudios.mcdeop.app;
 
-import com.apple.eawt.Application;
 import com.shanebeestudios.mcdeop.Processor;
 import com.shanebeestudios.mcdeop.Version;
 import com.shanebeestudios.mcdeop.util.Util;
@@ -29,9 +28,9 @@ public class App extends JFrame {
     private void init() {
         try {
             // If we're running on mac, set the logo
-            Application application = Application.getApplication();
+            Taskbar taskbar = Taskbar.getTaskbar();
             assert Icon.DOCK_LOGO_1024 != null;
-            application.setDockIconImage(Icon.DOCK_LOGO_1024.getImage());
+            taskbar.setIconImage(Icon.DOCK_LOGO_1024.getImage());
         } catch (Throwable ignore) {
             // Else we set it this way
             setIconImages(Icon.LOGO_IMAGES);
