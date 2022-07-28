@@ -17,6 +17,7 @@ public class McDeob {
 
         OptionParser parser = new OptionParser();
         parser.accepts("help", "Shows help and exits");
+        parser.accepts("versions", "Prints a list of all Minecraft versions available to deobfuscate");
         parser.accepts("version", "Minecraft version for which we're deobfuscating")
                 .withRequiredArg()
                 .ofType(String.class);
@@ -31,6 +32,14 @@ public class McDeob {
                 parser.printHelpOn(System.out);
             } catch (IOException e) {
                 throw new RuntimeException(e);
+            }
+            System.exit(0);
+        }
+
+        if (options.has("versions")) {
+            System.out.println("Available Minecraft versions to deobfuscate:");
+            for (Version version : Version.getVersions()) {
+                System.out.println(" - " + version.getVersion());
             }
             System.exit(0);
         }
@@ -62,15 +71,10 @@ public class McDeob {
             System.exit(1);
         }
 
-        boolean decompile = false;
-        if (options.has("decompile")) {
-            decompile = true;
-        }
-
-        boolean finalDecompile = decompile;
+        boolean decompile = options.has("decompile");
 
         Thread processorThread = new Thread(() -> {
-            Processor processor = new Processor(version, finalDecompile, null);
+            Processor processor = new Processor(version, decompile, null);
             processor.init();
         }, "Processor");
         processorThread.start();
