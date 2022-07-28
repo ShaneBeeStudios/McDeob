@@ -1,6 +1,8 @@
 package com.shanebeestudios.mcdeop;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @SuppressWarnings("unused")
@@ -37,28 +39,28 @@ public enum Version {
     CLIENT_1_17(Type.CLIENT, "1.17", "1cf89c77ed5e72401b869f66410934804f3d6f52", "227d16f520848747a59bef6f490ae19dc290a804"),
     SERVER_1_17_1(Type.SERVER, "1.17.1", "a16d67e5807f57fc4e550299cf20226194497dc2", "f6cae1c5c1255f68ba4834b16a0da6a09621fe13"),
     CLIENT_1_17_1(Type.CLIENT, "1.17.1", "8d9b65467c7913fcf6f5b2e729d44a1e00fde150", "e4d540e0cba05a6097e885dffdf363e621f87d3f"),
+    SERVER_1_18(Type.SERVER, "1.18", "3cf24a8694aca6267883b17d934efacc5e44440d", "a8fe854e35a69df7289d3f03fc0821f6363f2238"),
+    CLIENT_1_18(Type.CLIENT, "1.18", "d49eb6caed53d23927648c97451503442f9e26fd", "e824c89c612c0b9cb438ef739c44726c59bbf679"),
+    SERVER_1_18_1(Type.SERVER, "1.18.1", "125e5adf40c659fd3bce3e66e67a16bb49ecc1b9", "9717df2acd926bd4a9a7b2ce5f981bb7e4f7f04a"),
+    CLIENT_1_18_1(Type.CLIENT, "1.18.1", "7e46fb47609401970e2818989fa584fd467cd036", "99ade839eacf69b8bed88c91bd70ca660aee47bb"),
+    SERVER_1_18_2(Type.SERVER, "1.18.2", "c8f83c5655308435b3dcf03c06d9fe8740a77469", "e562f588fea155d96291267465dc3323bfe1551b"),
+    CLIENT_1_18_2(Type.CLIENT, "1.18.2", "2e9a3e3107cca00d6bc9c97bf7d149cae163ef21", "a661c6a55a0600bd391bdbbd6827654c05b2109c"),
+    SERVER_1_19(Type.SERVER, "1.19", "e00c4052dac1d59a1188b2aa9d5a87113aaf1122", "1c1cea17d5cd63d68356df2ef31e724dd09f8c26"),
+    CLIENT_1_19(Type.CLIENT, "1.19", "c0898ec7c6a5a2eaa317770203a1554260699994", "150346d1c0b4acec0b4eb7f58b86e3ea1aa730f3"),
+    SERVER_1_19_1(Type.SERVER, "1.19.1", "8399e1211e95faa421c1507b322dbeae86d604df", "3565648cdd47ae15738fb804a95a659137d7cfd3"),
+    CLIENT_1_19_1(Type.CLIENT, "1.19.1", "90d438c3e432add8848a9f9f368ce5a52f6bc4a7", "fc8e22d42c0e4eb1899e2acf7e97eae917e1cb94"),
 
     // Snapshot
-    SERVER_1_18_EXP_1(Type.SERVER, "1.18_Experimental_1", "83a3c2e94b744ad8f0c8bc373dd70a85da59babf", "3842b0e3eef95054f464d5de410f774ecead9f0f"),
-    CLIENT_1_18_EXP_1(Type.CLIENT, "1.18_Experimental_1", "b230ccffcf332c9d3619af85727d02e284ff4903", "117c5938948fb482bffb72e9ebf6f2f77a6d733d"),
-    SERVER_1_18_EXP_2(Type.SERVER, "1.18_Experimental_2", "9fa3fd2939f9785bafc6a0a3507c3c967fbeafed", "dde78de8bc0937fa8324efd62d78244febd431e9"),
-    CLIENT_1_18_EXP_2(Type.CLIENT, "1.18_Experimental_2", "1108159d2734fda202c782ff08e74bf1e399bad4", "e40574bb0e42a3a2e9fd486db7f7dcd5e5d0c165"),
 
     // Combat Test
-    SERVER_COMBAT_TEST_5(Type.SERVER, "Combat_Test_5", "0cc9a1582949297c8f1ca83b937c8d84ad295ffe", "44b2ca1d4677f3fffaa0333c87a42a9449e0bc52"),
-    CLIENT_COMBAT_TEST_5(Type.CLIENT, "Combat_Test_5", "0ad80b317873e1f64a9a79af09a02ddef62ce67c", "5c9745ba8db67bcc95e6de65a3a6dd1d4c655726"),
-    SERVER_COMBAT_TEST_6(Type.SERVER, "Combat_Test_6", "1c35c493ade7a39e2d02bcc326498aaab96f1a09", "6ddb98ca992d93fd654bf89f801223b1c4d98695"),
-    CLIENT_COMBAT_TEST_6(Type.CLIENT, "Combat_Test_6", "4f08b4667575cbfc35e44c9556a0667bd3d0f5cc", "185a362b6b301bfb71e12f788ce8fb998b806217"),
-    SERVER_COMBAT_TEST_7c(Type.SERVER, "Combat_Test_7c", "53c43fdae7d2ed01bbb31a82d99e31b9348e2a4b", "7f1369734e3e5585d44b211812274f2ad7ac160d"),
-    CLIENT_COMBAT_TEST_7c(Type.CLIENT, "Combat_Test_7c", "14991d31f1002e5cbd97e62310cba614666f876b", "907af4fb6a7d676921f9bcb7aa80f8749bf03592"),
-    SERVER_COMBAT_TEST_8b(Type.SERVER, "Combat_Test_8b", "635866257b4fc1ade528db8bd53ebbebb4816e5e", "57882209cb9b4e10303e7a7a2b3b3f93ae32bb8f"),
-    CLIENT_COMBAT_TEST_8b(Type.CLIENT, "Combat_Test_8b", "123cf1bd6736a3c1a47e8c1727a3db18e3c9cace", "8d09f244923d77e27493038e02d926d401122f03"),
     SERVER_COMBAT_TEST_8c(Type.SERVER, "Combat_Test_8c", "b707c44ac1503ad179fde86c78d41aa4d0cc78a5", "d89f9e0eb8fbe6f2c91e749e8b59391cd0dd96d4"),
     CLIENT_COMBAT_TEST_8c(Type.CLIENT, "Combat_Test_8c", "177472ace3ff5d98fbd63b4bcd5bbef5b035a018", "5ea38a7b8d58837c97214f2a46e5e12151d51f83"),
 
     // April Fools
     SERVER_20w14infinite(Type.SERVER, "20w14infinite", "c0711cd9608d1af3d6f05ac423dd8f4199780225", "a94a32e698caff0f5c5762b3dca045ddcd587071"),
-    CLIENT_20w14infinite(Type.CLIENT, "20w14infinite", "cc5cb23748614a6396ffb77427b4f11f4b6ae99b", "3d91233a24c5de720f0eb41927a0b00e45e89caa");
+    CLIENT_20w14infinite(Type.CLIENT, "20w14infinite", "cc5cb23748614a6396ffb77427b4f11f4b6ae99b", "3d91233a24c5de720f0eb41927a0b00e45e89caa"),
+    SERVER_22w13one(Type.SERVER, "22w13oneBlockAtATime", "5f48eea55c7fd1881d9c63835b15dfb5bbcd3a67", "2c55055b906935ffe1e7e7cb80d1a8b031eb9f95"),
+    CLIENT_22w13one(Type.CLIENT, "22w13oneBlockAtATime", "6548ac25265c2726a2cd24dec3820c07ee2b0b4b", "b1bbd68dbf48041dd994f1a4c1a3eacfa46e344b");
 
     private final Type type;
     private final String version;
@@ -104,11 +106,17 @@ public enum Version {
     private static final String OBJECTS = "https://launcher.mojang.com/v1/objects/";
     private static final Map<String, Version> SERVER_VERSION_MAP = new HashMap<>();
     private static final Map<String, Version> CLIENT_VERSION_MAP = new HashMap<>();
+    private static final List<Version> AVAILABLE_VERSIONS = new ArrayList<>();
+
+    public static List<Version> getVersions() {
+        return AVAILABLE_VERSIONS;
+    }
 
     static {
         for (Version ver : values()) {
             if (ver.type == Type.SERVER) {
                 SERVER_VERSION_MAP.put(ver.getVersion().toLowerCase(), ver);
+                AVAILABLE_VERSIONS.add(ver);
             } else {
                 CLIENT_VERSION_MAP.put(ver.getVersion().toLowerCase(), ver);
             }
