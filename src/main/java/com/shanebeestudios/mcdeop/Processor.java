@@ -77,15 +77,13 @@ public class Processor {
                 app.toggleControls();
             }
 
-            String trueVersion;
             if (version.isLatest()) {
-                trueVersion = prepareLatest();
-            } else {
-                trueVersion = version.getVersion();
+                String trueVersion = prepareLatest();
+                if (app != null) {
+                    app.addVersionBox(trueVersion);
+                }
             }
-            if (app != null) {
-                app.updateVerBox(trueVersion);
-            }
+
             downloadJar();
             downloadMappings();
             remapJar();

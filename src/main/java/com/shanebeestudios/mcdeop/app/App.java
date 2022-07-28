@@ -123,7 +123,7 @@ public class App extends JFrame {
         statusBox.setText(string);
     }
 
-    public void updateVerBox(String version) {
+    public void addVersionBox(String version) {
         if (currentVerBox == null) {
             currentVerBox = new JTextField();
             currentVerBox.setEditable(false);
