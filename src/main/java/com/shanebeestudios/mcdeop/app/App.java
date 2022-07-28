@@ -19,6 +19,7 @@ public class App extends JFrame {
     private JCheckBox decompile;
     private JComboBox<String> versionBox;
     private JTextField statusBox;
+    private JTextField currentVerBox;
 
     public App() {
         init();
@@ -120,6 +121,22 @@ public class App extends JFrame {
 
     public void updateStatusBox(String string) {
         statusBox.setText(string);
+    }
+
+    public void updateVerBox(String version) {
+        if (currentVerBox == null) {
+            currentVerBox = new JTextField();
+            currentVerBox.setEditable(false);
+            currentVerBox.setHorizontalAlignment(JTextField.CENTER);
+            currentVerBox.setBounds((getSize().width / 2) - 110, 150,220, 30);
+            add(currentVerBox);
+        }
+        // Shift status box down
+        int width = (int) (getSize().width * 0.90);
+        statusBox.setBounds((getSize().width / 2) - (width / 2), 180,width, 30);
+
+        currentVerBox.setText("Version: " + version);
+        currentVerBox.setForeground(new Color(13, 193, 47));
     }
 
     private void createStartButton() {

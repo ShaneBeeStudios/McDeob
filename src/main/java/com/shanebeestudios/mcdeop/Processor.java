@@ -77,8 +77,14 @@ public class Processor {
                 app.toggleControls();
             }
 
+            String trueVersion;
             if (version.isLatest()) {
-                prepareLatest();
+                trueVersion = prepareLatest();
+            } else {
+                trueVersion = version.getVersion();
+            }
+            if (app != null) {
+                app.updateVerBox(trueVersion);
             }
             downloadJar();
             downloadMappings();
@@ -210,8 +216,8 @@ public class Processor {
         Logger.info("Decompiling completed in %s", timeStamp);
     }
 
-    public void prepareLatest() throws IOException {
-        if (app != null)  {
+    public String prepareLatest() throws IOException {
+        if (app != null) {
             app.updateStatusBox("Fetching version list from mojang...");
             app.updateButton("Fetching...");
         }
@@ -244,7 +250,7 @@ public class Processor {
 
         String trueVersion = versions.getJSONObject("latest").getString(type);
         Logger.info("Finding the url for " + trueVersion);
-        if (app != null)  {
+        if (app != null) {
             app.updateStatusBox("Finding the url for " + trueVersion);
         }
 
@@ -272,7 +278,7 @@ public class Processor {
         }
 
         Logger.info("Download data for " + trueVersion + "...");
-        if (app != null)  {
+        if (app != null) {
             app.updateStatusBox("Download data for " + trueVersion + "...");
         }
 
@@ -298,10 +304,10 @@ public class Processor {
         MAPPED_JAR_NAME = String.format("remapped_%s_%s.jar", clientOrServer, trueVersion);
 
         Logger.info("Found the jar and mappings url for " + trueVersion + "!");
-        if (app != null)  {
+        if (app != null) {
             app.updateStatusBox("Found the jar and mappings url for " + trueVersion + "!");
         }
-
+        return trueVersion;
     }
 
     private void cleanup() {
