@@ -19,9 +19,31 @@
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
         </repository>
+        <repository>
+            <id>pan-repo</id>
+            <name>Pandaemonium Repository</name>
+            <url>https://gitlab.com/api/v4/projects/18568066/packages/maven</url>
+        </repository>
+        <repository>
+            <id>kenzie</id>
+            <name>Kenzie's Repository</name>
+            <url>https://repo.kenzie.mx/releases</url>
+        </repository>
     </repositories>
 
     <dependencies>
+
+        <dependency>
+            <groupId>mx.kenzie</groupId>
+            <artifactId>mirror</artifactId>
+            <version>5.0.3</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>mx.kenzie</groupId>
+            <artifactId>mimic</artifactId>
+            <version>1.0.0</version>
+        </dependency>
         <dependency>
             <groupId>io.github.lxgaming</groupId>
             <artifactId>reconstruct-common</artifactId>
@@ -52,6 +74,7 @@
             <artifactId>slf4j-simple</artifactId>
             <version>1.7.36</version>
         </dependency>
+
     </dependencies>
 
     <build>
@@ -111,6 +134,7 @@
                 <version>1.18.0</version>
                 <configuration>
                     <dmg>
+                        <useGenIsoImage>true</useGenIsoImage>
                         <generate>true</generate>
                         <appendVersion>false</appendVersion>
                         <dmgFileName>${project.name}-${project.version}-macOS</dmgFileName>

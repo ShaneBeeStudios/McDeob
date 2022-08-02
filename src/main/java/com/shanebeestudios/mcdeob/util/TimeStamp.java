@@ -18,9 +18,22 @@ public class TimeStamp {
     public String toString() {
         long minutes = duration.toMinutesPart();
         long seconds = duration.toSecondsPart();
-        String m = minutes == 1 ? "minute" : "minutes";
-        String s = seconds == 1 ? "second" : "seconds";
-        return String.format("%s %s, %s %s", minutes, m, seconds, s);
+        final StringBuilder sb = new StringBuilder();
+        if (minutes > 0) {
+            sb.append(minutes);
+            sb.append(minutes == 1 ? " minute, " : " minutes, ");
+        }
+
+        if (seconds > 0) {
+            sb.append(seconds);
+            sb.append(seconds == 1 ? " second" : " seconds");
+        }
+
+        if (minutes == 0 && seconds == 0) {
+            sb.append("less than a second");
+        }
+
+        return sb.toString();
     }
 
 }
