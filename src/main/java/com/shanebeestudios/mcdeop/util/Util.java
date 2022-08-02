@@ -1,4 +1,4 @@
-package com.shanebeestudios.mcdeob.util;
+package com.shanebeestudios.mcdeop.util;
 
 public class Util {
 

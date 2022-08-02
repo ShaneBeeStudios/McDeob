@@ -1,9 +1,9 @@
-package com.shanebeestudios.mcdeob;
+package com.shanebeestudios.mcdeop;
 
-import com.shanebeestudios.mcdeob.app.App;
-import com.shanebeestudios.mcdeob.util.Logger;
-import com.shanebeestudios.mcdeob.util.TimeStamp;
-import com.shanebeestudios.mcdeob.util.Util;
+import com.shanebeestudios.mcdeop.app.App;
+import com.shanebeestudios.mcdeop.util.Logger;
+import com.shanebeestudios.mcdeop.util.TimeStamp;
+import com.shanebeestudios.mcdeop.util.Util;
 import io.github.lxgaming.reconstruct.common.Reconstruct;
 import org.jetbrains.java.decompiler.main.decompiler.ConsoleDecompiler;
 import org.json.*;

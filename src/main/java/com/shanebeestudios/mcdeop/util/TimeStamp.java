@@ -1,4 +1,4 @@
-package com.shanebeestudios.mcdeob.util;
+package com.shanebeestudios.mcdeop.util;
 
 import java.time.Duration;
 

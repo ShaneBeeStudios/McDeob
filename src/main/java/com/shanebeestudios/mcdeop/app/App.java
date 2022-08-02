@@ -1,7 +1,7 @@
-package com.shanebeestudios.mcdeob.app;
+package com.shanebeestudios.mcdeop.app;
 
-import com.shanebeestudios.mcdeob.*;
-import com.shanebeestudios.mcdeob.util.Util;
+import com.shanebeestudios.mcdeop.*;
+import com.shanebeestudios.mcdeop.util.Util;
 import mx.kenzie.mirror.Mirror;
 
 import javax.swing.*;
