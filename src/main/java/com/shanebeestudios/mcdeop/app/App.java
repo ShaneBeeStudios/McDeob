@@ -49,8 +49,11 @@ public class App extends JFrame {
         setSize(width, height);
         setTitle("McDeob");
 
-        // Window title hack for GTK
-        Mirror.of(Toolkit.getDefaultToolkit()).unsafe().field("awtAppClassName").set("McDeob");
+        try { // Window title hack for GTK
+            Mirror.of(Toolkit.getDefaultToolkit()).unsafe().field("awtAppClassName").set("McDeob");
+        } catch (Exception ignored) {
+            // We're probably just not on XToolkit
+        }
 
         // Window title hack for macOS
         System.setProperty("com.apple.mrj.application.apple.menu.about.name", "McDeob");
