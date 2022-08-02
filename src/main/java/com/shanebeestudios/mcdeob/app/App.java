@@ -49,9 +49,12 @@ public class App extends JFrame {
         setSize(width, height);
         setTitle("McDeob");
 
+        // Window title hack for GTK
         Mirror.of(Toolkit.getDefaultToolkit()).unsafe().field("awtAppClassName").set("McDeob");
 
+        // Window title hack for MacOS
         System.setProperty("com.apple.mrj.application.apple.menu.about.name", "McDeob");
+
         setResizable(true);
         setMinimumSize(new Dimension(500, 335));
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
