@@ -52,15 +52,13 @@ public class Processor {
         this.version = version;
         this.app = app;
         if (Util.isRunningMacOS()) {
-            // If running on macOS, put the "decompile" directory in the user's home folder
-            // This is Mac Strangeness
+            // If running on macOS, put the output directory in the user home directory.
+            // This is due to how macOS APPs work — their '.' directory resolves to one inside the APP itself.
             dataFolderPath = Paths.get(System.getProperty("user.home"), "McDeob");
         }
-        if (Files.notExists(dataFolderPath)) {
-            try {
-                Files.createDirectory(dataFolderPath);
-            } catch (IOException ignore) {
-            }
+        try {
+            Files.createDirectories(dataFolderPath);
+        } catch (IOException ignore) {
         }
 
         minecraftJarName = String.format("minecraft_%s_%s.jar", version.getType().getName(), version.getVersion());
