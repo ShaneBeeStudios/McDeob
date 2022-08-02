@@ -1,4 +1,4 @@
-package com.shanebeestudios.mcdeop;
+package com.shanebeestudios.mcdeob;
 
 import io.github.lxgaming.reconstruct.common.configuration.Config;
 

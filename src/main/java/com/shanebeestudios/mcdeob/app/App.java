@@ -1,8 +1,8 @@
-package com.shanebeestudios.mcdeop.app;
+package com.shanebeestudios.mcdeob.app;
 
-import com.shanebeestudios.mcdeop.Processor;
-import com.shanebeestudios.mcdeop.Version;
-import com.shanebeestudios.mcdeop.util.Util;
+import com.shanebeestudios.mcdeob.Processor;
+import com.shanebeestudios.mcdeob.Version;
+import com.shanebeestudios.mcdeob.util.Util;
 
 import javax.swing.*;
 import java.awt.*;
@@ -64,7 +64,7 @@ public class App extends JFrame {
     }
 
     private void createTitle() {
-        JLabel label = new JLabel("Let's start deobfuscating some Minecraft", SwingConstants.CENTER);
+        JLabel label = new JLabel("Let's start de-obfuscating some Minecraft", SwingConstants.CENTER);
         label.setHorizontalTextPosition(SwingConstants.CENTER);
         label.setBounds(0, 10, getSize().width, 50);
         add(label);
