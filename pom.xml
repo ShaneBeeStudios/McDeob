@@ -125,7 +125,6 @@
                 <version>1.18.0</version>
                 <configuration>
                     <dmg>
-                        <useGenIsoImage>true</useGenIsoImage>
                         <generate>true</generate>
                         <appendVersion>false</appendVersion>
                         <dmgFileName>${project.name}-${project.version}-macOS</dmgFileName>
