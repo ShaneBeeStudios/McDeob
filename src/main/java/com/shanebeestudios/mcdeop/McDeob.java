@@ -5,12 +5,22 @@ import com.shanebeestudios.mcdeop.util.Logger;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 
+import javax.swing.*;
 import java.io.IOException;
 
 public class McDeob {
 
     public static void main(String[] args) {
         if (args.length == 0) {
+            try {
+                // makes the window prettier on other systems than macs
+                // swing's look and feel is ew
+                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            } catch (ClassNotFoundException | InstantiationException | IllegalAccessException |
+                     UnsupportedLookAndFeelException e) {
+                throw new RuntimeException(e);
+            }
+
             new App();
             return;
         }
