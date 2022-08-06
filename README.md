@@ -10,15 +10,20 @@
 
 **McDeob** is a re-mapping and deobfuscation tool for Minecraft server/client jars.   
 This tool will download the appropriate Minecraft server/client jar along with the mappings for that version, 
-then it will proceed to remap the jar and optionally decompile it. The decompile output will be a jar file.
-Simply unzip that jar file to find all your remapped/decompiled Minecraft code.
+then it will proceed to remap the jar and optionally decompile it. Simply unzip that file to find all your remapped/decompiled Minecraft code.
+
+## Requirements
+- A computer
+- Java 16+
+- A few minutes of your time
 
 ## Running
 Details for installing and running **McDeob** can be found on the [**WIKI**](https://github.com/ShaneBeeStudios/McDeob/wiki)
 
 ### Note:
-The remapping process takes around 5 minutes (give or take). Whilst its remapping you will see the progress in the app.   
-The decompiling process on the other hand takes about 12 minutes. Currently there is no progress in the app, so just wait til the app says its completed. 
+The remapping process takes around 2 minutes (give or take). Whilst its remapping you will see the progress in the app.   
+The decompiling process takes about 3 minutes (give or take). Currently there is no progress in the app, so just wait til the app says its completed.    
+(These numbers are based on a test run on my Mac (MacbookPro with M1 chip), times may vary on other machines.)
 
 ### SUPER IMPORTANT NOTE
 The files output by this app are for your own personal use only.   
@@ -39,5 +44,5 @@ This application uses 2 different tools for the processing of the jar files
 2) [**Fernflower**](https://github.com/fesh0r/fernflower) = This tool is used to decompile the jar file (class files) into usable .java files.
 
 ## License
-This tool shades in both [**Reconstruct by LXGaming**](https://github.com/LXGaming/Reconstruct) (we are using a modified fork of which you can find [**HERE**](https://github.com/ShaneBeeStudios/Reconstruct)) and [**Fernflower**](https://github.com/fesh0r/fernflower),
+This tool shades in both [**Reconstruct by LXGaming**](https://github.com/LXGaming/Reconstruct) and [**Fernflower**](https://github.com/fesh0r/fernflower),
 please see their repos for the appropriate licenses. 
