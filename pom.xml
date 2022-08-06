@@ -19,7 +19,6 @@
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
         </repository>
-
         <repository>
             <id>kenzie</id>
             <name>Kenzie's Repository</name>
@@ -28,7 +27,6 @@
     </repositories>
 
     <dependencies>
-
         <dependency>
             <groupId>mx.kenzie</groupId>
             <artifactId>mirror</artifactId>
@@ -65,7 +63,6 @@
             <artifactId>slf4j-simple</artifactId>
             <version>1.7.36</version>
         </dependency>
-
     </dependencies>
 
     <build>
