@@ -106,6 +106,7 @@ public class App extends JFrame {
             }
         }
         versionBox.setSelectedIndex(0);
+        versionBox.setBackground(Color.lightGray);
         hookSize(() -> versionBox.setBounds((getSize().width / 2) - versionBox.getWidth() / 2, 95, versionBox.getPreferredSize().width, 25));
         add(versionBox);
     }
