@@ -56,17 +56,17 @@ public enum Version {
     SERVER_1_14_4(Type.SERVER, "1.14.4", "3dc3d84a581f14691199cf6831b71ed1296a9fdf", "46a7ba37c15820f00d49eafb38afb4a9bb64a0be"),
     CLIENT_1_14_4(Type.CLIENT, "1.14.4", "8c325a0c5bd674dd747d6ebaa4c791fd363ad8a9", "3a0e42172d082f18c4ee0b4561a6a2ecc9868a58"),
 
-    // Snapshot
-
     // Combat Test
     SERVER_COMBAT_TEST_8c(Type.SERVER, "Combat_Test_8c", "b707c44ac1503ad179fde86c78d41aa4d0cc78a5", "d89f9e0eb8fbe6f2c91e749e8b59391cd0dd96d4"),
     CLIENT_COMBAT_TEST_8c(Type.CLIENT, "Combat_Test_8c", "177472ace3ff5d98fbd63b4bcd5bbef5b035a018", "5ea38a7b8d58837c97214f2a46e5e12151d51f83"),
 
     // April Fools
-    SERVER_20w14infinite(Type.SERVER, "20w14infinite", "c0711cd9608d1af3d6f05ac423dd8f4199780225", "a94a32e698caff0f5c5762b3dca045ddcd587071"),
-    CLIENT_20w14infinite(Type.CLIENT, "20w14infinite", "cc5cb23748614a6396ffb77427b4f11f4b6ae99b", "3d91233a24c5de720f0eb41927a0b00e45e89caa"),
+    SERVER_23w13a_or_b(Type.SERVER, "23w13TheVoteUpdate", "6241fc14ce7a659f371683a72aa24c155f60cce1", "370d31c1b7d700ee65ddeb25f975a2e67d1d13d0"),
+    CLIENT_23w13a_or_b(Type.CLIENT, "23w13TheVoteUpdate", "8ebf103ef3c48ff40d4d002f44c5f7bc5d90e7e2", "89796dd1e08c190821ecdd31e3c43709a66b010b"),
     SERVER_22w13one(Type.SERVER, "22w13oneBlockAtATime", "5f48eea55c7fd1881d9c63835b15dfb5bbcd3a67", "2c55055b906935ffe1e7e7cb80d1a8b031eb9f95"),
-    CLIENT_22w13one(Type.CLIENT, "22w13oneBlockAtATime", "6548ac25265c2726a2cd24dec3820c07ee2b0b4b", "b1bbd68dbf48041dd994f1a4c1a3eacfa46e344b");
+    CLIENT_22w13one(Type.CLIENT, "22w13oneBlockAtATime", "6548ac25265c2726a2cd24dec3820c07ee2b0b4b", "b1bbd68dbf48041dd994f1a4c1a3eacfa46e344b"),
+    SERVER_20w14infinite(Type.SERVER, "20w14infinite", "c0711cd9608d1af3d6f05ac423dd8f4199780225", "a94a32e698caff0f5c5762b3dca045ddcd587071"),
+    CLIENT_20w14infinite(Type.CLIENT, "20w14infinite", "cc5cb23748614a6396ffb77427b4f11f4b6ae99b", "3d91233a24c5de720f0eb41927a0b00e45e89caa");
 
     private final Type type;
     private final String version;
