@@ -2,6 +2,7 @@ package com.shanebeestudios.mcdeop;
 
 import com.shanebeestudios.mcdeop.app.App;
 import com.shanebeestudios.mcdeop.util.Logger;
+import com.shanebeestudios.mcdeop.util.Util;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 
@@ -13,9 +14,13 @@ public class McDeob {
     public static void main(String[] args) {
         if (args.length == 0) {
             try {
-                // makes the window prettier on other systems than macs
-                // swing's look and feel is ew
-                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+                if (Util.isRunningMacOS()) {
+                    System.setProperty("apple.awt.application.appearance", "system");
+                } else {
+                    // makes the window prettier on other systems than macs
+                    // swing's look and feel is ew
+                    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+                }
             } catch (ClassNotFoundException | InstantiationException | IllegalAccessException |
                      UnsupportedLookAndFeelException e) {
                 throw new RuntimeException(e);
