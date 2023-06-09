@@ -115,12 +115,12 @@ public class App extends JFrame {
         decompile = new JCheckBox("Decompile?");
         int decompileHeight;
         if (Util.isRunningMacOS()) {
-            decompileHeight = 40;
+            decompileHeight = 30;
         } else {
             // fixes some weird overlap with the status box
             decompileHeight = 30;
         }
-        hookSize(() -> decompile.setBounds((getSize().width / 2) - 60, 115, 120, decompileHeight));
+        hookSize(() -> decompile.setBounds((getSize().width / 2) - 60, 125, 120, decompileHeight));
         decompile.setSelected(false);
         add(decompile);
     }
@@ -131,7 +131,7 @@ public class App extends JFrame {
         statusBox.setEditable(false);
         statusBoxListener = hookSize(() -> {
             int width = (int) (getSize().width * 0.90);
-            statusBox.setBounds((getSize().width / 2) - (width / 2), 150, width, 30);
+            statusBox.setBounds((getSize().width / 2) - (width / 2), 160, width, 30);
         });
         add(statusBox);
     }
