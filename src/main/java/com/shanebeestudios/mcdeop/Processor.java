@@ -303,6 +303,5 @@ public class Processor {
         mappingsPath = null;
         remappedJar = null;
         reconstruct = null;
-        System.gc();
     }
 }
