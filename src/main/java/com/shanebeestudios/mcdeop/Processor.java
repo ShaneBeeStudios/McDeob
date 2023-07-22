@@ -1,23 +1,31 @@
 package com.shanebeestudios.mcdeop;
 
-import com.shanebeestudios.mcdeop.app.App;
-import com.shanebeestudios.mcdeop.util.Logger;
-import com.shanebeestudios.mcdeop.util.TimeStamp;
-import com.shanebeestudios.mcdeop.util.Util;
-import io.github.lxgaming.reconstruct.common.Reconstruct;
-import org.jetbrains.java.decompiler.main.decompiler.ConsoleDecompiler;
-import org.json.*;
-
 import java.awt.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.InvalidObjectException;
-import java.net.*;
-import java.nio.file.*;
-import java.util.stream.Stream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
+import org.jetbrains.java.decompiler.main.decompiler.ConsoleDecompiler;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.json.JSONTokener;
+
+import com.shanebeestudios.mcdeop.app.App;
+import com.shanebeestudios.mcdeop.util.FileUtil;
+import com.shanebeestudios.mcdeop.util.Logger;
+import com.shanebeestudios.mcdeop.util.TimeStamp;
+import com.shanebeestudios.mcdeop.util.Util;
+
+import io.github.lxgaming.reconstruct.common.Reconstruct;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 @SuppressWarnings("ResultOfMethodCallIgnored")
@@ -173,36 +181,40 @@ public class Processor {
     }
 
     public void decompileJar() throws IOException {
-        long start = System.currentTimeMillis();
-        Logger.info("Decompiling final JAR file.");
-        if (app != null) {
-            app.updateStatusBox("Decompiling... This will take a while!");
-            app.updateButton("Decompiling...", Color.BLUE);
-        }
-        final Path decompileDir = dataFolderPath.resolve("final-decompile");
-        Files.createDirectories(decompileDir);
+		final long start = System.currentTimeMillis();
+		Logger.info("Decompiling final JAR file.");
+		if (this.app != null)
+		{
+			this.app.updateStatusBox("Decompiling... This will take a while!");
+			this.app.updateButton("Decompiling...", Color.BLUE);
+		}
+		final Path decompileDir = this.dataFolderPath.resolve("final-decompile");
+		Files.createDirectories(decompileDir);
 
-        // Setup FernFlower to properly decompile the jar file
-        String[] args = new String[]{
-            "-dgs=1", "-hdc=0", "-rbr=0",
-            "-asc=1", "-udv=0",
-            remappedJar.toAbsolutePath().toString(),
-            decompileDir.toAbsolutePath().toString()
-        };
+		final String cleanJarName = this.remappedJar.getFileName().toString().replace(".jar", "");
+		final Path decompileJarDir = decompileDir.resolve(cleanJarName);
+		FileUtil.remove(decompileJarDir);
+		Files.createDirectories(decompileJarDir);
 
-        ConsoleDecompiler.main(args);
+		// Setup FernFlower to properly decompile the jar file
+		final String[] args = {
+				"-asc=1", // Encode non-ASCII characters in string and character literals as Unicode escapes
+				"-tcs=1", // Simplify boolean constants in ternary operations
+				"-jvn=1", // Use jad variable naming
+				this.remappedJar.toAbsolutePath().toString(),
+				decompileJarDir.toAbsolutePath().toString()
+		};
 
-        // Rename jar file to zip
-        try (final Stream<Path> stream = Files.list(decompileDir)) {
-            for (final Path path : (Iterable<Path>) stream::iterator) {
-                final String filename = path.getFileName().toString();
-                final int index = filename.lastIndexOf('.');
-                Files.move(path, path.resolveSibling(Path.of(filename.substring(0, index) + ".zip")));
-            }
-        }
+		ConsoleDecompiler.main(args);
 
-        TimeStamp timeStamp = TimeStamp.fromNow(start);
-        Logger.info("Decompiling completed in %s!", timeStamp);
+		// Pack the decompiled files into a zip file
+		final Path zipFilePath = decompileDir.resolve(Path.of(cleanJarName + ".zip"));
+		Logger.info("Packing decompiled files into %s", zipFilePath);
+		FileUtil.remove(zipFilePath);
+		FileUtil.zip(decompileJarDir, zipFilePath);
+
+		final TimeStamp timeStamp = TimeStamp.fromNow(start);
+		Logger.info("Decompiling completed in %s!", timeStamp);
     }
 
     public String prepareLatest() throws IOException {
