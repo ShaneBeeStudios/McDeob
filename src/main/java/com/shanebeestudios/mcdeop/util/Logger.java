@@ -31,7 +31,8 @@ public class Logger {
     public static void warn(String warning) {
         LocalDateTime now = LocalDateTime.now();
         String th = Thread.currentThread().getName();
-        System.out.println(YELLOW + "[" + DTF.format(now) + " " + CYAN + th + YELLOW + " WARN" + "]: " + warning + RESET);
+        System.out.println(
+                YELLOW + "[" + DTF.format(now) + " " + CYAN + th + YELLOW + " WARN" + "]: " + warning + RESET);
     }
 
     public static void warn(String format, Object... objects) {
@@ -47,5 +48,4 @@ public class Logger {
     public static void error(String format, Object... objects) {
         error(String.format(format, objects));
     }
-
 }

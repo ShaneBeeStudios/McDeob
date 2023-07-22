@@ -1,5 +1,13 @@
 package com.shanebeestudios.mcdeop;
 
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
+
+import com.shanebeestudios.mcdeop.app.App;
+import com.shanebeestudios.mcdeop.util.FileUtil;
+import com.shanebeestudios.mcdeop.util.Logger;
+import com.shanebeestudios.mcdeop.util.TimeStamp;
+import com.shanebeestudios.mcdeop.util.Util;
+import io.github.lxgaming.reconstruct.common.Reconstruct;
 import java.awt.*;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -13,24 +21,15 @@ import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
 import org.jetbrains.java.decompiler.main.decompiler.ConsoleDecompiler;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
-import com.shanebeestudios.mcdeop.app.App;
-import com.shanebeestudios.mcdeop.util.FileUtil;
-import com.shanebeestudios.mcdeop.util.Logger;
-import com.shanebeestudios.mcdeop.util.TimeStamp;
-import com.shanebeestudios.mcdeop.util.Util;
-
-import io.github.lxgaming.reconstruct.common.Reconstruct;
-import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
-
 @SuppressWarnings("ResultOfMethodCallIgnored")
 public class Processor {
     private static final URL LATEST_INFO;
+
     static {
         try {
             LATEST_INFO = new URL("https://launchermeta.mojang.com/mc/game/version_manifest.json");
@@ -69,7 +68,8 @@ public class Processor {
         } catch (IOException ignore) {
         }
 
-        minecraftJarName = String.format("minecraft_%s_%s.jar", version.getType().getName(), version.getVersion());
+        minecraftJarName =
+                String.format("minecraft_%s_%s.jar", version.getType().getName(), version.getVersion());
         mappingsName = String.format("mappings_%s_%s.txt", version.getType().getName(), version.getVersion());
         mappedJarName = String.format("remapped_%s_%s.jar", version.getType().getName(), version.getVersion());
         jarUrl = version.getJar();
@@ -129,9 +129,10 @@ public class Processor {
         final long length = connection.getContentLengthLong();
         if (Files.exists(jarPath) && Files.size(jarPath) == length) {
             Logger.info("Already have JAR, skipping download.");
-        } else try (final InputStream inputStream = connection.getInputStream()) {
-            Files.copy(inputStream, jarPath, REPLACE_EXISTING);
-        }
+        } else
+            try (final InputStream inputStream = connection.getInputStream()) {
+                Files.copy(inputStream, jarPath, REPLACE_EXISTING);
+            }
 
         TimeStamp timeStamp = TimeStamp.fromNow(start);
         Logger.info("Successfully downloaded JAR file in %s!", timeStamp);
@@ -150,9 +151,10 @@ public class Processor {
         mappingsPath = dataFolderPath.resolve(mappingsName);
         if (Files.exists(mappingsPath) && Files.size(mappingsPath) == length) {
             Logger.info("Already have mappings, skipping download.");
-        } else try (final InputStream inputStream = connection.getInputStream()) {
-            Files.copy(inputStream, mappingsPath, REPLACE_EXISTING);
-        }
+        } else
+            try (final InputStream inputStream = connection.getInputStream()) {
+                Files.copy(inputStream, mappingsPath, REPLACE_EXISTING);
+            }
 
         TimeStamp timeStamp = TimeStamp.fromNow(start);
         Logger.info("Successfully downloaded mappings file in %s!", timeStamp);
@@ -181,40 +183,39 @@ public class Processor {
     }
 
     public void decompileJar() throws IOException {
-		final long start = System.currentTimeMillis();
-		Logger.info("Decompiling final JAR file.");
-		if (this.app != null)
-		{
-			this.app.updateStatusBox("Decompiling... This will take a while!");
-			this.app.updateButton("Decompiling...", Color.BLUE);
-		}
-		final Path decompileDir = this.dataFolderPath.resolve("final-decompile");
-		Files.createDirectories(decompileDir);
+        final long start = System.currentTimeMillis();
+        Logger.info("Decompiling final JAR file.");
+        if (this.app != null) {
+            this.app.updateStatusBox("Decompiling... This will take a while!");
+            this.app.updateButton("Decompiling...", Color.BLUE);
+        }
+        final Path decompileDir = this.dataFolderPath.resolve("final-decompile");
+        Files.createDirectories(decompileDir);
 
-		final String cleanJarName = this.remappedJar.getFileName().toString().replace(".jar", "");
-		final Path decompileJarDir = decompileDir.resolve(cleanJarName);
-		FileUtil.remove(decompileJarDir);
-		Files.createDirectories(decompileJarDir);
+        final String cleanJarName = this.remappedJar.getFileName().toString().replace(".jar", "");
+        final Path decompileJarDir = decompileDir.resolve(cleanJarName);
+        FileUtil.remove(decompileJarDir);
+        Files.createDirectories(decompileJarDir);
 
-		// Setup FernFlower to properly decompile the jar file
-		final String[] args = {
-				"-asc=1", // Encode non-ASCII characters in string and character literals as Unicode escapes
-				"-tcs=1", // Simplify boolean constants in ternary operations
-				"-jvn=1", // Use jad variable naming
-				this.remappedJar.toAbsolutePath().toString(),
-				decompileJarDir.toAbsolutePath().toString()
-		};
+        // Setup FernFlower to properly decompile the jar file
+        final String[] args = {
+            "-asc=1", // Encode non-ASCII characters in string and character literals as Unicode escapes
+            "-tcs=1", // Simplify boolean constants in ternary operations
+            "-jvn=1", // Use jad variable naming
+            this.remappedJar.toAbsolutePath().toString(),
+            decompileJarDir.toAbsolutePath().toString()
+        };
 
-		ConsoleDecompiler.main(args);
+        ConsoleDecompiler.main(args);
 
-		// Pack the decompiled files into a zip file
-		final Path zipFilePath = decompileDir.resolve(Path.of(cleanJarName + ".zip"));
-		Logger.info("Packing decompiled files into %s", zipFilePath);
-		FileUtil.remove(zipFilePath);
-		FileUtil.zip(decompileJarDir, zipFilePath);
+        // Pack the decompiled files into a zip file
+        final Path zipFilePath = decompileDir.resolve(Path.of(cleanJarName + ".zip"));
+        Logger.info("Packing decompiled files into %s", zipFilePath);
+        FileUtil.remove(zipFilePath);
+        FileUtil.zip(decompileJarDir, zipFilePath);
 
-		final TimeStamp timeStamp = TimeStamp.fromNow(start);
-		Logger.info("Decompiling completed in %s!", timeStamp);
+        final TimeStamp timeStamp = TimeStamp.fromNow(start);
+        Logger.info("Decompiling completed in %s!", timeStamp);
     }
 
     public String prepareLatest() throws IOException {
@@ -228,7 +229,6 @@ public class Processor {
         final JSONObject versions = new JSONObject(new JSONTokener(in));
         in.close();
 
-
         if (!versions.has("latest")) {
             String s = "Failed! Could not locate the latest data from the downloaded manifest file!";
             Logger.error(s);
@@ -239,7 +239,9 @@ public class Processor {
             throw new InvalidObjectException(s);
         }
 
-        String type = version == Version.SERVER_LATEST_RELEASE || version == Version.CLIENT_LATEST_RELEASE ? "release" : "snapshot";
+        String type = version == Version.SERVER_LATEST_RELEASE || version == Version.CLIENT_LATEST_RELEASE
+                ? "release"
+                : "snapshot";
 
         String trueVersion = versions.getJSONObject("latest").getString(type);
         Logger.info("Finding the URL for " + trueVersion);
@@ -303,5 +305,4 @@ public class Processor {
         reconstruct = null;
         System.gc();
     }
-
 }

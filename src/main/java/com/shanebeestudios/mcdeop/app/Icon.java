@@ -1,11 +1,10 @@
 package com.shanebeestudios.mcdeop.app;
 
 import com.shanebeestudios.mcdeop.McDeob;
-
-import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.*;
 
 @SuppressWarnings({"unused", "ConstantConditions"})
 public class Icon {
@@ -52,5 +51,4 @@ public class Icon {
             return null;
         }
     }
-
 }

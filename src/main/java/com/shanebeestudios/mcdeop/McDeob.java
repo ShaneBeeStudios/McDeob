@@ -1,13 +1,14 @@
 package com.shanebeestudios.mcdeop;
 
+import javax.swing.*;
+import java.io.IOException;
+
 import com.shanebeestudios.mcdeop.app.App;
 import com.shanebeestudios.mcdeop.util.Logger;
 import com.shanebeestudios.mcdeop.util.Util;
+
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
-
-import javax.swing.*;
-import java.io.IOException;
 
 public class McDeob {
 
@@ -21,8 +22,10 @@ public class McDeob {
                     // swing's look and feel is ew
                     UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
                 }
-            } catch (ClassNotFoundException | InstantiationException | IllegalAccessException |
-                     UnsupportedLookAndFeelException e) {
+            } catch (ClassNotFoundException
+                    | InstantiationException
+                    | IllegalAccessException
+                    | UnsupportedLookAndFeelException e) {
                 throw new RuntimeException(e);
             }
 
@@ -88,11 +91,12 @@ public class McDeob {
 
         boolean decompile = options.has("decompile");
 
-        Thread processorThread = new Thread(() -> {
-            Processor processor = new Processor(version, decompile, null);
-            processor.init();
-        }, "Processor");
+        Thread processorThread = new Thread(
+                () -> {
+                    Processor processor = new Processor(version, decompile, null);
+                    processor.init();
+                },
+                "Processor");
         processorThread.start();
     }
-
 }

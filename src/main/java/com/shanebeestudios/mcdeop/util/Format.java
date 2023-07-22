@@ -44,5 +44,4 @@ public class Format extends java.awt.Color {
     public String toString() {
         return "\u001B[38;2;" + getRed() + ";" + getGreen() + ";" + getBlue() + "m";
     }
-
 }

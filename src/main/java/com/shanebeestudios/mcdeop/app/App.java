@@ -2,11 +2,10 @@ package com.shanebeestudios.mcdeop.app;
 
 import com.shanebeestudios.mcdeop.*;
 import com.shanebeestudios.mcdeop.util.Util;
-import mx.kenzie.mirror.Mirror;
-
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import javax.swing.*;
+import mx.kenzie.mirror.Mirror;
 
 @SuppressWarnings({"SameParameterValue", "unchecked", "rawtypes", "FieldCanBeLocal"})
 public class App extends JFrame {
@@ -50,7 +49,10 @@ public class App extends JFrame {
         setTitle("McDeob");
 
         try { // Window title hack for GTK
-            Mirror.of(Toolkit.getDefaultToolkit()).unsafe().field("awtAppClassName").set("McDeob");
+            Mirror.of(Toolkit.getDefaultToolkit())
+                    .unsafe()
+                    .field("awtAppClassName")
+                    .set("McDeob");
         } catch (Exception ignored) {
             // We're probably just not on XToolkit
         }
@@ -107,7 +109,8 @@ public class App extends JFrame {
         }
         versionBox.setSelectedIndex(0);
         versionBox.setBackground(Color.lightGray);
-        hookSize(() -> versionBox.setBounds((getSize().width / 2) - versionBox.getWidth() / 2, 95, versionBox.getPreferredSize().width, 25));
+        hookSize(() -> versionBox.setBounds(
+                (getSize().width / 2) - versionBox.getWidth() / 2, 95, versionBox.getPreferredSize().width, 25));
         add(versionBox);
     }
 
@@ -126,6 +129,7 @@ public class App extends JFrame {
     }
 
     private transient ComponentListener statusBoxListener;
+
     private void createStatusBox() {
         statusBox = new JTextField("Status!");
         statusBox.setEditable(false);
@@ -151,8 +155,7 @@ public class App extends JFrame {
         // Shift status box down
         int width = (int) (getSize().width * 0.90);
         this.removeComponentListener(statusBoxListener);
-        statusBoxListener = hookSize(() ->
-            statusBox.setBounds((getSize().width / 2) - (width / 2), 190, width, 30));
+        statusBoxListener = hookSize(() -> statusBox.setBounds((getSize().width / 2) - (width / 2), 190, width, 30));
 
         currentVerBox.setText("Version: " + version);
         currentVerBox.setForeground(new Color(13, 193, 47));
@@ -170,7 +173,8 @@ public class App extends JFrame {
             // makes the spacing of the button look better on windows
             hDivided = Math.round(h / 1.25F);
         }
-        hookSize(() -> startButton.setBounds((getSize().width / 2) - (w / 2), ((getSize().height / 5) * 4) - hDivided, w, h));
+        hookSize(() ->
+                startButton.setBounds((getSize().width / 2) - (w / 2), ((getSize().height / 5) * 4) - hDivided, w, h));
         startButton.addActionListener(new ButtonListener());
         add(startButton);
     }
@@ -226,5 +230,4 @@ public class App extends JFrame {
             }
         }
     }
-
 }

@@ -54,12 +54,12 @@ Super Simple!!!
 This application uses 2 different tools for the processing of the jar files
 
 1) [**Reconstruct by LXGaming**](https://github.com/LXGaming/Reconstruct) = This tool remaps the Minecraft jar using
-   Minecraft's mappings.
+Minecraft's mappings.
 2) [**Vineflower**](https://github.com/Vineflower/vineflower) = This tool is used to decompile the jar file (class
-   files) into usable .java files.
+files) into usable .java files.
 
 ## License
 
 This tool shades in both [**Reconstruct by LXGaming**](https://github.com/LXGaming/Reconstruct) and [**Fernflower
 **](https://github.com/fesh0r/fernflower),
-please see their repos for the appropriate licenses. 
+please see their repos for the appropriate licenses.
