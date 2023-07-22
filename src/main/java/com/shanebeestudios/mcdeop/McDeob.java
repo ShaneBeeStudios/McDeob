@@ -1,12 +1,10 @@
 package com.shanebeestudios.mcdeop;
 
-import javax.swing.*;
-import java.io.IOException;
-
 import com.shanebeestudios.mcdeop.app.App;
 import com.shanebeestudios.mcdeop.util.Logger;
 import com.shanebeestudios.mcdeop.util.Util;
-
+import java.io.IOException;
+import javax.swing.*;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 

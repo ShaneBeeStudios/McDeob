@@ -9,7 +9,10 @@ import java.util.Iterator;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class FileUtil {
     public static void remove(final Path path) throws IOException {
         if (!path.toFile().exists()) {

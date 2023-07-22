@@ -2,8 +2,11 @@ package com.shanebeestudios.mcdeop.util;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 @SuppressWarnings("unused")
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class Logger {
 
     private static final DateTimeFormatter DTF = DateTimeFormatter.ofPattern("HH:mm:ss");

@@ -1,16 +1,17 @@
 package com.shanebeestudios.mcdeop;
 
+import io.github.lxgaming.reconstruct.common.configuration.Config;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import io.github.lxgaming.reconstruct.common.configuration.Config;
-
 public class ReconConfig implements Config {
 
     private int threads = Runtime.getRuntime().availableProcessors();
-    Path input, output, map;
+    Path input;
+    Path output;
+    Path map;
 
     @Override
     public boolean isDebug() {
