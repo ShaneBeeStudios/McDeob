@@ -15,19 +15,19 @@ jobs:
     runs-on: macos-latest
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Set up JDK 16
-      uses: actions/setup-java@v1
-      with:
-        java-version: 16
-    - name: Build with Maven
-      run: mvn -B package --file pom.xml
-    - name: Upload a Build Artifact
-      uses: actions/upload-artifact@v2.1.4
-      with:
-        # Artifact name
-        name: McDeob-Artifact
-        # A file, directory or wildcard pattern that describes what to upload
-        path: |
-          target/McDeob*.jar
-          target/*.dmg
+      - uses: actions/checkout@v2
+      - name: Set up JDK 17
+        uses: actions/setup-java@v1
+        with:
+          java-version: 17
+      - name: Build with Maven
+        run: mvn -B package --file pom.xml
+      - name: Upload a Build Artifact
+        uses: actions/upload-artifact@v2.1.4
+        with:
+          # Artifact name
+          name: McDeob-Artifact
+          # A file, directory or wildcard pattern that describes what to upload
+          path: |
+            target/McDeob*.jar
+            target/*.dmg
