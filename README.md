@@ -60,6 +60,6 @@ files) into usable .java files.
 
 ## License
 
-This tool shades in both [**Reconstruct by LXGaming**](https://github.com/LXGaming/Reconstruct) and [**Fernflower
-**](https://github.com/fesh0r/fernflower),
+This tool shades in both [**Reconstruct by LXGaming**](https://github.com/LXGaming/Reconstruct) and [**Vineflower
+**](https://github.com/Vineflower/vineflower),
 please see their repos for the appropriate licenses.
