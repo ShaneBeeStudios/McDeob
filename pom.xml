@@ -82,6 +82,7 @@
   </repositories>
 
   <build>
+    <finalName>${project.artifactId}</finalName>
     <resources>
       <resource>
         <filtering>true</filtering>
@@ -190,7 +191,7 @@
               <dmg>
                 <generate>true</generate>
                 <appendVersion>false</appendVersion>
-                <dmgFileName>${project.name}-${project.version}-macOS</dmgFileName>
+                <dmgFileName>${project.name}-macOS</dmgFileName>
               </dmg>
               <plist>
                 <CFBundleIconFile>src/main/resources/images/1024.icns</CFBundleIconFile>
