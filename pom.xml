@@ -16,7 +16,7 @@
     <dependency>
       <groupId>mx.kenzie</groupId>
       <artifactId>mirror</artifactId>
-      <version>5.0.3</version>
+      <version>5.0.5</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
