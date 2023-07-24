@@ -1,5 +1,14 @@
 # Changelog
 
+## [2.3.0](https://github.com/Timmi6790/McDeob/compare/2.2.0...2.3.0) (2023-07-24)
+
+
+### Bug Fixes
+
+* **deps:** update dependency io.github.lxgaming:reconstruct-common to v1.3.24 ([14c96dc](https://github.com/Timmi6790/McDeob/commit/14c96dc3222a328f339d284e6c8a64f7e5176ab1))
+* **deps:** update dependency mx.kenzie:mirror to v5.0.5 ([b70d7a3](https://github.com/Timmi6790/McDeob/commit/b70d7a308e14abbe7a403482807b24a3bf5b20b5))
+* **deps:** update dependency org.slf4j:slf4j-simple to v2 ([feda125](https://github.com/Timmi6790/McDeob/commit/feda1251890af566978468c1015bf627bd17f858))
+
 ## [2.2.0](https://github.com/Timmi6790/McDeob/compare/2.1.35...2.2.0) (2023-07-24)
 
 
