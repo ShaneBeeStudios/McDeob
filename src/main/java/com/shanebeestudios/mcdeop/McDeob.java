@@ -7,14 +7,25 @@ import com.shanebeestudios.mcdeop.processor.ProcessorOptions;
 import com.shanebeestudios.mcdeop.processor.ResourceRequest;
 import com.shanebeestudios.mcdeop.processor.SourceType;
 import com.shanebeestudios.mcdeop.util.Util;
-import java.io.IOException;
-import javax.swing.*;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import lombok.extern.slf4j.Slf4j;
 
+import javax.swing.*;
+import java.io.IOException;
+
 @Slf4j
 public class McDeob {
+    public static String getVersion() {
+        String version = McDeob.class.getPackage().getImplementationVersion();
+
+        // The version is not available when running in an IDE
+        if (version == null) {
+            version = "0.0.0";
+        }
+
+        return version;
+    }
 
     public static void main(final String[] args) {
         if (args.length == 0) {

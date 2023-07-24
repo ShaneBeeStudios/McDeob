@@ -137,6 +137,7 @@
         <configuration>
           <archive>
             <manifest>
+              <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
               <addClasspath>true</addClasspath>
               <classpathPrefix>libs/</classpathPrefix>
               <mainClass>com.shanebeestudios.mcdeop.McDeob</mainClass>

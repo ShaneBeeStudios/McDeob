@@ -1,5 +1,6 @@
 package com.shanebeestudios.mcdeop.app;
 
+import com.shanebeestudios.mcdeop.McDeob;
 import com.shanebeestudios.mcdeop.VersionManager;
 import com.shanebeestudios.mcdeop.launchermeta.data.release.ReleaseManifest;
 import com.shanebeestudios.mcdeop.launchermeta.data.version.Version;
@@ -53,19 +54,21 @@ public class App extends JFrame {
     private void setupWindow(final int width, final int height) {
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         this.setSize(width, height);
-        this.setTitle("McDeob");
+
+        final String title = "McDeob - " + McDeob.getVersion();
+        this.setTitle(title);
 
         try { // Window title hack for GTK
             Mirror.of(Toolkit.getDefaultToolkit())
                     .unsafe()
                     .field("awtAppClassName")
-                    .set("McDeob");
+                    .set(title);
         } catch (final Exception ignored) {
             // We're probably just not on XToolkit
         }
 
         // Window title hack for macOS
-        System.setProperty("com.apple.mrj.application.apple.menu.about.name", "McDeob");
+        System.setProperty("com.apple.mrj.application.apple.menu.about.name", title);
 
         this.setResizable(true);
         this.setMinimumSize(new Dimension(500, 335));
