@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.function.Consumer;
@@ -28,9 +28,9 @@ import java.util.function.Consumer;
 @SuppressWarnings("ResultOfMethodCallIgnored")
 @Slf4j
 public class Processor {
-    public static void runProcessor(final ResourceRequest version, final boolean decompile, final App app) {
+    public static void runProcessor(final ResourceRequest request, final ProcessorOptions options, final App app) {
         try {
-            final Processor processor = new Processor(version, decompile, app);
+            final Processor processor = new Processor(request, options, app);
             processor.init();
             processor.cleanup();
         } catch (final Exception e) {
@@ -40,75 +40,56 @@ public class Processor {
         }
     }
 
-    private final ResourceRequest version;
-    private final boolean decompile;
+    private final ResourceRequest request;
+    private final ProcessorOptions options;
     private final App app;
 
     private final Remapper remapper;
     private final Decompiler decompiler;
 
+    private final Path dataFolderPath;
     private final Path jarPath;
     private final Path mappingsPath;
     private final Path remappedJar;
-    private final URL mappingsUrl;
-    private final URL jarUrl;
 
-    private final String minecraftJarName;
-    private final String mappedJarName;
-
-    private final Path dataFolderPath;
-
-    private Processor(final ResourceRequest version, final boolean decompile, final App app) {
-        this.version = version;
+    private Processor(final ResourceRequest request, final ProcessorOptions options, final App app) {
+        this.request = request;
+        this.options = options;
         this.app = app;
-        if (Util.isRunningMacOS()) {
-            // If running on macOS, put the output directory in the user home directory.
-            // This is due to how macOS APPs work — their '.' directory resolves to one inside the APP itself.
-            this.dataFolderPath = Paths.get(System.getProperty("user.home"), "McDeob");
-        } else {
-            this.dataFolderPath = Paths.get("deobf-work");
-        }
 
-        try {
-            Files.createDirectories(this.dataFolderPath);
-        } catch (final IOException ignore) {
-        }
-
-        this.minecraftJarName = String.format(
-                "minecraft_%s_%s.jar",
-                version.getType().getName(), version.getVersion().getId());
-        final String mappingsName = String.format(
-                "mappings_%s_%s.txt",
-                version.getType().getName(), version.getVersion().getId());
-        this.mappedJarName = String.format(
-                "remapped_%s_%s.jar",
-                version.getType().getName(), version.getVersion().getId());
-
-        this.remappedJar = this.dataFolderPath.resolve(this.mappedJarName);
-        this.mappingsPath = this.dataFolderPath.resolve(mappingsName);
-        this.jarPath = this.dataFolderPath.resolve(this.minecraftJarName);
-
-        this.jarUrl = version.getJar().orElse(null);
-        this.mappingsUrl = version.getMappings().orElse(null);
-        this.decompile = decompile;
+        this.dataFolderPath = this.getCorrectDataFolder();
+        this.jarPath = this.dataFolderPath.resolve("source.jar");
+        this.mappingsPath = this.dataFolderPath.resolve("mappings.txt");
+        this.remappedJar = this.dataFolderPath.resolve("remapped.jar");
 
         this.remapper = new ReconstructRemapper();
         this.decompiler = new VineflowerDecompiler();
     }
 
-    private void handleGui(final Consumer<App> guiConsumer) {
-        if (this.app != null) {
-            guiConsumer.accept(this.app);
+    private Path getCorrectDataFolder() {
+        final String versionFolder = this.request.getType().getName() + "-"
+                + this.request.getVersion().getId();
+        final Path folderPath = Util.getBaseDataFolder().resolve(versionFolder);
+
+        try {
+            Files.createDirectories(folderPath);
+        } catch (final IOException ignore) {
         }
+
+        return folderPath;
+    }
+
+    private void handleGui(final Consumer<App> guiConsumer) {
+        this.getApp().ifPresent(guiConsumer);
     }
 
     private void downloadFile(final URL url, final Path path, final String fileType) throws IOException {
         try (DurationTracker ignored = new DurationTracker(
                 duration -> log.info("Successfully downloaded {} file in {}!", fileType, duration))) {
             log.info("Downloading {} file from Mojang...", fileType);
-            final Request request = new Request.Builder().url(url).build();
+            final Request httpRequest = new Request.Builder().url(url).build();
 
-            try (Response response = RequestUtil.CLIENT.newCall(request).execute()) {
+            try (Response response = RequestUtil.CLIENT.newCall(httpRequest).execute()) {
                 if (response.body() == null) {
                     throw new IOException("Response body was null");
                 }
@@ -127,24 +108,44 @@ public class Processor {
         }
     }
 
-    public void init() {
-        if (this.jarUrl == null) {
+    private boolean isValid() {
+        if (this.getJarUrl() == null) {
             log.error(
                     "Failed to find JAR URL for version {}-{}",
-                    this.version.getType(),
-                    this.version.getVersion().getId());
-            this.handleGui(gui -> gui.updateStatusBox("Failed to find JAR URL for version " + this.version.getType()
-                    + "-" + this.version.getVersion().getId()));
-            return;
+                    this.request.getType(),
+                    this.request.getVersion().getId());
+            this.handleGui(gui -> gui.updateStatusBox("Failed to find JAR URL for version " + this.request.getType()
+                    + "-" + this.request.getVersion().getId()));
+            return false;
         }
 
-        if (this.mappingsUrl == null) {
+        if (this.getMappingsUrl() == null) {
             log.error(
                     "Failed to find mappings URL for version {}-{}",
-                    this.version.getType(),
-                    this.version.getVersion().getId());
+                    this.request.getType(),
+                    this.request.getVersion().getId());
             this.handleGui(gui -> gui.updateStatusBox("Failed to find mappings URL for version "
-                    + this.version.getType() + "-" + this.version.getVersion().getId()));
+                    + this.request.getType() + "-" + this.request.getVersion().getId()));
+            return false;
+        }
+
+        return true;
+    }
+
+    protected URL getJarUrl() {
+        return this.request.getJar().orElse(null);
+    }
+
+    protected URL getMappingsUrl() {
+        return this.request.getMappings().orElse(null);
+    }
+
+    protected Optional<App> getApp() {
+        return Optional.ofNullable(this.app);
+    }
+
+    public void init() {
+        if (!this.isValid()) {
             return;
         }
 
@@ -164,9 +165,12 @@ public class Processor {
             });
             CompletableFuture.allOf(this.downloadJar(), this.downloadMappings()).join();
 
-            this.remapJar();
-            if (this.decompile) {
-                this.decompileJar();
+            if (this.options.isRemap()) {
+                this.remapJar();
+            }
+
+            if (this.options.isDecompile()) {
+                this.decompileJar(this.options.isRemap() ? this.remappedJar : this.jarPath);
             }
 
         } catch (final IOException e) {
@@ -179,7 +183,7 @@ public class Processor {
     public CompletableFuture<Void> downloadJar() {
         return CompletableFuture.supplyAsync(() -> {
             try {
-                this.downloadFile(this.jarUrl, this.jarPath, "JAR");
+                this.downloadFile(this.getJarUrl(), this.jarPath, "JAR");
             } catch (final IOException e) {
                 throw new CompletionException(e);
             }
@@ -191,7 +195,7 @@ public class Processor {
     public CompletableFuture<Void> downloadMappings() {
         return CompletableFuture.supplyAsync(() -> {
             try {
-                this.downloadFile(this.mappingsUrl, this.mappingsPath, "mappings");
+                this.downloadFile(this.getMappingsUrl(), this.mappingsPath, "mappings");
             } catch (final IOException e) {
                 throw new CompletionException(e);
             }
@@ -209,15 +213,15 @@ public class Processor {
             });
 
             if (!Files.exists(this.remappedJar)) {
-                log.info("Remapping {} file...", this.minecraftJarName);
+                log.info("Remapping {} file...", this.jarPath.getFileName());
                 this.remapper.remap(this.jarPath, this.mappingsPath, this.remappedJar);
             } else {
-                log.info("{} already remapped... skipping mapping.", this.mappedJarName);
+                log.info("{} already remapped... skipping mapping.", this.remappedJar.getFileName());
             }
         }
     }
 
-    public void decompileJar() throws IOException {
+    public void decompileJar(final Path jarPath) throws IOException {
         try (DurationTracker ignored =
                 new DurationTracker(duration -> log.info("Decompiling completed in {}!", duration))) {
             log.info("Decompiling final JAR file.");
@@ -226,22 +230,20 @@ public class Processor {
                 gui.updateButton("Decompiling...", Color.BLUE);
             });
 
-            final Path decompileDir = this.dataFolderPath.resolve("final-decompile");
-            Files.createDirectories(decompileDir);
-
-            final String cleanJarName =
-                    this.remappedJar.getFileName().toString().replace(".jar", "");
-            final Path decompileJarDir = decompileDir.resolve(cleanJarName);
+            final String cleanJarName = "decompiled";
+            final Path decompileJarDir = this.dataFolderPath.resolve(cleanJarName);
             FileUtil.remove(decompileJarDir);
             Files.createDirectories(decompileJarDir);
 
-            this.decompiler.decompile(this.remappedJar, decompileJarDir);
+            this.decompiler.decompile(jarPath, decompileJarDir);
 
-            // Pack the decompiled files into a zip file
-            final Path zipFilePath = decompileDir.resolve(Path.of(cleanJarName + ".zip"));
-            log.info("Packing decompiled files into {}", zipFilePath);
-            FileUtil.remove(zipFilePath);
-            FileUtil.zip(decompileJarDir, zipFilePath);
+            if (this.options.isZipDecompileOutput()) {
+                // Pack the decompiled files into a zip file
+                final Path zipFilePath = this.dataFolderPath.resolve(Path.of(cleanJarName + ".zip"));
+                log.info("Packing decompiled files into {}", zipFilePath);
+                FileUtil.remove(zipFilePath);
+                FileUtil.zip(decompileJarDir, zipFilePath);
+            }
         }
     }
 

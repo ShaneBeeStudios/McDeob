@@ -3,6 +3,7 @@ package com.shanebeestudios.mcdeop;
 import com.shanebeestudios.mcdeop.app.App;
 import com.shanebeestudios.mcdeop.launchermeta.data.version.Version;
 import com.shanebeestudios.mcdeop.processor.Processor;
+import com.shanebeestudios.mcdeop.processor.ProcessorOptions;
 import com.shanebeestudios.mcdeop.processor.ResourceRequest;
 import com.shanebeestudios.mcdeop.processor.SourceType;
 import com.shanebeestudios.mcdeop.util.Util;
@@ -102,8 +103,12 @@ public class McDeob {
                 .ifPresentOrElse(
                         request -> {
                             final boolean decompile = options.has("decompile");
-                            final Thread processorThread =
-                                    new Thread(() -> Processor.runProcessor(request, decompile, null), "Processor");
+                            final ProcessorOptions processorOptions = ProcessorOptions.builder()
+                                    .decompile(decompile)
+                                    .build();
+
+                            final Thread processorThread = new Thread(
+                                    () -> Processor.runProcessor(request, processorOptions, null), "Processor");
                             processorThread.start();
                         },
                         () -> {
