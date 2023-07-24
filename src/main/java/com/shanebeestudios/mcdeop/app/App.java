@@ -1,76 +1,81 @@
 package com.shanebeestudios.mcdeop.app;
 
-import com.shanebeestudios.mcdeop.*;
+import com.shanebeestudios.mcdeop.Processor;
+import com.shanebeestudios.mcdeop.ResourceRequest;
+import com.shanebeestudios.mcdeop.SourceType;
+import com.shanebeestudios.mcdeop.VersionManager;
+import com.shanebeestudios.mcdeop.launchermeta.data.release.ReleaseManifest;
+import com.shanebeestudios.mcdeop.launchermeta.data.version.Version;
 import com.shanebeestudios.mcdeop.util.Util;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.IOException;
 import javax.swing.*;
 import mx.kenzie.mirror.Mirror;
 
 @SuppressWarnings({"SameParameterValue", "unchecked", "rawtypes", "FieldCanBeLocal"})
 public class App extends JFrame {
-
     private JButton startButton;
     private JRadioButton server;
     private JRadioButton client;
     private JCheckBox decompile;
-    private JComboBox<String> versionBox;
+    private JComboBox<Version> versionBox;
     private JTextField statusBox;
     private JTextField currentVerBox;
 
     public App() {
-        init();
-        setVisible(true);
+        this.init();
+        this.setVisible(true);
     }
 
     private void init() {
         try {
             // If we're running on Mac, set the logo
-            Taskbar taskbar = Taskbar.getTaskbar();
+            final Taskbar taskbar = Taskbar.getTaskbar();
             assert Icon.DOCK_LOGO_1024 != null;
             taskbar.setIconImage(Icon.DOCK_LOGO_1024.getImage());
-        } catch (Exception ignored) {
+        } catch (final Exception ignored) {
             // Else we set it this way
-            setIconImages(Icon.LOGO_IMAGES);
+            this.setIconImages(Icon.LOGO_IMAGES);
         }
 
-        setupWindow(500, 335);
-        createTitle();
-        createTypeButton();
-        createVersionPopup();
-        createDeobOption();
-        createStatusBox();
-        createStartButton();
+        this.setupWindow(500, 335);
+        this.createTitle();
+        this.createTypeButton();
+        this.createVersionPopup();
+        this.createDeobOption();
+        this.createStatusBox();
+        this.createStartButton();
     }
 
-    private void setupWindow(int width, int height) {
-        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        setSize(width, height);
-        setTitle("McDeob");
+    private void setupWindow(final int width, final int height) {
+        this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        this.setSize(width, height);
+        this.setTitle("McDeob");
 
         try { // Window title hack for GTK
             Mirror.of(Toolkit.getDefaultToolkit())
                     .unsafe()
                     .field("awtAppClassName")
                     .set("McDeob");
-        } catch (Exception ignored) {
+        } catch (final Exception ignored) {
             // We're probably just not on XToolkit
         }
 
         // Window title hack for macOS
         System.setProperty("com.apple.mrj.application.apple.menu.about.name", "McDeob");
 
-        setResizable(true);
-        setMinimumSize(new Dimension(500, 335));
-        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+        this.setResizable(true);
+        this.setMinimumSize(new Dimension(500, 335));
+        final Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         this.setLocation(dim.width / 2 - this.getSize().width / 2, dim.height / 2 - this.getSize().height / 2);
-        setLayout(null);
+        this.setLayout(null);
     }
 
     private ComponentListener hookSize(final Runnable sizeTask) {
         final ComponentListener listener = new ComponentAdapter() {
             @Override
-            public void componentResized(ComponentEvent e) {
+            public void componentResized(final ComponentEvent e) {
                 sizeTask.run();
             }
         };
@@ -81,127 +86,145 @@ public class App extends JFrame {
     }
 
     private void createTitle() {
-        JLabel label = new JLabel("Let's start de-obfuscating some Minecraft", SwingConstants.CENTER);
+        final JLabel label = new JLabel("Let's start de-obfuscating some Minecraft", SwingConstants.CENTER);
         label.setHorizontalTextPosition(SwingConstants.CENTER);
-        hookSize(() -> label.setBounds(0, 10, getSize().width, 50));
-        add(label);
+        this.hookSize(() -> label.setBounds(0, 10, this.getSize().width, 50));
+        this.add(label);
     }
 
     private void createTypeButton() {
-        server = new JRadioButton("Server");
-        client = new JRadioButton("Client");
-        hookSize(() -> server.setBounds(getSize().width / 2 + 10, 60, 100, 20));
-        hookSize(() -> client.setBounds(getSize().width / 2 - (100 - 10), 60, 100, 20));
-        client.setSelected(true);
-        ButtonGroup typeGroup = new ButtonGroup();
-        typeGroup.add(server);
-        typeGroup.add(client);
-        add(server);
-        add(client);
+        this.server = new JRadioButton("Server");
+        this.client = new JRadioButton("Client");
+        this.hookSize(() -> this.server.setBounds(this.getSize().width / 2 + 10, 60, 100, 20));
+        this.hookSize(() -> this.client.setBounds(this.getSize().width / 2 - (100 - 10), 60, 100, 20));
+        this.client.setSelected(true);
+        final ButtonGroup typeGroup = new ButtonGroup();
+        typeGroup.add(this.server);
+        typeGroup.add(this.client);
+        this.add(this.server);
+        this.add(this.client);
     }
 
     private void createVersionPopup() {
-        versionBox = new JComboBox();
-        for (Version version : Version.values()) {
-            if (version.getType() == Version.Type.SERVER) {
-                versionBox.addItem(version.getVersion().replace("_", " "));
+        this.versionBox = new JComboBox();
+        this.versionBox.setRenderer(new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(
+                    final JList list,
+                    final Object value,
+                    final int index,
+                    final boolean isSelected,
+                    final boolean cellHasFocus) {
+                final JLabel label =
+                        (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                final Version version = (Version) value;
+                label.setText(version.getId());
+                return label;
             }
+        });
+
+        for (final Version version : VersionManager.getInstance().getVersions()) {
+            this.versionBox.addItem(version);
         }
-        versionBox.setSelectedIndex(0);
-        versionBox.setBackground(Color.lightGray);
-        hookSize(() -> versionBox.setBounds(
-                (getSize().width / 2) - versionBox.getWidth() / 2, 95, versionBox.getPreferredSize().width, 25));
-        add(versionBox);
+        this.versionBox.setSelectedIndex(0);
+        this.versionBox.setBackground(Color.lightGray);
+        this.hookSize(() -> this.versionBox.setBounds(
+                (this.getSize().width / 2) - this.versionBox.getWidth() / 2,
+                95,
+                this.versionBox.getPreferredSize().width,
+                25));
+        this.add(this.versionBox);
     }
 
     private void createDeobOption() {
-        decompile = new JCheckBox("Decompile?");
-        int decompileHeight;
+        this.decompile = new JCheckBox("Decompile?");
+        final int decompileHeight;
         if (Util.isRunningMacOS()) {
             decompileHeight = 30;
         } else {
             // fixes some weird overlap with the status box
             decompileHeight = 30;
         }
-        hookSize(() -> decompile.setBounds((getSize().width / 2) - 60, 125, 120, decompileHeight));
-        decompile.setSelected(false);
-        add(decompile);
+        this.hookSize(() -> this.decompile.setBounds((this.getSize().width / 2) - 60, 125, 120, decompileHeight));
+        this.decompile.setSelected(false);
+        this.add(this.decompile);
     }
 
     private transient ComponentListener statusBoxListener;
 
     private void createStatusBox() {
-        statusBox = new JTextField("Status!");
-        statusBox.setEditable(false);
-        statusBoxListener = hookSize(() -> {
-            int width = (int) (getSize().width * 0.90);
-            statusBox.setBounds((getSize().width / 2) - (width / 2), 160, width, 30);
+        this.statusBox = new JTextField("Status!");
+        this.statusBox.setEditable(false);
+        this.statusBoxListener = this.hookSize(() -> {
+            final int width = (int) (this.getSize().width * 0.90);
+            this.statusBox.setBounds((this.getSize().width / 2) - (width / 2), 160, width, 30);
         });
-        add(statusBox);
+        this.add(this.statusBox);
     }
 
-    public void updateStatusBox(String string) {
-        statusBox.setText(string);
+    public void updateStatusBox(final String string) {
+        this.statusBox.setText(string);
     }
 
-    public void addVersionBox(String version) {
-        if (currentVerBox == null) {
-            currentVerBox = new JTextField();
-            currentVerBox.setEditable(false);
-            currentVerBox.setHorizontalAlignment(SwingConstants.CENTER);
-            hookSize(() -> currentVerBox.setBounds((getSize().width / 2) - 110, 150, 220, 30));
-            add(currentVerBox);
+    public void addVersionBox(final String version) {
+        if (this.currentVerBox == null) {
+            this.currentVerBox = new JTextField();
+            this.currentVerBox.setEditable(false);
+            this.currentVerBox.setHorizontalAlignment(SwingConstants.CENTER);
+            this.hookSize(() -> this.currentVerBox.setBounds((this.getSize().width / 2) - 110, 150, 220, 30));
+            this.add(this.currentVerBox);
         }
         // Shift status box down
-        int width = (int) (getSize().width * 0.90);
-        this.removeComponentListener(statusBoxListener);
-        statusBoxListener = hookSize(() -> statusBox.setBounds((getSize().width / 2) - (width / 2), 190, width, 30));
+        final int width = (int) (this.getSize().width * 0.90);
+        this.removeComponentListener(this.statusBoxListener);
+        this.statusBoxListener =
+                this.hookSize(() -> this.statusBox.setBounds((this.getSize().width / 2) - (width / 2), 190, width, 30));
 
-        currentVerBox.setText("Version: " + version);
-        currentVerBox.setForeground(new Color(13, 193, 47));
+        this.currentVerBox.setText("Version: " + version);
+        this.currentVerBox.setForeground(new Color(13, 193, 47));
     }
 
     private void createStartButton() {
-        startButton = new JButton("Start!");
-        startButton.setToolTipText("test");
-        int w = 200;
-        int h = 50;
-        int hDivided;
+        this.startButton = new JButton("Start!");
+        this.startButton.setToolTipText("test");
+        final int w = 200;
+        final int h = 50;
+        final int hDivided;
         if (Util.isRunningMacOS()) {
             hDivided = h / 2;
         } else {
             // makes the spacing of the button look better on windows
             hDivided = Math.round(h / 1.25F);
         }
-        hookSize(() ->
-                startButton.setBounds((getSize().width / 2) - (w / 2), ((getSize().height / 5) * 4) - hDivided, w, h));
-        startButton.addActionListener(new ButtonListener());
-        add(startButton);
+        this.hookSize(() -> this.startButton.setBounds(
+                (this.getSize().width / 2) - (w / 2), ((this.getSize().height / 5) * 4) - hDivided, w, h));
+        this.startButton.addActionListener(new ButtonListener());
+        this.add(this.startButton);
     }
 
-    public void updateButton(String string) {
-        updateButton(string, Color.BLACK);
+    public void updateButton(final String string) {
+        this.updateButton(string, Color.BLACK);
     }
 
-    public void updateButton(String string, Color color) {
-        startButton.setText(string);
-        startButton.setForeground(color);
+    public void updateButton(final String string, final Color color) {
+        this.startButton.setText(string);
+        this.startButton.setForeground(color);
     }
 
     public void toggleControls() {
-        startButton.setEnabled(!startButton.isEnabled());
-        decompile.setEnabled(!decompile.isEnabled());
-        versionBox.setEnabled(!versionBox.isEnabled());
-        server.setEnabled(!server.isEnabled());
-        client.setEnabled(!client.isEnabled());
+        this.startButton.setEnabled(!this.startButton.isEnabled());
+        this.decompile.setEnabled(!this.decompile.isEnabled());
+        this.versionBox.setEnabled(!this.versionBox.isEnabled());
+        this.server.setEnabled(!this.server.isEnabled());
+        this.client.setEnabled(!this.client.isEnabled());
     }
 
-    private void start(Version version, boolean shouldDecompile) {
-        App app = this;
-        Thread thread = new Thread("Processor") {
+    private void start(final ResourceRequest request, final boolean shouldDecompile) {
+        final App app = this;
+        final Thread thread = new Thread("Processor") {
             @Override
             public void run() {
-                Processor processor = new Processor(version, shouldDecompile, app);
+                final Processor processor = new Processor(request, shouldDecompile, app);
                 processor.init();
             }
         };
@@ -211,23 +234,43 @@ public class App extends JFrame {
     class ButtonListener implements ActionListener {
 
         @Override
-        public void actionPerformed(ActionEvent e) {
-            if (e.getSource() == startButton) {
-                Version.Type type = server.isSelected() ? Version.Type.SERVER : Version.Type.CLIENT;
-                Version version = Version.getByVersion(((String) versionBox.getSelectedItem()).replace(" ", "_"), type);
-                if (!startButton.getText().equalsIgnoreCase("Start!")) return;
-                if (version == null) {
-                    updateButton("INVALID VERSION!", Color.RED);
-                    getToolkit().beep();
-                    Timer timer = new Timer(1000, e1 -> updateButton("Start!"));
-                    timer.setRepeats(false);
-                    timer.start();
-                } else {
-                    boolean decomp = decompile.isSelected();
-                    updateButton("Starting...", Color.BLUE);
-                    start(version, decomp);
-                }
+        public void actionPerformed(final ActionEvent e) {
+            if (e.getSource() != App.this.startButton) {
+                return;
             }
+
+            if (!App.this.startButton.getText().equalsIgnoreCase("Start!")) {
+                return;
+            }
+
+            final Version version = (Version) App.this.versionBox.getSelectedItem();
+            if (version == null) {
+                App.this.updateButton("INVALID VERSION!", Color.RED);
+                App.this.getToolkit().beep();
+                final Timer timer = new Timer(1000, e1 -> App.this.updateButton("Start!"));
+                timer.setRepeats(false);
+                timer.start();
+                return;
+            }
+
+            final SourceType type = App.this.server.isSelected() ? SourceType.SERVER : SourceType.CLIENT;
+            final boolean decomp = App.this.decompile.isSelected();
+
+            final ReleaseManifest releaseManifest;
+            try {
+                releaseManifest = VersionManager.getInstance().getReleaseManifest(version);
+            } catch (final IOException ex) {
+                App.this.updateButton("FAILED TO FETCH RELEASE MANIFEST", Color.RED);
+                App.this.getToolkit().beep();
+                final Timer timer = new Timer(1000, e1 -> App.this.updateButton("Start!"));
+                timer.setRepeats(false);
+                timer.start();
+                return;
+            }
+
+            final ResourceRequest resourceRequest = new ResourceRequest(releaseManifest, type);
+            App.this.updateButton("Starting...", Color.BLUE);
+            App.this.start(resourceRequest, decomp);
         }
     }
 }

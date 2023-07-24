@@ -1,6 +1,7 @@
 package com.shanebeestudios.mcdeop;
 
 import com.shanebeestudios.mcdeop.app.App;
+import com.shanebeestudios.mcdeop.launchermeta.data.version.Version;
 import com.shanebeestudios.mcdeop.util.Logger;
 import com.shanebeestudios.mcdeop.util.Util;
 import java.io.IOException;
@@ -8,9 +9,10 @@ import javax.swing.*;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 
+// TODO: RECONSTRUCT SOURCE INTO A CORRECT PROJECT WITH RESOURCE FILES + A LIBS FOLDER
 public class McDeob {
 
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
         if (args.length == 0) {
             try {
                 if (Util.isRunningMacOS()) {
@@ -31,7 +33,7 @@ public class McDeob {
             return;
         }
 
-        OptionParser parser = new OptionParser();
+        final OptionParser parser = new OptionParser();
         parser.accepts("help", "Shows help and exits");
         parser.accepts("versions", "Prints a list of all Minecraft versions available to deobfuscate");
         parser.accepts("version", "Minecraft version for which we're deobfuscating")
@@ -42,11 +44,11 @@ public class McDeob {
                 .ofType(String.class);
         parser.accepts("decompile", "Marks that we should decompile the deobfuscated source");
 
-        OptionSet options = parser.parse(args);
+        final OptionSet options = parser.parse(args);
         if (options.has("help")) {
             try {
                 parser.printHelpOn(System.out);
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 throw new RuntimeException(e);
             }
             System.exit(0);
@@ -54,8 +56,8 @@ public class McDeob {
 
         if (options.has("versions")) {
             System.out.println("Available Minecraft versions to deobfuscate:");
-            for (Version version : Version.getVersions()) {
-                System.out.println(" - " + version.getVersion());
+            for (final Version version : VersionManager.getInstance().getVersions()) {
+                System.out.println(" - " + version.getId());
             }
             System.exit(0);
         }
@@ -70,31 +72,44 @@ public class McDeob {
             System.exit(1);
         }
 
-        String versionString = (String) options.valueOf("version");
-        String typeString = (String) options.valueOf("type");
+        final String versionString = (String) options.valueOf("version");
+        final String typeString = (String) options.valueOf("type");
 
+        final SourceType type;
         try {
-            Version.Type.valueOf(typeString.toUpperCase());
-        } catch (IllegalArgumentException e) {
+            type = SourceType.valueOf(typeString.toUpperCase());
+        } catch (final IllegalArgumentException e) {
             Logger.error("Invalid type specified, shutting down...");
             System.exit(1);
+            return;
         }
 
-        Version.Type type = Version.Type.valueOf(typeString.toUpperCase());
-        Version version = Version.getByVersion(versionString, type);
-        if (version == null) {
-            Logger.error("Invalid or unsupported version was specified, shutting down...");
-            System.exit(1);
-        }
+        VersionManager.getInstance()
+                .getVersion(versionString)
+                .map(version -> {
+                    try {
+                        return VersionManager.getInstance().getReleaseManifest(version);
+                    } catch (final IOException e) {
+                        Logger.error("Failed to fetch release manifest", e);
+                    }
 
-        boolean decompile = options.has("decompile");
-
-        Thread processorThread = new Thread(
-                () -> {
-                    Processor processor = new Processor(version, decompile, null);
-                    processor.init();
-                },
-                "Processor");
-        processorThread.start();
+                    return null;
+                })
+                .map(manifest -> new ResourceRequest(manifest, type))
+                .ifPresentOrElse(
+                        request -> {
+                            final boolean decompile = options.has("decompile");
+                            final Thread processorThread = new Thread(
+                                    () -> {
+                                        final Processor processor = new Processor(request, decompile, null);
+                                        processor.init();
+                                    },
+                                    "Processor");
+                            processorThread.start();
+                        },
+                        () -> {
+                            Logger.error("Invalid or unsupported version was specified, shutting down...");
+                            System.exit(1);
+                        });
     }
 }

@@ -9,176 +9,192 @@ import com.shanebeestudios.mcdeop.util.TimeStamp;
 import com.shanebeestudios.mcdeop.util.Util;
 import io.github.lxgaming.reconstruct.common.Reconstruct;
 import java.awt.*;
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.InvalidObjectException;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import org.jetbrains.java.decompiler.main.decompiler.ConsoleDecompiler;
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.json.JSONTokener;
 
+// TODO: Reconstruct breaks after the first run.
 @SuppressWarnings("ResultOfMethodCallIgnored")
 public class Processor {
-    private static final URL LATEST_INFO;
-
-    static {
-        try {
-            LATEST_INFO = new URL("https://launchermeta.mojang.com/mc/game/version_manifest.json");
-        } catch (MalformedURLException e) {
-            throw new AssertionError("Impossible");
-        }
-    }
-
-    private final Version version;
+    private final ResourceRequest version;
     private final boolean decompile;
     private final App app;
 
-    private Reconstruct reconstruct;
-    private Path jarPath;
-    private Path mappingsPath;
-    private Path remappedJar;
-    private String mappingsUrl;
-    private String jarUrl;
+    private final Reconstruct reconstruct;
+    private final Path jarPath;
+    private final Path mappingsPath;
+    private final Path remappedJar;
+    private final URL mappingsUrl;
+    private final URL jarUrl;
 
-    private String minecraftJarName;
-    private String mappingsName;
-    private String mappedJarName;
+    private final String minecraftJarName;
+    private final String mappedJarName;
 
-    private Path dataFolderPath = Paths.get("deobf-work");
+    private final Path dataFolderPath;
 
-    public Processor(Version version, boolean decompile, App app) {
+    public Processor(final ResourceRequest version, final boolean decompile, final App app) {
         this.version = version;
         this.app = app;
         if (Util.isRunningMacOS()) {
             // If running on macOS, put the output directory in the user home directory.
             // This is due to how macOS APPs work — their '.' directory resolves to one inside the APP itself.
-            dataFolderPath = Paths.get(System.getProperty("user.home"), "McDeob");
-        }
-        try {
-            Files.createDirectories(dataFolderPath);
-        } catch (IOException ignore) {
+            this.dataFolderPath = Paths.get(System.getProperty("user.home"), "McDeob");
+        } else {
+            this.dataFolderPath = Paths.get("deobf-work");
         }
 
-        minecraftJarName =
-                String.format("minecraft_%s_%s.jar", version.getType().getName(), version.getVersion());
-        mappingsName = String.format("mappings_%s_%s.txt", version.getType().getName(), version.getVersion());
-        mappedJarName = String.format("remapped_%s_%s.jar", version.getType().getName(), version.getVersion());
-        jarUrl = version.getJar();
-        mappingsUrl = version.getMappings();
+        try {
+            Files.createDirectories(this.dataFolderPath);
+        } catch (final IOException ignore) {
+        }
+
+        this.minecraftJarName = String.format(
+                "minecraft_%s_%s.jar",
+                version.getType().getName(), version.getVersion().getId());
+        final String mappingsName = String.format(
+                "mappings_%s_%s.txt",
+                version.getType().getName(), version.getVersion().getId());
+        this.mappedJarName = String.format(
+                "remapped_%s_%s.jar",
+                version.getType().getName(), version.getVersion().getId());
+
+        this.remappedJar = this.dataFolderPath.resolve(this.mappedJarName);
+        this.mappingsPath = this.dataFolderPath.resolve(mappingsName);
+        this.jarPath = this.dataFolderPath.resolve(this.minecraftJarName);
+
+        this.jarUrl = version.getJar().orElse(null);
+        this.mappingsUrl = version.getMappings().orElse(null);
         this.decompile = decompile;
-        this.reconstruct = new Reconstruct(new ReconConfig());
+        this.reconstruct = this.createReconstruct();
+    }
+
+    private Reconstruct createReconstruct() {
+        final ReconConfig config = new ReconConfig();
+
+        config.setInputPath(this.jarPath.toAbsolutePath());
+        config.setMappingPath(this.mappingsPath.toAbsolutePath());
+        config.setOutputPath(this.remappedJar.toAbsolutePath());
+
+        return new Reconstruct(config);
     }
 
     public void init() {
+        if (this.jarUrl == null) {
+            Logger.error(
+                    "Failed to find JAR URL for version %s-%s",
+                    this.version.getType(), this.version.getVersion().getId());
+            if (this.app != null) {
+                this.app.updateStatusBox("Failed to find JAR URL for version " + this.version.getType() + "-"
+                        + this.version.getVersion().getId());
+            }
+            this.cleanup();
+            return;
+        }
+
+        if (this.mappingsUrl == null) {
+            Logger.error(
+                    "Failed to find mappings URL for version %s-%s",
+                    this.version.getType(), this.version.getVersion().getId());
+            if (this.app != null) {
+                this.app.updateStatusBox("Failed to find mappings URL for version " + this.version.getType() + "-"
+                        + this.version.getVersion().getId());
+            }
+            this.cleanup();
+            return;
+        }
+
         try {
-            long start = System.currentTimeMillis();
-            if (app != null) {
-                app.toggleControls();
+            final long start = System.currentTimeMillis();
+            if (this.app != null) {
+                this.app.toggleControls();
             }
 
-            if (version.isLatest()) {
-                String trueVersion = prepareLatest();
-                if (app != null) {
-                    app.addVersionBox(trueVersion);
-                }
+            this.downloadJar();
+            this.downloadMappings();
+            this.remapJar();
+            if (this.decompile) {
+                this.decompileJar();
             }
+            this.cleanup();
 
-            downloadJar();
-            downloadMappings();
-            remapJar();
-            if (decompile) {
-                decompileJar();
-            }
-            cleanup();
-
-            TimeStamp timeStamp = TimeStamp.fromNow(start);
+            final TimeStamp timeStamp = TimeStamp.fromNow(start);
             Logger.info("Completed in %s!", timeStamp);
-            if (app != null) {
-                app.updateStatusBox(String.format("Completed in %s!", timeStamp));
-                app.updateButton("Start!");
+            if (this.app != null) {
+                this.app.updateStatusBox(String.format("Completed in %s!", timeStamp));
+                this.app.updateButton("Start!");
             }
-        } catch (IOException e) {
+        } catch (final IOException e) {
             e.printStackTrace();
         } finally {
-            if (app != null) {
-                app.toggleControls();
+            if (this.app != null) {
+                this.app.toggleControls();
             }
         }
     }
 
     public void downloadJar() throws IOException {
-        long start = System.currentTimeMillis();
+        final long start = System.currentTimeMillis();
         Logger.info("Downloading JAR file from Mojang.");
-        if (app != null) {
-            app.updateStatusBox("Downloading JAR...");
-            app.updateButton("Downloading JAR...", Color.BLUE);
+        if (this.app != null) {
+            this.app.updateStatusBox("Downloading JAR...");
+            this.app.updateButton("Downloading JAR...", Color.BLUE);
         }
 
-        jarPath = dataFolderPath.resolve(minecraftJarName);
-        final URL parsedURL = new URL(jarUrl);
-        final HttpURLConnection connection = (HttpURLConnection) parsedURL.openConnection();
+        final HttpURLConnection connection = (HttpURLConnection) this.jarUrl.openConnection();
         final long length = connection.getContentLengthLong();
-        if (Files.exists(jarPath) && Files.size(jarPath) == length) {
+        if (Files.exists(this.jarPath) && Files.size(this.jarPath) == length) {
             Logger.info("Already have JAR, skipping download.");
-        } else
+        } else {
             try (final InputStream inputStream = connection.getInputStream()) {
-                Files.copy(inputStream, jarPath, REPLACE_EXISTING);
+                Files.copy(inputStream, this.jarPath, REPLACE_EXISTING);
             }
+        }
 
-        TimeStamp timeStamp = TimeStamp.fromNow(start);
+        final TimeStamp timeStamp = TimeStamp.fromNow(start);
         Logger.info("Successfully downloaded JAR file in %s!", timeStamp);
     }
 
     public void downloadMappings() throws IOException {
-        long start = System.currentTimeMillis();
+        final long start = System.currentTimeMillis();
         Logger.info("Downloading mappings file from Mojang...");
-        if (app != null) {
-            app.updateStatusBox("Downloading mappings...");
-            app.updateButton("Downloading mappings...", Color.BLUE);
+        if (this.app != null) {
+            this.app.updateStatusBox("Downloading mappings...");
+            this.app.updateButton("Downloading mappings...", Color.BLUE);
         }
-        final URL parsedURL = new URL(mappingsUrl);
-        final HttpURLConnection connection = (HttpURLConnection) parsedURL.openConnection();
+        final HttpURLConnection connection = (HttpURLConnection) this.mappingsUrl.openConnection();
         final long length = connection.getContentLengthLong();
-        mappingsPath = dataFolderPath.resolve(mappingsName);
-        if (Files.exists(mappingsPath) && Files.size(mappingsPath) == length) {
+        if (Files.exists(this.mappingsPath) && Files.size(this.mappingsPath) == length) {
             Logger.info("Already have mappings, skipping download.");
-        } else
+        } else {
             try (final InputStream inputStream = connection.getInputStream()) {
-                Files.copy(inputStream, mappingsPath, REPLACE_EXISTING);
+                Files.copy(inputStream, this.mappingsPath, REPLACE_EXISTING);
             }
+        }
 
-        TimeStamp timeStamp = TimeStamp.fromNow(start);
+        final TimeStamp timeStamp = TimeStamp.fromNow(start);
         Logger.info("Successfully downloaded mappings file in %s!", timeStamp);
     }
 
     public void remapJar() {
-        long start = System.currentTimeMillis();
-        if (app != null) {
-            app.updateStatusBox("Remapping...");
-            app.updateButton("Remapping...", Color.BLUE);
+        final long start = System.currentTimeMillis();
+        if (this.app != null) {
+            this.app.updateStatusBox("Remapping...");
+            this.app.updateButton("Remapping...", Color.BLUE);
         }
-        remappedJar = dataFolderPath.resolve(mappedJarName);
 
-        if (!Files.exists(remappedJar)) {
-            Logger.info("Remapping %s file...", minecraftJarName);
-            reconstruct.getConfig().setInputPath(jarPath.toAbsolutePath());
-            reconstruct.getConfig().setMappingPath(mappingsPath.toAbsolutePath());
-            reconstruct.getConfig().setOutputPath(remappedJar.toAbsolutePath());
-            reconstruct.load();
+        if (!Files.exists(this.remappedJar)) {
+            Logger.info("Remapping %s file...", this.minecraftJarName);
+            this.reconstruct.load();
 
-            TimeStamp timeStamp = TimeStamp.fromNow(start);
+            final TimeStamp timeStamp = TimeStamp.fromNow(start);
             Logger.info("Remapping completed in %s!", timeStamp);
         } else {
-            Logger.info("%s already remapped... skipping mapping.", mappedJarName);
+            Logger.info("%s already remapped... skipping mapping.", this.mappedJarName);
         }
     }
 
@@ -218,90 +234,15 @@ public class Processor {
         Logger.info("Decompiling completed in %s!", timeStamp);
     }
 
-    public String prepareLatest() throws IOException {
-        if (app != null) {
-            app.updateStatusBox("Fetching version list from Mojang...");
-            app.updateButton("Fetching...");
-        }
-
-        URLConnection connection = LATEST_INFO.openConnection();
-        BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-        final JSONObject versions = new JSONObject(new JSONTokener(in));
-        in.close();
-
-        if (!versions.has("latest")) {
-            String s = "Failed! Could not locate the latest data from the downloaded manifest file!";
-            Logger.error(s);
-            if (app != null) {
-                app.updateStatusBox(s);
-                app.updateButton("Exit");
-            }
-            throw new InvalidObjectException(s);
-        }
-
-        String type = version == Version.SERVER_LATEST_RELEASE || version == Version.CLIENT_LATEST_RELEASE
-                ? "release"
-                : "snapshot";
-
-        String trueVersion = versions.getJSONObject("latest").getString(type);
-        Logger.info("Finding the URL for " + trueVersion);
-        if (app != null) {
-            app.updateStatusBox("Finding the URL for " + trueVersion);
-        }
-
-        String versionURL = null;
-
-        JSONArray versionArray = versions.getJSONArray("versions");
-        for (int i = 0; i < versionArray.length(); i++) {
-            JSONObject innerVersion = versionArray.getJSONObject(i);
-
-            String id = innerVersion.getString("id");
-            if (id.equalsIgnoreCase(trueVersion)) {
-                versionURL = innerVersion.getString("url");
-                break;
-            }
-        }
-
-        if (versionURL == null) {
-            String s = "Failed! Could not find information for version " + trueVersion + "!";
-            Logger.error(s);
-            if (app != null) {
-                app.updateStatusBox(s);
-                app.updateButton("Exit");
-            }
-            throw new InvalidObjectException(s);
-        }
-
-        Logger.info("Download data for " + trueVersion + "...");
-        if (app != null) {
-            app.updateStatusBox("Download data for " + trueVersion + "...");
-        }
-
-        connection = new URL(versionURL).openConnection();
-        in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-        JSONObject versionManifest = new JSONObject(new JSONTokener(in));
-        in.close();
-
-        JSONObject downloads = versionManifest.getJSONObject("downloads");
-        String clientOrServer = version.getType().getName().toLowerCase();
-        jarUrl = downloads.getJSONObject(clientOrServer).getString("url");
-        mappingsUrl = downloads.getJSONObject(clientOrServer + "_mappings").getString("url");
-
-        minecraftJarName = String.format("minecraft_%s_%s.jar", clientOrServer, trueVersion);
-        mappingsName = String.format("mappings_%s_%s.txt", clientOrServer, trueVersion);
-        mappedJarName = String.format("remapped_%s_%s.jar", clientOrServer, trueVersion);
-
-        Logger.info("Found the jar and mappings url for " + trueVersion + "!");
-        if (app != null) {
-            app.updateStatusBox("Found the JAR and mappings URL for " + trueVersion + "!");
-        }
-        return trueVersion;
-    }
-
     private void cleanup() {
-        jarPath = null;
-        mappingsPath = null;
-        remappedJar = null;
-        reconstruct = null;
+        // TODO: Re-implement better cleanup system
+        /*
+        this.jarPath = null;
+        this.mappingsPath = null;
+        this.remappedJar = null;
+        this.reconstruct = null;
+        System.gc();
+
+         */
     }
 }
