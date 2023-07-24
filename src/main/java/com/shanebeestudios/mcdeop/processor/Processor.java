@@ -1,15 +1,15 @@
 package com.shanebeestudios.mcdeop.processor;
 
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
+
 import com.shanebeestudios.mcdeop.app.App;
 import com.shanebeestudios.mcdeop.processor.decompiler.Decompiler;
 import com.shanebeestudios.mcdeop.processor.decompiler.VineflowerDecompiler;
 import com.shanebeestudios.mcdeop.processor.remapper.ReconstructRemapper;
 import com.shanebeestudios.mcdeop.processor.remapper.Remapper;
+import com.shanebeestudios.mcdeop.util.DurationTracker;
 import com.shanebeestudios.mcdeop.util.FileUtil;
-import com.shanebeestudios.mcdeop.util.TimeStamp;
 import com.shanebeestudios.mcdeop.util.Util;
-import lombok.extern.slf4j.Slf4j;
-
 import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,8 +19,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.function.Consumer;
-
-import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
+import lombok.extern.slf4j.Slf4j;
 
 @SuppressWarnings("ResultOfMethodCallIgnored")
 @Slf4j
@@ -120,8 +119,13 @@ public class Processor {
             return;
         }
 
-        try {
-            final long start = System.currentTimeMillis();
+        try (DurationTracker ignored = new DurationTracker(duration -> {
+            log.info("Completed in {}!", duration);
+            this.handleGui(gui -> {
+                gui.updateStatusBox(String.format("Completed in %s!", duration));
+                gui.updateButton("Start!");
+            });
+        })) {
             this.handleGui(App::toggleControls);
 
             this.downloadJar();
@@ -131,13 +135,6 @@ public class Processor {
                 this.decompileJar();
             }
 
-            final TimeStamp timeStamp = TimeStamp.fromNow(start);
-            log.info("Completed in {}!", timeStamp);
-            this.handleGui(gui -> {
-                gui.updateStatusBox(String.format("Completed in %s!", timeStamp));
-                gui.updateButton("Start!");
-            });
-
         } catch (final IOException e) {
             e.printStackTrace();
         } finally {
@@ -146,93 +143,90 @@ public class Processor {
     }
 
     public void downloadJar() throws IOException {
-        final long start = System.currentTimeMillis();
-        log.info("Downloading JAR file from Mojang.");
-        this.handleGui(gui -> {
-            gui.updateStatusBox("Downloading JAR...");
-            gui.updateButton("Downloading JAR...", Color.BLUE);
-        });
+        try (DurationTracker ignored =
+                new DurationTracker(duration -> log.info("Successfully downloaded JAR file in {}!", duration))) {
+            log.info("Downloading JAR file from Mojang.");
+            this.handleGui(gui -> {
+                gui.updateStatusBox("Downloading JAR...");
+                gui.updateButton("Downloading JAR...", Color.BLUE);
+            });
 
-        final HttpURLConnection connection = (HttpURLConnection) this.jarUrl.openConnection();
-        final long length = connection.getContentLengthLong();
-        if (Files.exists(this.jarPath) && Files.size(this.jarPath) == length) {
-            log.info("Already have JAR, skipping download.");
-        } else {
-            try (final InputStream inputStream = connection.getInputStream()) {
-                Files.copy(inputStream, this.jarPath, REPLACE_EXISTING);
+            final HttpURLConnection connection = (HttpURLConnection) this.jarUrl.openConnection();
+            final long length = connection.getContentLengthLong();
+            if (Files.exists(this.jarPath) && Files.size(this.jarPath) == length) {
+                log.info("Already have JAR, skipping download.");
+            } else {
+                try (final InputStream inputStream = connection.getInputStream()) {
+                    Files.copy(inputStream, this.jarPath, REPLACE_EXISTING);
+                }
             }
         }
-
-        final TimeStamp timeStamp = TimeStamp.fromNow(start);
-        log.info("Successfully downloaded JAR file in {}!", timeStamp);
     }
 
     public void downloadMappings() throws IOException {
-        final long start = System.currentTimeMillis();
-        log.info("Downloading mappings file from Mojang...");
-        this.handleGui(gui -> {
-            gui.updateStatusBox("Downloading mappings...");
-            gui.updateButton("Downloading mappings...", Color.BLUE);
-        });
+        try (DurationTracker ignored =
+                new DurationTracker(duration -> log.info("Successfully downloaded mappings file in {}!", duration))) {
+            log.info("Downloading mappings file from Mojang...");
+            this.handleGui(gui -> {
+                gui.updateStatusBox("Downloading mappings...");
+                gui.updateButton("Downloading mappings...", Color.BLUE);
+            });
 
-        final HttpURLConnection connection = (HttpURLConnection) this.mappingsUrl.openConnection();
-        final long length = connection.getContentLengthLong();
-        if (Files.exists(this.mappingsPath) && Files.size(this.mappingsPath) == length) {
-            log.info("Already have mappings, skipping download.");
-        } else {
-            try (final InputStream inputStream = connection.getInputStream()) {
-                Files.copy(inputStream, this.mappingsPath, REPLACE_EXISTING);
+            final HttpURLConnection connection = (HttpURLConnection) this.mappingsUrl.openConnection();
+            final long length = connection.getContentLengthLong();
+            if (Files.exists(this.mappingsPath) && Files.size(this.mappingsPath) == length) {
+                log.info("Already have mappings, skipping download.");
+            } else {
+                try (final InputStream inputStream = connection.getInputStream()) {
+                    Files.copy(inputStream, this.mappingsPath, REPLACE_EXISTING);
+                }
             }
         }
-
-        final TimeStamp timeStamp = TimeStamp.fromNow(start);
-        log.info("Successfully downloaded mappings file in {}!", timeStamp);
     }
 
     public void remapJar() {
-        final long start = System.currentTimeMillis();
-        this.handleGui(gui -> {
-            gui.updateStatusBox("Remapping...");
-            gui.updateButton("Remapping...", Color.BLUE);
-        });
+        try (DurationTracker ignored =
+                new DurationTracker(duration -> log.info("Remapping completed in {}!", duration))) {
+            this.handleGui(gui -> {
+                gui.updateStatusBox("Remapping...");
+                gui.updateButton("Remapping...", Color.BLUE);
+            });
 
-        if (!Files.exists(this.remappedJar)) {
-            log.info("Remapping {} file...", this.minecraftJarName);
-            this.remapper.remap(this.jarPath, this.mappingsPath, this.remappedJar);
-
-            final TimeStamp timeStamp = TimeStamp.fromNow(start);
-            log.info("Remapping completed in {}!", timeStamp);
-        } else {
-            log.info("{} already remapped... skipping mapping.", this.mappedJarName);
+            if (!Files.exists(this.remappedJar)) {
+                log.info("Remapping {} file...", this.minecraftJarName);
+                this.remapper.remap(this.jarPath, this.mappingsPath, this.remappedJar);
+            } else {
+                log.info("{} already remapped... skipping mapping.", this.mappedJarName);
+            }
         }
     }
 
     public void decompileJar() throws IOException {
-        final long start = System.currentTimeMillis();
-        log.info("Decompiling final JAR file.");
-        this.handleGui(gui -> {
-            gui.updateStatusBox("Decompiling... This will take a while!");
-            gui.updateButton("Decompiling...", Color.BLUE);
-        });
+        try (DurationTracker ignored =
+                new DurationTracker(duration -> log.info("Decompiling completed in {}!", duration))) {
+            log.info("Decompiling final JAR file.");
+            this.handleGui(gui -> {
+                gui.updateStatusBox("Decompiling... This will take a while!");
+                gui.updateButton("Decompiling...", Color.BLUE);
+            });
 
-        final Path decompileDir = this.dataFolderPath.resolve("final-decompile");
-        Files.createDirectories(decompileDir);
+            final Path decompileDir = this.dataFolderPath.resolve("final-decompile");
+            Files.createDirectories(decompileDir);
 
-        final String cleanJarName = this.remappedJar.getFileName().toString().replace(".jar", "");
-        final Path decompileJarDir = decompileDir.resolve(cleanJarName);
-        FileUtil.remove(decompileJarDir);
-        Files.createDirectories(decompileJarDir);
+            final String cleanJarName =
+                    this.remappedJar.getFileName().toString().replace(".jar", "");
+            final Path decompileJarDir = decompileDir.resolve(cleanJarName);
+            FileUtil.remove(decompileJarDir);
+            Files.createDirectories(decompileJarDir);
 
-        this.decompiler.decompile(this.remappedJar, decompileJarDir);
+            this.decompiler.decompile(this.remappedJar, decompileJarDir);
 
-        // Pack the decompiled files into a zip file
-        final Path zipFilePath = decompileDir.resolve(Path.of(cleanJarName + ".zip"));
-        log.info("Packing decompiled files into {}", zipFilePath);
-        FileUtil.remove(zipFilePath);
-        FileUtil.zip(decompileJarDir, zipFilePath);
-
-        final TimeStamp timeStamp = TimeStamp.fromNow(start);
-        log.info("Decompiling completed in {}!", timeStamp);
+            // Pack the decompiled files into a zip file
+            final Path zipFilePath = decompileDir.resolve(Path.of(cleanJarName + ".zip"));
+            log.info("Packing decompiled files into {}", zipFilePath);
+            FileUtil.remove(zipFilePath);
+            FileUtil.zip(decompileJarDir, zipFilePath);
+        }
     }
 
     private void cleanup() {
