@@ -7,11 +7,12 @@ import com.shanebeestudios.mcdeop.VersionManager;
 import com.shanebeestudios.mcdeop.launchermeta.data.release.ReleaseManifest;
 import com.shanebeestudios.mcdeop.launchermeta.data.version.Version;
 import com.shanebeestudios.mcdeop.util.Util;
+import mx.kenzie.mirror.Mirror;
+
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
-import javax.swing.*;
-import mx.kenzie.mirror.Mirror;
 
 @SuppressWarnings({"SameParameterValue", "unchecked", "rawtypes", "FieldCanBeLocal"})
 public class App extends JFrame {
@@ -224,8 +225,7 @@ public class App extends JFrame {
         final Thread thread = new Thread("Processor") {
             @Override
             public void run() {
-                final Processor processor = new Processor(request, shouldDecompile, app);
-                processor.init();
+                Processor.runProcessor(request, shouldDecompile, app);
             }
         };
         thread.start();

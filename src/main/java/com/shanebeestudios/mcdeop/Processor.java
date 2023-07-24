@@ -5,25 +5,65 @@ import com.shanebeestudios.mcdeop.util.FileUtil;
 import com.shanebeestudios.mcdeop.util.TimeStamp;
 import com.shanebeestudios.mcdeop.util.Util;
 import io.github.lxgaming.reconstruct.common.Reconstruct;
+import io.github.lxgaming.reconstruct.common.manager.TransformerManager;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.java.decompiler.main.decompiler.ConsoleDecompiler;
 
 import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Set;
 import java.util.function.Consumer;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
-// TODO: Reconstruct breaks after the first run.
 @SuppressWarnings("ResultOfMethodCallIgnored")
 @Slf4j
 public class Processor {
+    /**
+     * {@link Reconstruct} breaks if you run it multiple times because all the transformers are cached with the first config every initialized.
+     * This is a nasty hack to clear the static fields in {@link TransformerManager} so that we can run it multiple times.
+     */
+    @SneakyThrows
+    private static void fixReconstruct() {
+        log.debug("Fix Reconstruct");
+        final Class<TransformerManager> affectedClass = TransformerManager.class;
+        final Field[] declaredFields = affectedClass.getDeclaredFields();
+        for (final Field field : declaredFields) {
+            if (!Modifier.isStatic(field.getModifiers())) {
+                continue;
+            }
+
+            field.setAccessible(true);
+            final Object fieldObject = field.get(affectedClass);
+            if (fieldObject instanceof Set) {
+                log.debug("Clear Set field in Reconstruct: {}", field.getName());
+                ((Set<?>) fieldObject).clear();
+            }
+        }
+    }
+
+    public static void runProcessor(final ResourceRequest version, final boolean decompile, final App app) {
+        try {
+            fixReconstruct();
+
+            final Processor processor = new Processor(version, decompile, app);
+            processor.init();
+        } catch (final Exception e) {
+            log.error("Failed to run processor", e);
+        } finally {
+            Util.forceGC();
+        }
+    }
+
     private final ResourceRequest version;
     private final boolean decompile;
     private final App app;
@@ -40,7 +80,7 @@ public class Processor {
 
     private final Path dataFolderPath;
 
-    public Processor(final ResourceRequest version, final boolean decompile, final App app) {
+    private Processor(final ResourceRequest version, final boolean decompile, final App app) {
         this.version = version;
         this.app = app;
         if (Util.isRunningMacOS()) {
@@ -100,7 +140,6 @@ public class Processor {
                     this.version.getVersion().getId());
             this.handleGui(gui -> gui.updateStatusBox("Failed to find JAR URL for version " + this.version.getType()
                     + "-" + this.version.getVersion().getId()));
-            this.cleanup();
             return;
         }
 
@@ -111,7 +150,6 @@ public class Processor {
                     this.version.getVersion().getId());
             this.handleGui(gui -> gui.updateStatusBox("Failed to find mappings URL for version "
                     + this.version.getType() + "-" + this.version.getVersion().getId()));
-            this.cleanup();
             return;
         }
 
@@ -125,7 +163,6 @@ public class Processor {
             if (this.decompile) {
                 this.decompileJar();
             }
-            this.cleanup();
 
             final TimeStamp timeStamp = TimeStamp.fromNow(start);
             log.info("Completed in {}!", timeStamp);
@@ -238,17 +275,5 @@ public class Processor {
 
         final TimeStamp timeStamp = TimeStamp.fromNow(start);
         log.info("Decompiling completed in {}!", timeStamp);
-    }
-
-    private void cleanup() {
-        // TODO: Re-implement better cleanup system
-        /*
-        this.jarPath = null;
-        this.mappingsPath = null;
-        this.remappedJar = null;
-        this.reconstruct = null;
-        System.gc();
-
-         */
     }
 }

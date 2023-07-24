@@ -3,11 +3,12 @@ package com.shanebeestudios.mcdeop;
 import com.shanebeestudios.mcdeop.app.App;
 import com.shanebeestudios.mcdeop.launchermeta.data.version.Version;
 import com.shanebeestudios.mcdeop.util.Util;
-import java.io.IOException;
-import javax.swing.*;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import lombok.extern.slf4j.Slf4j;
+
+import javax.swing.*;
+import java.io.IOException;
 
 @Slf4j
 public class McDeob {
@@ -99,12 +100,8 @@ public class McDeob {
                 .ifPresentOrElse(
                         request -> {
                             final boolean decompile = options.has("decompile");
-                            final Thread processorThread = new Thread(
-                                    () -> {
-                                        final Processor processor = new Processor(request, decompile, null);
-                                        processor.init();
-                                    },
-                                    "Processor");
+                            final Thread processorThread =
+                                    new Thread(() -> Processor.runProcessor(request, decompile, null), "Processor");
                             processorThread.start();
                         },
                         () -> {
