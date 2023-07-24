@@ -1,13 +1,13 @@
 package com.shanebeestudios.mcdeop;
 
-import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
-
 import com.shanebeestudios.mcdeop.app.App;
 import com.shanebeestudios.mcdeop.util.FileUtil;
 import com.shanebeestudios.mcdeop.util.Logger;
 import com.shanebeestudios.mcdeop.util.TimeStamp;
 import com.shanebeestudios.mcdeop.util.Util;
 import io.github.lxgaming.reconstruct.common.Reconstruct;
+import org.jetbrains.java.decompiler.main.decompiler.ConsoleDecompiler;
+
 import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,7 +16,9 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import org.jetbrains.java.decompiler.main.decompiler.ConsoleDecompiler;
+import java.util.function.Consumer;
+
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 // TODO: Reconstruct breaks after the first run.
 @SuppressWarnings("ResultOfMethodCallIgnored")
@@ -83,15 +85,19 @@ public class Processor {
         return new Reconstruct(config);
     }
 
+    private void handleGui(final Consumer<App> guiConsumer) {
+        if (this.app != null) {
+            guiConsumer.accept(this.app);
+        }
+    }
+
     public void init() {
         if (this.jarUrl == null) {
             Logger.error(
                     "Failed to find JAR URL for version %s-%s",
                     this.version.getType(), this.version.getVersion().getId());
-            if (this.app != null) {
-                this.app.updateStatusBox("Failed to find JAR URL for version " + this.version.getType() + "-"
-                        + this.version.getVersion().getId());
-            }
+            this.handleGui(gui -> gui.updateStatusBox("Failed to find JAR URL for version " + this.version.getType()
+                    + "-" + this.version.getVersion().getId()));
             this.cleanup();
             return;
         }
@@ -100,19 +106,15 @@ public class Processor {
             Logger.error(
                     "Failed to find mappings URL for version %s-%s",
                     this.version.getType(), this.version.getVersion().getId());
-            if (this.app != null) {
-                this.app.updateStatusBox("Failed to find mappings URL for version " + this.version.getType() + "-"
-                        + this.version.getVersion().getId());
-            }
+            this.handleGui(gui -> gui.updateStatusBox("Failed to find mappings URL for version "
+                    + this.version.getType() + "-" + this.version.getVersion().getId()));
             this.cleanup();
             return;
         }
 
         try {
             final long start = System.currentTimeMillis();
-            if (this.app != null) {
-                this.app.toggleControls();
-            }
+            this.handleGui(App::toggleControls);
 
             this.downloadJar();
             this.downloadMappings();
@@ -124,26 +126,25 @@ public class Processor {
 
             final TimeStamp timeStamp = TimeStamp.fromNow(start);
             Logger.info("Completed in %s!", timeStamp);
-            if (this.app != null) {
-                this.app.updateStatusBox(String.format("Completed in %s!", timeStamp));
-                this.app.updateButton("Start!");
-            }
+            this.handleGui(gui -> {
+                gui.updateStatusBox(String.format("Completed in %s!", timeStamp));
+                gui.updateButton("Start!");
+            });
+
         } catch (final IOException e) {
             e.printStackTrace();
         } finally {
-            if (this.app != null) {
-                this.app.toggleControls();
-            }
+            this.handleGui(App::toggleControls);
         }
     }
 
     public void downloadJar() throws IOException {
         final long start = System.currentTimeMillis();
         Logger.info("Downloading JAR file from Mojang.");
-        if (this.app != null) {
-            this.app.updateStatusBox("Downloading JAR...");
-            this.app.updateButton("Downloading JAR...", Color.BLUE);
-        }
+        this.handleGui(gui -> {
+            gui.updateStatusBox("Downloading JAR...");
+            gui.updateButton("Downloading JAR...", Color.BLUE);
+        });
 
         final HttpURLConnection connection = (HttpURLConnection) this.jarUrl.openConnection();
         final long length = connection.getContentLengthLong();
@@ -162,10 +163,11 @@ public class Processor {
     public void downloadMappings() throws IOException {
         final long start = System.currentTimeMillis();
         Logger.info("Downloading mappings file from Mojang...");
-        if (this.app != null) {
-            this.app.updateStatusBox("Downloading mappings...");
-            this.app.updateButton("Downloading mappings...", Color.BLUE);
-        }
+        this.handleGui(gui -> {
+            gui.updateStatusBox("Downloading mappings...");
+            gui.updateButton("Downloading mappings...", Color.BLUE);
+        });
+
         final HttpURLConnection connection = (HttpURLConnection) this.mappingsUrl.openConnection();
         final long length = connection.getContentLengthLong();
         if (Files.exists(this.mappingsPath) && Files.size(this.mappingsPath) == length) {
@@ -182,10 +184,10 @@ public class Processor {
 
     public void remapJar() {
         final long start = System.currentTimeMillis();
-        if (this.app != null) {
-            this.app.updateStatusBox("Remapping...");
-            this.app.updateButton("Remapping...", Color.BLUE);
-        }
+        this.handleGui(gui -> {
+            gui.updateStatusBox("Remapping...");
+            gui.updateButton("Remapping...", Color.BLUE);
+        });
 
         if (!Files.exists(this.remappedJar)) {
             Logger.info("Remapping %s file...", this.minecraftJarName);
@@ -201,10 +203,11 @@ public class Processor {
     public void decompileJar() throws IOException {
         final long start = System.currentTimeMillis();
         Logger.info("Decompiling final JAR file.");
-        if (this.app != null) {
-            this.app.updateStatusBox("Decompiling... This will take a while!");
-            this.app.updateButton("Decompiling...", Color.BLUE);
-        }
+        this.handleGui(gui -> {
+            gui.updateStatusBox("Decompiling... This will take a while!");
+            gui.updateButton("Decompiling...", Color.BLUE);
+        });
+
         final Path decompileDir = this.dataFolderPath.resolve("final-decompile");
         Files.createDirectories(decompileDir);
 
