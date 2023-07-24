@@ -1,7 +1,5 @@
 package com.shanebeestudios.mcdeop.processor;
 
-import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
-
 import com.shanebeestudios.mcdeop.app.App;
 import com.shanebeestudios.mcdeop.processor.decompiler.Decompiler;
 import com.shanebeestudios.mcdeop.processor.decompiler.VineflowerDecompiler;
@@ -9,17 +7,23 @@ import com.shanebeestudios.mcdeop.processor.remapper.ReconstructRemapper;
 import com.shanebeestudios.mcdeop.processor.remapper.Remapper;
 import com.shanebeestudios.mcdeop.util.DurationTracker;
 import com.shanebeestudios.mcdeop.util.FileUtil;
+import com.shanebeestudios.mcdeop.util.RequestUtil;
 import com.shanebeestudios.mcdeop.util.Util;
+import lombok.extern.slf4j.Slf4j;
+import okhttp3.Request;
+import okhttp3.Response;
+import okio.BufferedSink;
+import okio.Okio;
+
 import java.awt.*;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 import java.util.function.Consumer;
-import lombok.extern.slf4j.Slf4j;
 
 @SuppressWarnings("ResultOfMethodCallIgnored")
 @Slf4j
@@ -98,6 +102,31 @@ public class Processor {
         }
     }
 
+    private void downloadFile(final URL url, final Path path, final String fileType) throws IOException {
+        try (DurationTracker ignored = new DurationTracker(
+                duration -> log.info("Successfully downloaded {} file in {}!", fileType, duration))) {
+            log.info("Downloading {} file from Mojang...", fileType);
+            final Request request = new Request.Builder().url(url).build();
+
+            try (Response response = RequestUtil.CLIENT.newCall(request).execute()) {
+                if (response.body() == null) {
+                    throw new IOException("Response body was null");
+                }
+
+                final long length = response.body().contentLength();
+                if (Files.exists(path) && Files.size(path) == length) {
+                    log.info("Already have {}, skipping download.", path.getFileName());
+                    return;
+                }
+
+                FileUtil.remove(path);
+                try (BufferedSink sink = Okio.buffer(Okio.sink(path))) {
+                    sink.writeAll(response.body().source());
+                }
+            }
+        }
+    }
+
     public void init() {
         if (this.jarUrl == null) {
             log.error(
@@ -128,8 +157,13 @@ public class Processor {
         })) {
             this.handleGui(App::toggleControls);
 
-            this.downloadJar();
-            this.downloadMappings();
+            // Download the JAR and mappings files
+            this.handleGui(gui -> {
+                gui.updateStatusBox("Downloading JAR & MAPPINGS...");
+                gui.updateButton("Downloading JAR & MAPPINGS...", Color.BLUE);
+            });
+            CompletableFuture.allOf(this.downloadJar(), this.downloadMappings()).join();
+
             this.remapJar();
             if (this.decompile) {
                 this.decompileJar();
@@ -142,46 +176,28 @@ public class Processor {
         }
     }
 
-    public void downloadJar() throws IOException {
-        try (DurationTracker ignored =
-                new DurationTracker(duration -> log.info("Successfully downloaded JAR file in {}!", duration))) {
-            log.info("Downloading JAR file from Mojang.");
-            this.handleGui(gui -> {
-                gui.updateStatusBox("Downloading JAR...");
-                gui.updateButton("Downloading JAR...", Color.BLUE);
-            });
-
-            final HttpURLConnection connection = (HttpURLConnection) this.jarUrl.openConnection();
-            final long length = connection.getContentLengthLong();
-            if (Files.exists(this.jarPath) && Files.size(this.jarPath) == length) {
-                log.info("Already have JAR, skipping download.");
-            } else {
-                try (final InputStream inputStream = connection.getInputStream()) {
-                    Files.copy(inputStream, this.jarPath, REPLACE_EXISTING);
-                }
+    public CompletableFuture<Void> downloadJar() {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                this.downloadFile(this.jarUrl, this.jarPath, "JAR");
+            } catch (final IOException e) {
+                throw new CompletionException(e);
             }
-        }
+
+            return null;
+        });
     }
 
-    public void downloadMappings() throws IOException {
-        try (DurationTracker ignored =
-                new DurationTracker(duration -> log.info("Successfully downloaded mappings file in {}!", duration))) {
-            log.info("Downloading mappings file from Mojang...");
-            this.handleGui(gui -> {
-                gui.updateStatusBox("Downloading mappings...");
-                gui.updateButton("Downloading mappings...", Color.BLUE);
-            });
-
-            final HttpURLConnection connection = (HttpURLConnection) this.mappingsUrl.openConnection();
-            final long length = connection.getContentLengthLong();
-            if (Files.exists(this.mappingsPath) && Files.size(this.mappingsPath) == length) {
-                log.info("Already have mappings, skipping download.");
-            } else {
-                try (final InputStream inputStream = connection.getInputStream()) {
-                    Files.copy(inputStream, this.mappingsPath, REPLACE_EXISTING);
-                }
+    public CompletableFuture<Void> downloadMappings() {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                this.downloadFile(this.mappingsUrl, this.mappingsPath, "mappings");
+            } catch (final IOException e) {
+                throw new CompletionException(e);
             }
-        }
+
+            return null;
+        });
     }
 
     public void remapJar() {

@@ -7,25 +7,18 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.shanebeestudios.mcdeop.launchermeta.data.release.ReleaseManifest;
 import com.shanebeestudios.mcdeop.launchermeta.data.version.Version;
 import com.shanebeestudios.mcdeop.launchermeta.data.version.VersionManifest;
+import com.shanebeestudios.mcdeop.util.RequestUtil;
+import okhttp3.Call;
+import okhttp3.Request;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
+
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import okhttp3.*;
 
 public class LauncherMetaManager {
     private static final String VERSION_MANIFEST_URL = "https://launchermeta.mojang.com/mc/game/version_manifest.json";
-
-    private final OkHttpClient client = new OkHttpClient.Builder()
-            .addInterceptor(chain -> {
-                Request originalRequest = chain.request();
-                Request requestWithUserAgent = originalRequest
-                        .newBuilder()
-                        .header("User-Agent", "McDeob")
-                        .build();
-
-                return chain.proceed(requestWithUserAgent);
-            })
-            .build();
 
     private final ObjectMapper objectMapper = JsonMapper.builder()
             .addModule(new JavaTimeModule())
@@ -45,7 +38,7 @@ public class LauncherMetaManager {
     private <T> T get(final URL url, final Class<T> clazz) throws IOException {
         final Request request = new Request.Builder().url(url).build();
 
-        final Call call = this.client.newCall(request);
+        final Call call = RequestUtil.CLIENT.newCall(request);
         try (Response response = call.execute()) {
             final ResponseBody body = response.body();
             if (body == null) {
