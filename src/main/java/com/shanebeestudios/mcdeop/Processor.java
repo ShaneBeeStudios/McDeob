@@ -2,10 +2,10 @@ package com.shanebeestudios.mcdeop;
 
 import com.shanebeestudios.mcdeop.app.App;
 import com.shanebeestudios.mcdeop.util.FileUtil;
-import com.shanebeestudios.mcdeop.util.Logger;
 import com.shanebeestudios.mcdeop.util.TimeStamp;
 import com.shanebeestudios.mcdeop.util.Util;
 import io.github.lxgaming.reconstruct.common.Reconstruct;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.java.decompiler.main.decompiler.ConsoleDecompiler;
 
 import java.awt.*;
@@ -22,6 +22,7 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 // TODO: Reconstruct breaks after the first run.
 @SuppressWarnings("ResultOfMethodCallIgnored")
+@Slf4j
 public class Processor {
     private final ResourceRequest version;
     private final boolean decompile;
@@ -93,9 +94,10 @@ public class Processor {
 
     public void init() {
         if (this.jarUrl == null) {
-            Logger.error(
-                    "Failed to find JAR URL for version %s-%s",
-                    this.version.getType(), this.version.getVersion().getId());
+            log.error(
+                    "Failed to find JAR URL for version {}-{}",
+                    this.version.getType(),
+                    this.version.getVersion().getId());
             this.handleGui(gui -> gui.updateStatusBox("Failed to find JAR URL for version " + this.version.getType()
                     + "-" + this.version.getVersion().getId()));
             this.cleanup();
@@ -103,9 +105,10 @@ public class Processor {
         }
 
         if (this.mappingsUrl == null) {
-            Logger.error(
-                    "Failed to find mappings URL for version %s-%s",
-                    this.version.getType(), this.version.getVersion().getId());
+            log.error(
+                    "Failed to find mappings URL for version {}-{}",
+                    this.version.getType(),
+                    this.version.getVersion().getId());
             this.handleGui(gui -> gui.updateStatusBox("Failed to find mappings URL for version "
                     + this.version.getType() + "-" + this.version.getVersion().getId()));
             this.cleanup();
@@ -125,7 +128,7 @@ public class Processor {
             this.cleanup();
 
             final TimeStamp timeStamp = TimeStamp.fromNow(start);
-            Logger.info("Completed in %s!", timeStamp);
+            log.info("Completed in {}!", timeStamp);
             this.handleGui(gui -> {
                 gui.updateStatusBox(String.format("Completed in %s!", timeStamp));
                 gui.updateButton("Start!");
@@ -140,7 +143,7 @@ public class Processor {
 
     public void downloadJar() throws IOException {
         final long start = System.currentTimeMillis();
-        Logger.info("Downloading JAR file from Mojang.");
+        log.info("Downloading JAR file from Mojang.");
         this.handleGui(gui -> {
             gui.updateStatusBox("Downloading JAR...");
             gui.updateButton("Downloading JAR...", Color.BLUE);
@@ -149,7 +152,7 @@ public class Processor {
         final HttpURLConnection connection = (HttpURLConnection) this.jarUrl.openConnection();
         final long length = connection.getContentLengthLong();
         if (Files.exists(this.jarPath) && Files.size(this.jarPath) == length) {
-            Logger.info("Already have JAR, skipping download.");
+            log.info("Already have JAR, skipping download.");
         } else {
             try (final InputStream inputStream = connection.getInputStream()) {
                 Files.copy(inputStream, this.jarPath, REPLACE_EXISTING);
@@ -157,12 +160,12 @@ public class Processor {
         }
 
         final TimeStamp timeStamp = TimeStamp.fromNow(start);
-        Logger.info("Successfully downloaded JAR file in %s!", timeStamp);
+        log.info("Successfully downloaded JAR file in {}!", timeStamp);
     }
 
     public void downloadMappings() throws IOException {
         final long start = System.currentTimeMillis();
-        Logger.info("Downloading mappings file from Mojang...");
+        log.info("Downloading mappings file from Mojang...");
         this.handleGui(gui -> {
             gui.updateStatusBox("Downloading mappings...");
             gui.updateButton("Downloading mappings...", Color.BLUE);
@@ -171,7 +174,7 @@ public class Processor {
         final HttpURLConnection connection = (HttpURLConnection) this.mappingsUrl.openConnection();
         final long length = connection.getContentLengthLong();
         if (Files.exists(this.mappingsPath) && Files.size(this.mappingsPath) == length) {
-            Logger.info("Already have mappings, skipping download.");
+            log.info("Already have mappings, skipping download.");
         } else {
             try (final InputStream inputStream = connection.getInputStream()) {
                 Files.copy(inputStream, this.mappingsPath, REPLACE_EXISTING);
@@ -179,7 +182,7 @@ public class Processor {
         }
 
         final TimeStamp timeStamp = TimeStamp.fromNow(start);
-        Logger.info("Successfully downloaded mappings file in %s!", timeStamp);
+        log.info("Successfully downloaded mappings file in {}!", timeStamp);
     }
 
     public void remapJar() {
@@ -190,19 +193,19 @@ public class Processor {
         });
 
         if (!Files.exists(this.remappedJar)) {
-            Logger.info("Remapping %s file...", this.minecraftJarName);
+            log.info("Remapping {} file...", this.minecraftJarName);
             this.reconstruct.load();
 
             final TimeStamp timeStamp = TimeStamp.fromNow(start);
-            Logger.info("Remapping completed in %s!", timeStamp);
+            log.info("Remapping completed in {}!", timeStamp);
         } else {
-            Logger.info("%s already remapped... skipping mapping.", this.mappedJarName);
+            log.info("{} already remapped... skipping mapping.", this.mappedJarName);
         }
     }
 
     public void decompileJar() throws IOException {
         final long start = System.currentTimeMillis();
-        Logger.info("Decompiling final JAR file.");
+        log.info("Decompiling final JAR file.");
         this.handleGui(gui -> {
             gui.updateStatusBox("Decompiling... This will take a while!");
             gui.updateButton("Decompiling...", Color.BLUE);
@@ -229,12 +232,12 @@ public class Processor {
 
         // Pack the decompiled files into a zip file
         final Path zipFilePath = decompileDir.resolve(Path.of(cleanJarName + ".zip"));
-        Logger.info("Packing decompiled files into %s", zipFilePath);
+        log.info("Packing decompiled files into {}", zipFilePath);
         FileUtil.remove(zipFilePath);
         FileUtil.zip(decompileJarDir, zipFilePath);
 
         final TimeStamp timeStamp = TimeStamp.fromNow(start);
-        Logger.info("Decompiling completed in %s!", timeStamp);
+        log.info("Decompiling completed in {}!", timeStamp);
     }
 
     private void cleanup() {

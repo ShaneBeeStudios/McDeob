@@ -7,11 +7,10 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.shanebeestudios.mcdeop.launchermeta.data.release.ReleaseManifest;
 import com.shanebeestudios.mcdeop.launchermeta.data.version.Version;
 import com.shanebeestudios.mcdeop.launchermeta.data.version.VersionManifest;
-import okhttp3.*;
-
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import okhttp3.*;
 
 public class LauncherMetaManager {
     private static final String VERSION_MANIFEST_URL = "https://launchermeta.mojang.com/mc/game/version_manifest.json";

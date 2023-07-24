@@ -2,14 +2,14 @@ package com.shanebeestudios.mcdeop;
 
 import com.shanebeestudios.mcdeop.app.App;
 import com.shanebeestudios.mcdeop.launchermeta.data.version.Version;
-import com.shanebeestudios.mcdeop.util.Logger;
 import com.shanebeestudios.mcdeop.util.Util;
 import java.io.IOException;
 import javax.swing.*;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
+import lombok.extern.slf4j.Slf4j;
 
-// TODO: RECONSTRUCT SOURCE INTO A CORRECT PROJECT WITH RESOURCE FILES + A LIBS FOLDER
+@Slf4j
 public class McDeob {
 
     public static void main(final String[] args) {
@@ -63,12 +63,12 @@ public class McDeob {
         }
 
         if (!options.has("version")) {
-            Logger.error("No version specified, shutting down...");
+            log.error("No version specified, shutting down...");
             System.exit(1);
         }
 
         if (!options.has("type")) {
-            Logger.error("No type specified, shutting down...");
+            log.error("No type specified, shutting down...");
             System.exit(1);
         }
 
@@ -79,7 +79,7 @@ public class McDeob {
         try {
             type = SourceType.valueOf(typeString.toUpperCase());
         } catch (final IllegalArgumentException e) {
-            Logger.error("Invalid type specified, shutting down...");
+            log.error("Invalid type specified, shutting down...");
             System.exit(1);
             return;
         }
@@ -90,7 +90,7 @@ public class McDeob {
                     try {
                         return VersionManager.getInstance().getReleaseManifest(version);
                     } catch (final IOException e) {
-                        Logger.error("Failed to fetch release manifest", e);
+                        log.error("Failed to fetch release manifest", e);
                     }
 
                     return null;
@@ -108,7 +108,7 @@ public class McDeob {
                             processorThread.start();
                         },
                         () -> {
-                            Logger.error("Invalid or unsupported version was specified, shutting down...");
+                            log.error("Invalid or unsupported version was specified, shutting down...");
                             System.exit(1);
                         });
     }

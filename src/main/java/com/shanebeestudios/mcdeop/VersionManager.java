@@ -4,9 +4,6 @@ import com.shanebeestudios.mcdeop.launchermeta.LauncherMetaManager;
 import com.shanebeestudios.mcdeop.launchermeta.data.release.ReleaseManifest;
 import com.shanebeestudios.mcdeop.launchermeta.data.version.Version;
 import com.shanebeestudios.mcdeop.launchermeta.data.version.VersionType;
-import com.shanebeestudios.mcdeop.util.Logger;
-import lombok.NoArgsConstructor;
-
 import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
@@ -14,8 +11,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
+import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @NoArgsConstructor(access = lombok.AccessLevel.PRIVATE)
+@Slf4j
 public class VersionManager {
     private static final OffsetDateTime MINIMUM_RELEASE_TIME = OffsetDateTime.parse("2019-08-28T15:00:00Z");
     private static final Set<String> SPECIAL_VERSIONS = Set.of("1.14.4");
@@ -44,7 +44,7 @@ public class VersionManager {
         try {
             versions = this.launcherMetaManager.getVersionManifest().getVersions();
         } catch (final IOException e) {
-            Logger.error("Failed to fetch version manifest", e);
+            log.error("Failed to fetch version manifest", e);
             return;
         }
 
