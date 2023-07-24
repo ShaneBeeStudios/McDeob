@@ -30,6 +30,7 @@ jobs:
           distribution: 'temurin'
           cache: maven
       - name: Build with Maven
+        if: ${{ steps.release.outputs.release_created }}
         run: mvn -B package --file pom.xml
       - name: Upload Release Artifact
         if: ${{ steps.release.outputs.release_created }}
