@@ -1,13 +1,11 @@
-package com.shanebeestudios.mcdeop;
+package com.shanebeestudios.mcdeop.processor;
 
 import io.github.lxgaming.reconstruct.common.configuration.Config;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 public class ReconConfig implements Config {
-
     private int threads = Runtime.getRuntime().availableProcessors();
     Path input;
     Path output;
@@ -29,7 +27,7 @@ public class ReconConfig implements Config {
     }
 
     @Override
-    public void setThreads(int threads) {
+    public void setThreads(final int threads) {
         this.threads = threads;
     }
 
@@ -40,43 +38,36 @@ public class ReconConfig implements Config {
 
     @Override
     public Path getInputPath() {
-        return input;
+        return this.input;
     }
 
     @Override
-    public void setInputPath(Path inputPath) {
+    public void setInputPath(final Path inputPath) {
         this.input = inputPath;
     }
 
     @Override
     public Path getMappingPath() {
-        return map;
+        return this.map;
     }
 
     @Override
-    public void setMappingPath(Path mappingPath) {
+    public void setMappingPath(final Path mappingPath) {
         this.map = mappingPath;
     }
 
     @Override
     public Path getOutputPath() {
-        return output;
+        return this.output;
     }
 
     @Override
-    public void setOutputPath(Path outputPath) {
+    public void setOutputPath(final Path outputPath) {
         this.output = outputPath;
     }
 
     @Override
     public Collection<String> getExcludedPackages() {
-        List<String> exclude = new ArrayList<>();
-        exclude.add("com.google.");
-        exclude.add("io.netty.");
-        exclude.add("it.unimi.dsi.fastutil.");
-        exclude.add("javax.");
-        exclude.add("joptsimple.");
-        exclude.add("org.apache.");
-        return exclude;
+        return List.of("com.google.", "io.netty.", "it.unimi.dsi.fastutil.", "javax.", "joptsimple.", "org.apache.");
     }
 }

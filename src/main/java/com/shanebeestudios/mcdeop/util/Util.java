@@ -1,9 +1,8 @@
 package com.shanebeestudios.mcdeop.util;
 
+import java.lang.ref.WeakReference;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-
-import java.lang.ref.WeakReference;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class Util {

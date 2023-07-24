@@ -1,26 +1,23 @@
-package com.shanebeestudios.mcdeop;
+package com.shanebeestudios.mcdeop.processor;
 
 import com.shanebeestudios.mcdeop.app.App;
+import com.shanebeestudios.mcdeop.processor.decompiler.Decompiler;
+import com.shanebeestudios.mcdeop.processor.decompiler.VineflowerDecompiler;
+import com.shanebeestudios.mcdeop.processor.remapper.ReconstructRemapper;
+import com.shanebeestudios.mcdeop.processor.remapper.Remapper;
 import com.shanebeestudios.mcdeop.util.FileUtil;
 import com.shanebeestudios.mcdeop.util.TimeStamp;
 import com.shanebeestudios.mcdeop.util.Util;
-import io.github.lxgaming.reconstruct.common.Reconstruct;
-import io.github.lxgaming.reconstruct.common.manager.TransformerManager;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.java.decompiler.main.decompiler.ConsoleDecompiler;
 
 import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Set;
 import java.util.function.Consumer;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
@@ -28,35 +25,11 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 @SuppressWarnings("ResultOfMethodCallIgnored")
 @Slf4j
 public class Processor {
-    /**
-     * {@link Reconstruct} breaks if you run it multiple times because all the transformers are cached with the first config every initialized.
-     * This is a nasty hack to clear the static fields in {@link TransformerManager} so that we can run it multiple times.
-     */
-    @SneakyThrows
-    private static void fixReconstruct() {
-        log.debug("Fix Reconstruct");
-        final Class<TransformerManager> affectedClass = TransformerManager.class;
-        final Field[] declaredFields = affectedClass.getDeclaredFields();
-        for (final Field field : declaredFields) {
-            if (!Modifier.isStatic(field.getModifiers())) {
-                continue;
-            }
-
-            field.setAccessible(true);
-            final Object fieldObject = field.get(affectedClass);
-            if (fieldObject instanceof Set) {
-                log.debug("Clear Set field in Reconstruct: {}", field.getName());
-                ((Set<?>) fieldObject).clear();
-            }
-        }
-    }
-
     public static void runProcessor(final ResourceRequest version, final boolean decompile, final App app) {
         try {
-            fixReconstruct();
-
             final Processor processor = new Processor(version, decompile, app);
             processor.init();
+            processor.cleanup();
         } catch (final Exception e) {
             log.error("Failed to run processor", e);
         } finally {
@@ -68,7 +41,9 @@ public class Processor {
     private final boolean decompile;
     private final App app;
 
-    private final Reconstruct reconstruct;
+    private final Remapper remapper;
+    private final Decompiler decompiler;
+
     private final Path jarPath;
     private final Path mappingsPath;
     private final Path remappedJar;
@@ -113,17 +88,9 @@ public class Processor {
         this.jarUrl = version.getJar().orElse(null);
         this.mappingsUrl = version.getMappings().orElse(null);
         this.decompile = decompile;
-        this.reconstruct = this.createReconstruct();
-    }
 
-    private Reconstruct createReconstruct() {
-        final ReconConfig config = new ReconConfig();
-
-        config.setInputPath(this.jarPath.toAbsolutePath());
-        config.setMappingPath(this.mappingsPath.toAbsolutePath());
-        config.setOutputPath(this.remappedJar.toAbsolutePath());
-
-        return new Reconstruct(config);
+        this.remapper = new ReconstructRemapper();
+        this.decompiler = new VineflowerDecompiler();
     }
 
     private void handleGui(final Consumer<App> guiConsumer) {
@@ -231,7 +198,7 @@ public class Processor {
 
         if (!Files.exists(this.remappedJar)) {
             log.info("Remapping {} file...", this.minecraftJarName);
-            this.reconstruct.load();
+            this.remapper.remap(this.jarPath, this.mappingsPath, this.remappedJar);
 
             final TimeStamp timeStamp = TimeStamp.fromNow(start);
             log.info("Remapping completed in {}!", timeStamp);
@@ -256,16 +223,7 @@ public class Processor {
         FileUtil.remove(decompileJarDir);
         Files.createDirectories(decompileJarDir);
 
-        // Setup FernFlower to properly decompile the jar file
-        final String[] args = {
-            "-asc=1", // Encode non-ASCII characters in string and character literals as Unicode escapes
-            "-tcs=1", // Simplify boolean constants in ternary operations
-            "-jvn=1", // Use jad variable naming
-            this.remappedJar.toAbsolutePath().toString(),
-            decompileJarDir.toAbsolutePath().toString()
-        };
-
-        ConsoleDecompiler.main(args);
+        this.decompiler.decompile(this.remappedJar, decompileJarDir);
 
         // Pack the decompiled files into a zip file
         final Path zipFilePath = decompileDir.resolve(Path.of(cleanJarName + ".zip"));
@@ -275,5 +233,15 @@ public class Processor {
 
         final TimeStamp timeStamp = TimeStamp.fromNow(start);
         log.info("Decompiling completed in {}!", timeStamp);
+    }
+
+    private void cleanup() {
+        if (this.remapper != null && this.remapper instanceof final Cleanup cleanup) {
+            cleanup.cleanup();
+        }
+
+        if (this.decompiler != null && this.decompiler instanceof final Cleanup cleanup) {
+            cleanup.cleanup();
+        }
     }
 }

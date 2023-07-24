@@ -1,4 +1,4 @@
-package com.shanebeestudios.mcdeop;
+package com.shanebeestudios.mcdeop.processor;
 
 import com.shanebeestudios.mcdeop.launchermeta.data.release.DownloadInfo;
 import com.shanebeestudios.mcdeop.launchermeta.data.release.ReleaseManifest;

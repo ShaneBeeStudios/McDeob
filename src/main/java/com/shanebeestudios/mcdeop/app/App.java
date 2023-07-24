@@ -1,18 +1,17 @@
 package com.shanebeestudios.mcdeop.app;
 
-import com.shanebeestudios.mcdeop.Processor;
-import com.shanebeestudios.mcdeop.ResourceRequest;
-import com.shanebeestudios.mcdeop.SourceType;
 import com.shanebeestudios.mcdeop.VersionManager;
 import com.shanebeestudios.mcdeop.launchermeta.data.release.ReleaseManifest;
 import com.shanebeestudios.mcdeop.launchermeta.data.version.Version;
+import com.shanebeestudios.mcdeop.processor.Processor;
+import com.shanebeestudios.mcdeop.processor.ResourceRequest;
+import com.shanebeestudios.mcdeop.processor.SourceType;
 import com.shanebeestudios.mcdeop.util.Util;
-import mx.kenzie.mirror.Mirror;
-
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
+import javax.swing.*;
+import mx.kenzie.mirror.Mirror;
 
 @SuppressWarnings({"SameParameterValue", "unchecked", "rawtypes", "FieldCanBeLocal"})
 public class App extends JFrame {
