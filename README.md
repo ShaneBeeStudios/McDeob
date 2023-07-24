@@ -16,7 +16,7 @@ remapped/decompiled Minecraft code.
 ## Requirements
 
 - A computer
-- Java 16+
+- Java 17+
 - A few minutes of your time
 
 ## Running
