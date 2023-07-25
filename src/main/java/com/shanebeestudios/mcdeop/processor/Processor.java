@@ -15,7 +15,6 @@ import okhttp3.Response;
 import okio.BufferedSink;
 import okio.Okio;
 
-import java.awt.*;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
@@ -153,16 +152,13 @@ public class Processor {
             log.info("Completed in {}!", duration);
             this.handleGui(gui -> {
                 gui.updateStatusBox(String.format("Completed in %s!", duration));
-                gui.updateButton("Start!");
+                gui.getControlButton().reset();
             });
         })) {
             this.handleGui(App::toggleControls);
 
             // Download the JAR and mappings files
-            this.handleGui(gui -> {
-                gui.updateStatusBox("Downloading JAR & MAPPINGS...");
-                gui.updateButton("Downloading JAR & MAPPINGS...", Color.BLUE);
-            });
+            this.handleGui(gui -> gui.updateStatusBox("Downloading JAR & MAPPINGS..."));
             CompletableFuture.allOf(this.downloadJar(), this.downloadMappings()).join();
 
             if (this.options.isRemap()) {
@@ -207,10 +203,7 @@ public class Processor {
     public void remapJar() {
         try (DurationTracker ignored =
                 new DurationTracker(duration -> log.info("Remapping completed in {}!", duration))) {
-            this.handleGui(gui -> {
-                gui.updateStatusBox("Remapping...");
-                gui.updateButton("Remapping...", Color.BLUE);
-            });
+            this.handleGui(gui -> gui.updateStatusBox("Remapping..."));
 
             if (!Files.exists(this.remappedJar)) {
                 log.info("Remapping {} file...", this.jarPath.getFileName());
@@ -225,10 +218,7 @@ public class Processor {
         try (DurationTracker ignored =
                 new DurationTracker(duration -> log.info("Decompiling completed in {}!", duration))) {
             log.info("Decompiling final JAR file.");
-            this.handleGui(gui -> {
-                gui.updateStatusBox("Decompiling... This will take a while!");
-                gui.updateButton("Decompiling...", Color.BLUE);
-            });
+            this.handleGui(gui -> gui.updateStatusBox("Decompiling... This will take a while!"));
 
             final String cleanJarName = "decompiled";
             final Path decompileJarDir = this.dataFolderPath.resolve(cleanJarName);

@@ -6,15 +6,14 @@ import com.shanebeestudios.mcdeop.launchermeta.data.version.Version;
 import com.shanebeestudios.mcdeop.processor.Processor;
 import com.shanebeestudios.mcdeop.processor.ProcessorOptions;
 import com.shanebeestudios.mcdeop.processor.ResourceRequest;
-import lombok.Getter;
-import mx.kenzie.mirror.Mirror;
-
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.*;
+import lombok.Getter;
+import mx.kenzie.mirror.Mirror;
 
 @SuppressWarnings({"SameParameterValue", "unchecked", "rawtypes", "FieldCanBeLocal"})
 @Getter
@@ -34,7 +33,7 @@ public class App extends JFrame {
         return containers;
     }
 
-    private final JButton controlButton;
+    private final ControlButton controlButton;
     private final JRadioButton server;
     private final JRadioButton client;
     private final JCheckBox decompile;
@@ -108,22 +107,23 @@ public class App extends JFrame {
         this.statusBox.setText(string);
     }
 
-    public void updateButton(final String string) {
-        this.updateButton(string, Color.BLACK);
-    }
-
-    public void updateButton(final String string, final Color color) {
-        this.controlButton.setText(string);
-        this.controlButton.setForeground(color);
-    }
-
     public void toggleControls() {
         for (final Component component : this.getAllComponents()) {
+            if (component instanceof final JTextField field && !field.isEditable()) {
+                continue;
+            }
+
+            if (component instanceof JLabel) {
+                continue;
+            }
+
             component.setEnabled(!component.isEnabled());
         }
     }
 
     public void start(final ResourceRequest request, final boolean shouldDecompile) {
+        this.getControlButton().setReady(false);
+
         final App app = this;
         final Thread thread = new Thread("Processor") {
             @Override

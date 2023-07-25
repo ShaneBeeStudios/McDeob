@@ -7,22 +7,30 @@ import com.shanebeestudios.mcdeop.launchermeta.data.version.Version;
 import com.shanebeestudios.mcdeop.processor.ResourceRequest;
 import com.shanebeestudios.mcdeop.processor.SourceType;
 import com.shanebeestudios.mcdeop.util.Util;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.util.concurrent.Executors;
 
 public class ControlButton extends JButton implements DynamicDimension {
+    private static final String DEFAULT_TEXT = "Start!";
     private static final int WIDTH = 200;
     private static final int HEIGHT = 50;
 
     private final int heightDivided;
 
+    @Getter
+    @Setter
+    private boolean ready = true;
+
     public ControlButton(final App app) {
-        super("Start!");
+        super(DEFAULT_TEXT);
 
         if (Util.isRunningMacOS()) {
             this.heightDivided = HEIGHT / 2;
@@ -34,6 +42,12 @@ public class ControlButton extends JButton implements DynamicDimension {
         this.addActionListener(new StartButtonListener(app, this));
     }
 
+    public void reset() {
+        this.setText(DEFAULT_TEXT);
+        this.setForeground(Color.BLACK);
+        this.setReady(true);
+    }
+
     @Override
     public void updateDimension(final int newWidth, final int newHeight) {
         this.setBounds((newWidth / 2) - (WIDTH / 2), 180 + this.heightDivided, WIDTH, HEIGHT);
@@ -42,7 +56,7 @@ public class ControlButton extends JButton implements DynamicDimension {
     @RequiredArgsConstructor
     static class StartButtonListener implements ActionListener {
         private final App app;
-        private final JButton button;
+        private final ControlButton button;
 
         @Override
         public void actionPerformed(final ActionEvent e) {
@@ -50,38 +64,37 @@ public class ControlButton extends JButton implements DynamicDimension {
                 return;
             }
 
-            if (!this.button.getText().equalsIgnoreCase("Start!")) {
+            if (!this.button.isReady()) {
                 return;
             }
 
             final Version version = (Version) this.app.getVersionBox().getSelectedItem();
             if (version == null) {
-                this.app.updateButton("INVALID VERSION!", Color.RED);
+                this.app.updateStatusBox("INVALID VERSION!");
                 this.app.getToolkit().beep();
-                final Timer timer = new Timer(1000, e1 -> this.app.updateButton("Start!"));
-                timer.setRepeats(false);
-                timer.start();
+                Executors.newSingleThreadScheduledExecutor()
+                        .schedule(this.button::reset, 1, java.util.concurrent.TimeUnit.SECONDS);
                 return;
             }
 
             final SourceType type = this.app.getServer().isSelected() ? SourceType.SERVER : SourceType.CLIENT;
-            final boolean decomp = this.app.getDecompile().isSelected();
+            final boolean decompile = this.app.getDecompile().isSelected();
 
             final ReleaseManifest releaseManifest;
             try {
                 releaseManifest = VersionManager.getInstance().getReleaseManifest(version);
             } catch (final IOException ex) {
-                this.app.updateButton("FAILED TO FETCH RELEASE MANIFEST", Color.RED);
+                this.app.updateStatusBox("FAILED TO FETCH RELEASE MANIFEST");
                 this.app.getToolkit().beep();
-                final Timer timer = new Timer(1000, e1 -> this.app.updateButton("Start!"));
-                timer.setRepeats(false);
-                timer.start();
+                Executors.newSingleThreadScheduledExecutor()
+                        .schedule(this.button::reset, 1, java.util.concurrent.TimeUnit.SECONDS);
                 return;
             }
 
             final ResourceRequest resourceRequest = new ResourceRequest(releaseManifest, type);
-            this.app.updateButton("Starting...", Color.BLUE);
-            this.app.start(resourceRequest, decomp);
+            this.button.setText("Running...");
+            this.button.setForeground(Color.BLUE);
+            this.app.start(resourceRequest, decompile);
         }
     }
 }
