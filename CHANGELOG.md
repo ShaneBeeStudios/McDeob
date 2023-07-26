@@ -1,5 +1,18 @@
 # Changelog
 
+## [2.4.0](https://github.com/Timmi6790/McDeob/compare/2.3.0...2.4.0) (2023-07-26)
+
+
+### Features
+
+* add missing processor options into GUI ([df8ed28](https://github.com/Timmi6790/McDeob/commit/df8ed28100d34d7d523363a2fa3235879d7e7ecd))
+* add missing ProcessorOptions to command line ([1ab4e4b](https://github.com/Timmi6790/McDeob/commit/1ab4e4bd12b7a70b202083b876fb0599942ea9c5))
+
+
+### Bug Fixes
+
+* missing Serializable for ProcessorOptionsGroup ([977d6f1](https://github.com/Timmi6790/McDeob/commit/977d6f15c808711b56f1fcb05cfea8948d36d4d2))
+
 ## [2.3.0](https://github.com/Timmi6790/McDeob/compare/2.2.0...2.3.0) (2023-07-24)
 
 
