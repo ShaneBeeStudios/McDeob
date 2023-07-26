@@ -57,7 +57,9 @@ public class McDeob {
         parser.accepts("type", "What we should deobfuscate: client or server")
                 .withRequiredArg()
                 .ofType(String.class);
+        parser.accepts("remap", "Marks that we should remap the deobfuscated source");
         parser.accepts("decompile", "Marks that we should decompile the deobfuscated source");
+        parser.accepts("zip", "Marks that we should zip the decompiled source");
 
         final OptionSet options = parser.parse(args);
         if (options.has("help")) {
@@ -113,9 +115,13 @@ public class McDeob {
                 .map(manifest -> new ResourceRequest(manifest, type))
                 .ifPresentOrElse(
                         request -> {
+                            final boolean remap = options.has("remap");
                             final boolean decompile = options.has("decompile");
+                            final boolean zip = options.has("zip");
                             final ProcessorOptions processorOptions = ProcessorOptions.builder()
+                                    .remap(remap)
                                     .decompile(decompile)
+                                    .zipDecompileOutput(zip)
                                     .build();
 
                             final Thread processorThread = new Thread(
