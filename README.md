@@ -1,12 +1,10 @@
 # McDeob
 
-[![Java CI with Maven](https://github.com/ShaneBeeStudios/McDeob/workflows/Java%20CI%20with%20Maven/badge.svg)](https://github.com/ShaneBeeStudios/McDeob/actions)
-[![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/ShaneBeeStudios/McDeob?include_prereleases)](https://github.com/ShaneBeeStudios/McDeob/releases/latest)
-[![GitHub All Releases](https://img.shields.io/github/downloads/ShaneBeeStudios/McDeob/total)](https://github.com/ShaneBeeStudios/McDeob/releases)
-[![GitHub issues](https://img.shields.io/github/issues/ShaneBeeStudios/McDeob)](https://github.com/ShaneBeeStudios/McDeob/issues)
-![GitHub closed issues](https://img.shields.io/github/issues-closed/ShaneBeeStudios/McDeob)
-[![GitHub pull requests](https://img.shields.io/github/issues-pr/ShaneBeeStudios/McDeob)](https://github.com/ShaneBeeStudios/McDeob/pulls)
-[![GitHub](https://img.shields.io/github/license/ShaneBeeStudios/McDeob)](https://github.com/ShaneBeeStudios/McDeob/blob/master/LICENSE)
+[![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/Timmi6790/McDeob?include_prereleases)](https://github.com/Timmi6790/McDeob/releases/latest)
+[![GitHub issues](https://img.shields.io/github/issues/Timmi6790/McDeob)](https://github.com/Timmi6790/McDeob/issues)
+![GitHub closed issues](https://img.shields.io/github/issues-closed/Timmi6790/McDeob)
+[![GitHub pull requests](https://img.shields.io/github/issues-pr/Timmi6790/McDeob)](https://github.com/Timmi6790/McDeob/pulls)
+[![GitHub](https://img.shields.io/github/license/Timmi6790/McDeob)](https://github.com/Timmi6790/McDeob/blob/master/LICENSE)
 
 **McDeob** is a re-mapping and deobfuscation tool for Minecraft server/client jars.   
 This tool will download the appropriate Minecraft server/client jar along with the mappings for that version,
@@ -15,9 +13,20 @@ remapped/decompiled Minecraft code.
 
 ## Requirements
 
-- A computer
 - Java 17+
-- A few minutes of your time
+
+## Fork Notice
+
+I don't plan to PR this to the original repo, as I have adjusted the code for my personal needs.
+
+### Fork Changes
+
+* Add dynamic version fetching
+* Add all versions that have the mappings available
+* Add Remap and Zip options
+* Restructure saving structure
+* Replace Fernflower with Vineflower (Multithreaded support)
+* Random bug fixes the original author missed
 
 ## Running
 
@@ -42,7 +51,7 @@ That said, you may **NOT** upload the resulting files to something like GitHub.
 
 ## Preview
 
-![](https://i.imgur.com/eOSuIGr.png)
+![](https://i.imgur.com/aXFtkaI.png)
 
 ## Compiling
 
@@ -60,6 +69,5 @@ files) into usable .java files.
 
 ## License
 
-This tool shades in both [**Reconstruct by LXGaming**](https://github.com/LXGaming/Reconstruct) and [**Vineflower
-**](https://github.com/Vineflower/vineflower),
-please see their repos for the appropriate licenses.
+This tool shades in both [**Reconstruct by LXGaming**](https://github.com/LXGaming/Reconstruct) and
+[**Vineflower**](https://github.com/Vineflower/vineflower), please see their repos for the appropriate licenses.
