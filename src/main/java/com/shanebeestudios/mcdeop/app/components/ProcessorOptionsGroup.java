@@ -1,11 +1,17 @@
 package com.shanebeestudios.mcdeop.app.components;
 
 import com.shanebeestudios.mcdeop.processor.ProcessorOptions;
-import javax.swing.*;
 import lombok.Getter;
 
+import javax.swing.*;
+import java.io.Serial;
+import java.io.Serializable;
+
 @Getter
-public class ProcessorOptionsGroup {
+public class ProcessorOptionsGroup implements Serializable {
+    @Serial
+    private static final long serialVersionUID = -2361182126374526544L;
+
     private final JCheckBox remap;
     private final JCheckBox decompile;
     private final JCheckBox zipDecompileOutput;
