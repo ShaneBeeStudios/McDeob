@@ -2,12 +2,11 @@ package com.shanebeestudios.mcdeop.app.components;
 
 import com.shanebeestudios.mcdeop.VersionManager;
 import com.shanebeestudios.mcdeop.launchermeta.data.version.Version;
-
-import javax.swing.*;
 import java.awt.*;
 import java.util.Collection;
+import javax.swing.*;
 
-public class VersionBox extends JComboBox<Version> implements DynamicDimension {
+public class VersionBox extends JComboBox<Version> {
     public VersionBox() {
         this.setRenderer(new VersionRenderer());
 
@@ -21,11 +20,6 @@ public class VersionBox extends JComboBox<Version> implements DynamicDimension {
 
     private Collection<Version> getVersions() {
         return VersionManager.getInstance().getVersions();
-    }
-
-    @Override
-    public void updateDimension(final int newWidth, final int newHeight) {
-        this.setBounds((newWidth / 2) - this.getWidth() / 2, 95, this.getPreferredSize().width, 25);
     }
 
     private static class VersionRenderer extends DefaultListCellRenderer {

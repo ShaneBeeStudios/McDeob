@@ -1,26 +1,23 @@
 package com.shanebeestudios.mcdeop.app;
 
 import com.shanebeestudios.mcdeop.McDeob;
-import com.shanebeestudios.mcdeop.app.components.*;
+import com.shanebeestudios.mcdeop.app.components.ControlButton;
+import com.shanebeestudios.mcdeop.app.components.VersionBox;
 import com.shanebeestudios.mcdeop.launchermeta.data.version.Version;
 import com.shanebeestudios.mcdeop.processor.Processor;
 import com.shanebeestudios.mcdeop.processor.ProcessorOptions;
 import com.shanebeestudios.mcdeop.processor.ResourceRequest;
-import java.awt.*;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.util.ArrayList;
-import java.util.List;
-import javax.swing.*;
 import lombok.Getter;
 import mx.kenzie.mirror.Mirror;
+
+import javax.swing.*;
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @SuppressWarnings({"SameParameterValue", "unchecked", "rawtypes", "FieldCanBeLocal"})
 @Getter
 public class App extends JFrame {
-    private static final int DEFAULT_WIDTH = 500;
-    private static final int DEFAULT_HEIGHT = 335;
-
     public static java.util.List<Component> getAllComponents(final Container c) {
         final java.util.List<Component> containers = new ArrayList<>();
         final Component[] comps = c.getComponents();
@@ -33,6 +30,7 @@ public class App extends JFrame {
         return containers;
     }
 
+    private final JLabel titleLabel;
     private final ControlButton controlButton;
     private final JRadioButton server;
     private final JRadioButton client;
@@ -50,57 +48,71 @@ public class App extends JFrame {
             this.setIconImages(Icon.LOGO_IMAGES);
         }
 
-        this.setupWindow(DEFAULT_WIDTH, DEFAULT_HEIGHT);
-        this.addComponent(new TitleLabel());
+        this.titleLabel = new JLabel("Let's start de-obfuscating some Minecraft");
 
-        this.server = this.addComponent(new ServerVersionTypeButton());
-        this.client = this.addComponent(new ClientVersionTypeButton());
+        this.server = new JRadioButton("Server");
+        this.client = new JRadioButton("Client");
+        this.client.setSelected(true);
+
         final ButtonGroup versionTypeGroup = new ButtonGroup();
         versionTypeGroup.add(this.server);
         versionTypeGroup.add(this.client);
 
-        this.versionBox = this.addComponent(new VersionBox());
-        this.decompile = this.addComponent(new DecompilerOptionBox());
-        this.statusBox = this.addComponent(new StatusField());
-        this.controlButton = this.addComponent(new ControlButton(this));
+        this.versionBox = new VersionBox();
+        this.decompile = new JCheckBox("Decompile?");
+        this.decompile.setSelected(false);
 
-        this.addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentResized(final ComponentEvent e) {
-                App.this.updateComponentDimensions();
-            }
-        });
+        this.statusBox = new JTextField("Status!");
+        this.statusBox.setEditable(false);
 
-        this.updateComponentDimensions();
+        this.controlButton = new ControlButton(this);
+
+        this.createLayout();
+        this.pack();
+        this.setupWindow();
         this.setVisible(true);
-    }
-
-    private <T extends Component> T addComponent(final T component) {
-        super.add(component);
-        return component;
     }
 
     private List<Component> getAllComponents() {
         return getAllComponents(this);
     }
 
-    private void updateComponentDimensions() {
-        for (final Component component : this.getAllComponents()) {
-            if (component instanceof final DynamicDimension dynamicDimension) {
-                dynamicDimension.updateDimension(this.getWidth(), this.getHeight());
-            }
-        }
+    private void createLayout() {
+        final Container contentPane = this.getContentPane();
+        final GroupLayout layout = new GroupLayout(contentPane);
+        layout.setLayoutStyle(new AppLayoutStyle());
+        contentPane.setLayout(layout);
+
+        layout.setAutoCreateGaps(true);
+        layout.setAutoCreateContainerGaps(true);
+
+        layout.setHorizontalGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
+                .addComponent(this.titleLabel)
+                .addGroup(
+                        layout.createSequentialGroup().addComponent(this.client).addComponent(this.server))
+                .addGroup(layout.createSequentialGroup().addComponent(this.versionBox, 150, 150, 150))
+                .addGroup(layout.createSequentialGroup().addComponent(this.decompile))
+                .addGroup(layout.createSequentialGroup().addComponent(this.statusBox, 150, 450, Short.MAX_VALUE))
+                .addGroup(layout.createSequentialGroup().addComponent(this.controlButton, 150, 150, 150)));
+
+        layout.setVerticalGroup(layout.createSequentialGroup()
+                .addComponent(this.titleLabel)
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER, true)
+                        .addComponent(this.client)
+                        .addComponent(this.server))
+                .addGroup(layout.createSequentialGroup().addComponent(this.versionBox, 25, 25, 25))
+                .addGroup(layout.createSequentialGroup().addComponent(this.decompile))
+                .addGroup(layout.createSequentialGroup().addComponent(this.statusBox, 50, 50, Short.MAX_VALUE))
+                .addGroup(layout.createSequentialGroup().addComponent(this.controlButton, 15, 50, 50)));
     }
 
-    private void setupWindow(final int width, final int height) {
+    private void setupWindow() {
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        this.setSize(width, height);
         this.setTitle("McDeob - " + McDeob.getVersion());
         this.setResizable(true);
-        this.setMinimumSize(new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT));
+        this.setMinimumSize(this.getSize());
         final Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         this.setLocation(dim.width / 2 - this.getSize().width / 2, dim.height / 2 - this.getSize().height / 2);
-        this.setLayout(null);
     }
 
     public void updateStatusBox(final String string) {
@@ -152,5 +164,22 @@ public class App extends JFrame {
 
         // Window title hack for macOS
         System.setProperty("com.apple.mrj.application.apple.menu.about.name", title);
+    }
+
+    private static class AppLayoutStyle extends LayoutStyle {
+        @Override
+        public int getPreferredGap(
+                final JComponent component1,
+                final JComponent component2,
+                final ComponentPlacement type,
+                final int position,
+                final Container parent) {
+            return 15;
+        }
+
+        @Override
+        public int getContainerGap(final JComponent component, final int position, final Container parent) {
+            return 15;
+        }
     }
 }

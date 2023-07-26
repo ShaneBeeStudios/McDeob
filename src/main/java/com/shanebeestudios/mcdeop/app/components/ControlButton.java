@@ -7,18 +7,17 @@ import com.shanebeestudios.mcdeop.launchermeta.data.version.Version;
 import com.shanebeestudios.mcdeop.processor.ResourceRequest;
 import com.shanebeestudios.mcdeop.processor.SourceType;
 import com.shanebeestudios.mcdeop.util.Util;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.concurrent.Executors;
+import javax.swing.*;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
-public class ControlButton extends JButton implements DynamicDimension {
+public class ControlButton extends JButton {
     private static final String DEFAULT_TEXT = "Start!";
     private static final int WIDTH = 200;
     private static final int HEIGHT = 50;
@@ -46,11 +45,6 @@ public class ControlButton extends JButton implements DynamicDimension {
         this.setText(DEFAULT_TEXT);
         this.setForeground(Color.BLACK);
         this.setReady(true);
-    }
-
-    @Override
-    public void updateDimension(final int newWidth, final int newHeight) {
-        this.setBounds((newWidth / 2) - (WIDTH / 2), 180 + this.heightDivided, WIDTH, HEIGHT);
     }
 
     @RequiredArgsConstructor
