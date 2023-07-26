@@ -2,6 +2,7 @@ package com.shanebeestudios.mcdeop.app;
 
 import com.shanebeestudios.mcdeop.McDeob;
 import com.shanebeestudios.mcdeop.app.components.ControlButton;
+import com.shanebeestudios.mcdeop.app.components.ProcessorOptionsGroup;
 import com.shanebeestudios.mcdeop.app.components.VersionBox;
 import com.shanebeestudios.mcdeop.launchermeta.data.version.Version;
 import com.shanebeestudios.mcdeop.processor.Processor;
@@ -34,7 +35,7 @@ public class App extends JFrame {
     private final ControlButton controlButton;
     private final JRadioButton server;
     private final JRadioButton client;
-    private final JCheckBox decompile;
+    private final ProcessorOptionsGroup processorOptionsGroup;
     private final JComboBox<Version> versionBox;
     private final JTextField statusBox;
 
@@ -59,8 +60,7 @@ public class App extends JFrame {
         versionTypeGroup.add(this.client);
 
         this.versionBox = new VersionBox();
-        this.decompile = new JCheckBox("Decompile?");
-        this.decompile.setSelected(false);
+        this.processorOptionsGroup = new ProcessorOptionsGroup();
 
         this.statusBox = new JTextField("Status!");
         this.statusBox.setEditable(false);
@@ -91,7 +91,10 @@ public class App extends JFrame {
                 .addGroup(
                         layout.createSequentialGroup().addComponent(this.client).addComponent(this.server))
                 .addGroup(layout.createSequentialGroup().addComponent(this.versionBox, 150, 150, 150))
-                .addGroup(layout.createSequentialGroup().addComponent(this.decompile))
+                .addGroup(layout.createSequentialGroup()
+                        .addComponent(this.processorOptionsGroup.getRemap())
+                        .addComponent(this.processorOptionsGroup.getDecompile())
+                        .addComponent(this.processorOptionsGroup.getZipDecompileOutput()))
                 .addGroup(layout.createSequentialGroup().addComponent(this.statusBox, 150, 450, Short.MAX_VALUE))
                 .addGroup(layout.createSequentialGroup().addComponent(this.controlButton, 150, 150, 150)));
 
@@ -101,7 +104,10 @@ public class App extends JFrame {
                         .addComponent(this.client)
                         .addComponent(this.server))
                 .addGroup(layout.createSequentialGroup().addComponent(this.versionBox, 25, 25, 25))
-                .addGroup(layout.createSequentialGroup().addComponent(this.decompile))
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER, true)
+                        .addComponent(this.processorOptionsGroup.getRemap())
+                        .addComponent(this.processorOptionsGroup.getDecompile())
+                        .addComponent(this.processorOptionsGroup.getZipDecompileOutput()))
                 .addGroup(layout.createSequentialGroup().addComponent(this.statusBox, 50, 50, Short.MAX_VALUE))
                 .addGroup(layout.createSequentialGroup().addComponent(this.controlButton, 15, 50, 50)));
     }
@@ -133,16 +139,13 @@ public class App extends JFrame {
         }
     }
 
-    public void start(final ResourceRequest request, final boolean shouldDecompile) {
+    public void start(final ResourceRequest request, final ProcessorOptions options) {
         this.getControlButton().setReady(false);
 
         final App app = this;
         final Thread thread = new Thread("Processor") {
             @Override
             public void run() {
-                final ProcessorOptions options =
-                        ProcessorOptions.builder().decompile(shouldDecompile).build();
-
                 Processor.runProcessor(request, options, app);
             }
         };

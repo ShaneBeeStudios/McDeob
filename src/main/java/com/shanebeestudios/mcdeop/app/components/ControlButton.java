@@ -4,18 +4,20 @@ import com.shanebeestudios.mcdeop.VersionManager;
 import com.shanebeestudios.mcdeop.app.App;
 import com.shanebeestudios.mcdeop.launchermeta.data.release.ReleaseManifest;
 import com.shanebeestudios.mcdeop.launchermeta.data.version.Version;
+import com.shanebeestudios.mcdeop.processor.ProcessorOptions;
 import com.shanebeestudios.mcdeop.processor.ResourceRequest;
 import com.shanebeestudios.mcdeop.processor.SourceType;
 import com.shanebeestudios.mcdeop.util.Util;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.concurrent.Executors;
-import javax.swing.*;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 
 public class ControlButton extends JButton {
     private static final String DEFAULT_TEXT = "Start!";
@@ -72,7 +74,7 @@ public class ControlButton extends JButton {
             }
 
             final SourceType type = this.app.getServer().isSelected() ? SourceType.SERVER : SourceType.CLIENT;
-            final boolean decompile = this.app.getDecompile().isSelected();
+            final ProcessorOptions options = this.app.getProcessorOptionsGroup().getProcessorOptions();
 
             final ReleaseManifest releaseManifest;
             try {
@@ -88,7 +90,7 @@ public class ControlButton extends JButton {
             final ResourceRequest resourceRequest = new ResourceRequest(releaseManifest, type);
             this.button.setText("Running...");
             this.button.setForeground(Color.BLUE);
-            this.app.start(resourceRequest, decompile);
+            this.app.start(resourceRequest, options);
         }
     }
 }

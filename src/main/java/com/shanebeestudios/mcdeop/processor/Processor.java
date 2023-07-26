@@ -231,6 +231,7 @@ public class Processor {
                 // Pack the decompiled files into a zip file
                 final Path zipFilePath = this.dataFolderPath.resolve(Path.of(cleanJarName + ".zip"));
                 log.info("Packing decompiled files into {}", zipFilePath);
+                this.handleGui(gui -> gui.updateStatusBox("Packing decompiled files ..."));
                 FileUtil.remove(zipFilePath);
                 FileUtil.zip(decompileJarDir, zipFilePath);
             }
