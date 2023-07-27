@@ -185,7 +185,7 @@ public class Processor {
         // Setup FernFlower to properly decompile the jar file
         String[] args = new String[]{
             "-dgs=1", "-hdc=0", "-rbr=0",
-            "-asc=1", "-udv=0",
+            "-asc=1", "-udv=0", "-rsy=1",
             remappedJar.toAbsolutePath().toString(),
             decompileDir.toAbsolutePath().toString()
         };
