@@ -39,9 +39,9 @@
             <version>1.3.20</version>
         </dependency>
         <dependency>
-            <groupId>com.github.fesh0r</groupId>
-            <artifactId>fernflower</artifactId>
-            <version>e19aab61ce</version>
+            <groupId>org.quiltmc</groupId>
+            <artifactId>quiltflower</artifactId>
+            <version>1.9.0</version>
         </dependency>
         <dependency>
             <groupId>com.apple</groupId>

@@ -6,7 +6,9 @@ import com.shanebeestudios.mcdeop.util.TimeStamp;
 import com.shanebeestudios.mcdeop.util.Util;
 import io.github.lxgaming.reconstruct.common.Reconstruct;
 import org.jetbrains.java.decompiler.main.decompiler.ConsoleDecompiler;
-import org.json.*;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.json.JSONTokener;
 
 import java.awt.*;
 import java.io.BufferedReader;
@@ -14,15 +16,19 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.InvalidObjectException;
-import java.net.*;
-import java.nio.file.*;
-import java.util.stream.Stream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
-@SuppressWarnings("ResultOfMethodCallIgnored")
 public class Processor {
     private static final URL LATEST_INFO;
+
     static {
         try {
             LATEST_INFO = new URL("https://launchermeta.mojang.com/mc/game/version_manifest.json");
@@ -184,22 +190,13 @@ public class Processor {
 
         // Setup FernFlower to properly decompile the jar file
         String[] args = new String[]{
-            "-dgs=1", "-hdc=0", "-rbr=0",
-            "-asc=1", "-udv=0",
-            remappedJar.toAbsolutePath().toString(),
-            decompileDir.toAbsolutePath().toString()
+                "-dgs=1", "-hdc=0", "-rbr=0",
+                "-asc=1", "-udv=0",
+                remappedJar.toAbsolutePath().toString(),
+                decompileDir.toAbsolutePath().toString()
         };
 
         ConsoleDecompiler.main(args);
-
-        // Rename jar file to zip
-        try (final Stream<Path> stream = Files.list(decompileDir)) {
-            for (final Path path : (Iterable<Path>) stream::iterator) {
-                final String filename = path.getFileName().toString();
-                final int index = filename.lastIndexOf('.');
-                Files.move(path, path.resolveSibling(Path.of(filename.substring(0, index) + ".zip")));
-            }
-        }
 
         TimeStamp timeStamp = TimeStamp.fromNow(start);
         Logger.info("Decompiling completed in %s!", timeStamp);
