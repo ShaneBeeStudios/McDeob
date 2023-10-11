@@ -1,11 +1,10 @@
 package com.shanebeestudios.mcdeop.app.components;
 
 import com.shanebeestudios.mcdeop.processor.ProcessorOptions;
-import lombok.Getter;
-
-import javax.swing.*;
 import java.io.Serial;
 import java.io.Serializable;
+import javax.swing.*;
+import lombok.Getter;
 
 @Getter
 public class ProcessorOptionsGroup implements Serializable {

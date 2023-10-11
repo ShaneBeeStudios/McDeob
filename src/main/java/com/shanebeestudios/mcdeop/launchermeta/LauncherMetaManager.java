@@ -8,14 +8,13 @@ import com.shanebeestudios.mcdeop.launchermeta.data.release.ReleaseManifest;
 import com.shanebeestudios.mcdeop.launchermeta.data.version.Version;
 import com.shanebeestudios.mcdeop.launchermeta.data.version.VersionManifest;
 import com.shanebeestudios.mcdeop.util.RequestUtil;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import okhttp3.Call;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
-
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 
 public class LauncherMetaManager {
     private static final String VERSION_MANIFEST_URL = "https://launchermeta.mojang.com/mc/game/version_manifest.json";

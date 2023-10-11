@@ -8,16 +8,15 @@ import com.shanebeestudios.mcdeop.processor.ProcessorOptions;
 import com.shanebeestudios.mcdeop.processor.ResourceRequest;
 import com.shanebeestudios.mcdeop.processor.SourceType;
 import com.shanebeestudios.mcdeop.util.Util;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.concurrent.Executors;
+import javax.swing.*;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 public class ControlButton extends JButton {
     private static final String DEFAULT_TEXT = "Start!";

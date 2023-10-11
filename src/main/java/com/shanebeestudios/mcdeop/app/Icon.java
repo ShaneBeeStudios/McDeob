@@ -1,13 +1,12 @@
 package com.shanebeestudios.mcdeop.app;
 
 import com.shanebeestudios.mcdeop.McDeob;
+import java.awt.*;
+import java.util.List;
+import javax.swing.*;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
-import javax.swing.*;
-import java.awt.*;
-import java.util.List;
 
 @SuppressWarnings({"unused", "ConstantConditions"})
 @NoArgsConstructor(access = AccessLevel.PRIVATE)

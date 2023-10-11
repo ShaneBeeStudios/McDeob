@@ -8,15 +8,13 @@ import com.shanebeestudios.mcdeop.launchermeta.data.version.Version;
 import com.shanebeestudios.mcdeop.processor.Processor;
 import com.shanebeestudios.mcdeop.processor.ProcessorOptions;
 import com.shanebeestudios.mcdeop.processor.ResourceRequest;
-import lombok.Getter;
-import mx.kenzie.mirror.Mirror;
-
-import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.*;
+import lombok.Getter;
+import mx.kenzie.mirror.Mirror;
 
-@SuppressWarnings({"SameParameterValue", "unchecked", "rawtypes", "FieldCanBeLocal"})
 @Getter
 public class App extends JFrame {
     public static java.util.List<Component> getAllComponents(final Container c) {

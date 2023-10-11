@@ -9,12 +9,6 @@ import com.shanebeestudios.mcdeop.util.DurationTracker;
 import com.shanebeestudios.mcdeop.util.FileUtil;
 import com.shanebeestudios.mcdeop.util.RequestUtil;
 import com.shanebeestudios.mcdeop.util.Util;
-import lombok.extern.slf4j.Slf4j;
-import okhttp3.Request;
-import okhttp3.Response;
-import okio.BufferedSink;
-import okio.Okio;
-
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
@@ -23,6 +17,11 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.function.Consumer;
+import lombok.extern.slf4j.Slf4j;
+import okhttp3.Request;
+import okhttp3.Response;
+import okio.BufferedSink;
+import okio.Okio;
 
 @SuppressWarnings("ResultOfMethodCallIgnored")
 @Slf4j
