@@ -1,3 +1,5 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
 plugins {
     `java-library`
     `maven-publish`
@@ -74,4 +76,10 @@ spotless {
         target("*.yaml")
         jackson()
     }
+}
+
+tasks.withType<ShadowJar> {
+    archiveClassifier.set("")
+
+    dependsOn("distTar", "distZip")
 }
