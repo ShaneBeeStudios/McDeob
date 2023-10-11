@@ -3,23 +3,18 @@ package com.shanebeestudios.mcdeop.app.components;
 import com.shanebeestudios.mcdeop.VersionManager;
 import com.shanebeestudios.mcdeop.launchermeta.data.version.Version;
 import java.awt.*;
-import java.util.Collection;
 import javax.swing.*;
 
 public class VersionBox extends JComboBox<Version> {
-    public VersionBox() {
+    public VersionBox(final VersionManager versionManager) {
         this.setRenderer(new VersionRenderer());
 
-        for (final Version version : this.getVersions()) {
+        for (final Version version : versionManager.getVersions()) {
             this.addItem(version);
         }
 
         this.setSelectedIndex(0);
         this.setBackground(Color.lightGray);
-    }
-
-    private Collection<Version> getVersions() {
-        return VersionManager.getInstance().getVersions();
     }
 
     private static class VersionRenderer extends DefaultListCellRenderer {

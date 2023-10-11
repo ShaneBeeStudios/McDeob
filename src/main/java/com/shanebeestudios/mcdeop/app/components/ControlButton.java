@@ -7,7 +7,6 @@ import com.shanebeestudios.mcdeop.launchermeta.data.version.Version;
 import com.shanebeestudios.mcdeop.processor.ProcessorOptions;
 import com.shanebeestudios.mcdeop.processor.ResourceRequest;
 import com.shanebeestudios.mcdeop.processor.SourceType;
-import com.shanebeestudios.mcdeop.util.Util;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -18,28 +17,17 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
+@Getter
 public class ControlButton extends JButton {
     private static final String DEFAULT_TEXT = "Start!";
-    private static final int WIDTH = 200;
-    private static final int HEIGHT = 50;
 
-    private final int heightDivided;
-
-    @Getter
     @Setter
     private boolean ready = true;
 
-    public ControlButton(final App app) {
+    public ControlButton(final App app, final VersionManager versionManager) {
         super(DEFAULT_TEXT);
 
-        if (Util.isRunningMacOS()) {
-            this.heightDivided = HEIGHT / 2;
-        } else {
-            // makes the spacing of the button look better on windows
-            this.heightDivided = Math.round(HEIGHT / 1.25F);
-        }
-
-        this.addActionListener(new StartButtonListener(app, this));
+        this.addActionListener(new StartButtonListener(app, versionManager));
     }
 
     public void reset() {
@@ -49,17 +37,17 @@ public class ControlButton extends JButton {
     }
 
     @RequiredArgsConstructor
-    static class StartButtonListener implements ActionListener {
+    class StartButtonListener implements ActionListener {
         private final App app;
-        private final ControlButton button;
+        private final VersionManager versionManager;
 
         @Override
         public void actionPerformed(final ActionEvent e) {
-            if (!e.getSource().equals(this.button)) {
+            if (!e.getSource().equals(ControlButton.this)) {
                 return;
             }
 
-            if (!this.button.isReady()) {
+            if (!ControlButton.this.isReady()) {
                 return;
             }
 
@@ -68,7 +56,7 @@ public class ControlButton extends JButton {
                 this.app.updateStatusBox("INVALID VERSION!");
                 this.app.getToolkit().beep();
                 Executors.newSingleThreadScheduledExecutor()
-                        .schedule(this.button::reset, 1, java.util.concurrent.TimeUnit.SECONDS);
+                        .schedule(ControlButton.this::reset, 1, java.util.concurrent.TimeUnit.SECONDS);
                 return;
             }
 
@@ -77,18 +65,18 @@ public class ControlButton extends JButton {
 
             final ReleaseManifest releaseManifest;
             try {
-                releaseManifest = VersionManager.getInstance().getReleaseManifest(version);
+                releaseManifest = this.versionManager.getReleaseManifest(version);
             } catch (final IOException ex) {
                 this.app.updateStatusBox("FAILED TO FETCH RELEASE MANIFEST");
                 this.app.getToolkit().beep();
                 Executors.newSingleThreadScheduledExecutor()
-                        .schedule(this.button::reset, 1, java.util.concurrent.TimeUnit.SECONDS);
+                        .schedule(ControlButton.this::reset, 1, java.util.concurrent.TimeUnit.SECONDS);
                 return;
             }
 
             final ResourceRequest resourceRequest = new ResourceRequest(releaseManifest, type);
-            this.button.setText("Running...");
-            this.button.setForeground(Color.BLUE);
+            ControlButton.this.setText("Running...");
+            ControlButton.this.setForeground(Color.BLUE);
             this.app.start(resourceRequest, options);
         }
     }

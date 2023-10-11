@@ -1,6 +1,7 @@
 package com.shanebeestudios.mcdeop.app;
 
 import com.shanebeestudios.mcdeop.McDeob;
+import com.shanebeestudios.mcdeop.VersionManager;
 import com.shanebeestudios.mcdeop.app.components.ControlButton;
 import com.shanebeestudios.mcdeop.app.components.ProcessorOptionsGroup;
 import com.shanebeestudios.mcdeop.app.components.VersionBox;
@@ -17,17 +18,7 @@ import mx.kenzie.mirror.Mirror;
 
 @Getter
 public class App extends JFrame {
-    public static java.util.List<Component> getAllComponents(final Container c) {
-        final java.util.List<Component> containers = new ArrayList<>();
-        final Component[] comps = c.getComponents();
-        for (final Component comp : comps) {
-            containers.add(comp);
-            if (comp instanceof final Container container) {
-                containers.addAll(getAllComponents(container));
-            }
-        }
-        return containers;
-    }
+    private final VersionManager versionManager;
 
     private final JLabel titleLabel;
     private final ControlButton controlButton;
@@ -38,6 +29,8 @@ public class App extends JFrame {
     private final JTextField statusBox;
 
     public App() {
+        this.versionManager = new VersionManager();
+
         try {
             // If we're running on Mac, set the logo
             final Taskbar taskbar = Taskbar.getTaskbar();
@@ -57,18 +50,30 @@ public class App extends JFrame {
         versionTypeGroup.add(this.server);
         versionTypeGroup.add(this.client);
 
-        this.versionBox = new VersionBox();
+        this.versionBox = new VersionBox(this.versionManager);
         this.processorOptionsGroup = new ProcessorOptionsGroup();
 
         this.statusBox = new JTextField("Status!");
         this.statusBox.setEditable(false);
 
-        this.controlButton = new ControlButton(this);
+        this.controlButton = new ControlButton(this, this.versionManager);
 
         this.createLayout();
         this.pack();
         this.setupWindow();
         this.setVisible(true);
+    }
+
+    public static java.util.List<Component> getAllComponents(final Container c) {
+        final java.util.List<Component> containers = new ArrayList<>();
+        final Component[] comps = c.getComponents();
+        for (final Component comp : comps) {
+            containers.add(comp);
+            if (comp instanceof final Container container) {
+                containers.addAll(getAllComponents(container));
+            }
+        }
+        return containers;
     }
 
     private List<Component> getAllComponents() {

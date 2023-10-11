@@ -19,15 +19,15 @@ public class FileUtil {
             return;
         }
 
-        try (Stream<Path> files = Files.walk(path)) {
+        try (final Stream<Path> files = Files.walk(path)) {
             files.sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
         }
     }
 
     public static void zip(final Path sourceDirPath, final Path zipFilePath) throws IOException {
         final Path zipFile = Files.createFile(zipFilePath);
-        try (ZipOutputStream zs = new ZipOutputStream(Files.newOutputStream(zipFile));
-                Stream<Path> paths = Files.walk(sourceDirPath)) {
+        try (final ZipOutputStream zs = new ZipOutputStream(Files.newOutputStream(zipFile));
+                final Stream<Path> paths = Files.walk(sourceDirPath)) {
             for (final Iterator<Path> it = paths.iterator(); it.hasNext(); ) {
                 final Path path = it.next();
                 if (Files.isDirectory(path)) {

@@ -5,13 +5,8 @@ import com.shanebeestudios.mcdeop.launchermeta.data.release.ReleaseManifest;
 import com.shanebeestudios.mcdeop.launchermeta.data.version.Version;
 import java.net.URL;
 import java.util.Optional;
-import lombok.Data;
 
-@Data
-public class ResourceRequest {
-    private final ReleaseManifest manifest;
-    private final SourceType type;
-
+public record ResourceRequest(ReleaseManifest manifest, SourceType type) {
     public Version getVersion() {
         return this.manifest.getVersion();
     }

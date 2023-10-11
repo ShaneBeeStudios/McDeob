@@ -11,7 +11,7 @@ import lombok.extern.jackson.Jacksonized;
 @Builder
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ReleaseManifest {
-    private Version version;
     private final Downloads downloads;
     private final String mainClass;
+    private Version version;
 }

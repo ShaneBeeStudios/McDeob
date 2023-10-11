@@ -6,10 +6,10 @@ import java.util.Collection;
 import java.util.List;
 
 public class ReconConfig implements Config {
-    private int threads = Runtime.getRuntime().availableProcessors();
     Path input;
     Path output;
     Path map;
+    private int threads = Runtime.getRuntime().availableProcessors();
 
     @Override
     public boolean isDebug() {
@@ -33,7 +33,7 @@ public class ReconConfig implements Config {
 
     @Override
     public Collection<String> getTransformers() {
-        return null;
+        return List.of();
     }
 
     @Override

@@ -8,7 +8,6 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-@SuppressWarnings({"unused", "ConstantConditions"})
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @Slf4j
 public class Icon {

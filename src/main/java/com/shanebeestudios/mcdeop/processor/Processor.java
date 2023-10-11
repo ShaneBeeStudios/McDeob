@@ -22,29 +22,15 @@ import okhttp3.Request;
 import okhttp3.Response;
 import okio.BufferedSink;
 import okio.Okio;
+import org.jetbrains.annotations.Nullable;
 
-@SuppressWarnings("ResultOfMethodCallIgnored")
 @Slf4j
 public class Processor {
-    public static void runProcessor(final ResourceRequest request, final ProcessorOptions options, final App app) {
-        try {
-            final Processor processor = new Processor(request, options, app);
-            processor.init();
-            processor.cleanup();
-        } catch (final Exception e) {
-            log.error("Failed to run processor", e);
-        } finally {
-            Util.forceGC();
-        }
-    }
-
     private final ResourceRequest request;
     private final ProcessorOptions options;
     private final App app;
-
     private final Remapper remapper;
     private final Decompiler decompiler;
-
     private final Path dataFolderPath;
     private final Path jarPath;
     private final Path mappingsPath;
@@ -64,9 +50,21 @@ public class Processor {
         this.decompiler = new VineflowerDecompiler();
     }
 
+    public static void runProcessor(final ResourceRequest request, final ProcessorOptions options, final App app) {
+        try {
+            final Processor processor = new Processor(request, options, app);
+            processor.init();
+            processor.cleanup();
+        } catch (final Exception e) {
+            log.error("Failed to run processor", e);
+        } finally {
+            Util.forceGC();
+        }
+    }
+
     private Path getCorrectDataFolder() {
-        final String versionFolder = this.request.getType().getName() + "-"
-                + this.request.getVersion().getId();
+        final String versionFolder =
+                this.request.type().getName() + "-" + this.request.getVersion().getId();
         final Path folderPath = Util.getBaseDataFolder().resolve(versionFolder);
 
         try {
@@ -110,31 +108,31 @@ public class Processor {
         if (this.getJarUrl() == null) {
             log.error(
                     "Failed to find JAR URL for version {}-{}",
-                    this.request.getType(),
+                    this.request.type(),
                     this.request.getVersion().getId());
-            this.handleGui(gui -> gui.updateStatusBox("Failed to find JAR URL for version " + this.request.getType()
-                    + "-" + this.request.getVersion().getId()));
+            this.handleGui(gui -> gui.updateStatusBox("Failed to find JAR URL for version " + this.request.type() + "-"
+                    + this.request.getVersion().getId()));
             return false;
         }
 
         if (this.getMappingsUrl() == null) {
             log.error(
                     "Failed to find mappings URL for version {}-{}",
-                    this.request.getType(),
+                    this.request.type(),
                     this.request.getVersion().getId());
-            this.handleGui(gui -> gui.updateStatusBox("Failed to find mappings URL for version "
-                    + this.request.getType() + "-" + this.request.getVersion().getId()));
+            this.handleGui(gui -> gui.updateStatusBox("Failed to find mappings URL for version " + this.request.type()
+                    + "-" + this.request.getVersion().getId()));
             return false;
         }
 
         return true;
     }
 
-    protected URL getJarUrl() {
+    @Nullable protected URL getJarUrl() {
         return this.request.getJar().orElse(null);
     }
 
-    protected URL getMappingsUrl() {
+    @Nullable protected URL getMappingsUrl() {
         return this.request.getMappings().orElse(null);
     }
 
@@ -169,7 +167,7 @@ public class Processor {
             }
 
         } catch (final IOException e) {
-            e.printStackTrace();
+            log.error("Failed to run Processor!", e);
         } finally {
             this.handleGui(App::toggleControls);
         }
@@ -191,8 +189,8 @@ public class Processor {
         return CompletableFuture.supplyAsync(() -> {
             try {
                 this.downloadFile(this.getMappingsUrl(), this.mappingsPath, "mappings");
-            } catch (final IOException e) {
-                throw new CompletionException(e);
+            } catch (final IOException exception) {
+                throw new CompletionException(exception);
             }
 
             return null;
@@ -200,7 +198,7 @@ public class Processor {
     }
 
     public void remapJar() {
-        try (DurationTracker ignored =
+        try (final DurationTracker ignored =
                 new DurationTracker(duration -> log.info("Remapping completed in {}!", duration))) {
             this.handleGui(gui -> gui.updateStatusBox("Remapping..."));
 
@@ -214,7 +212,7 @@ public class Processor {
     }
 
     public void decompileJar(final Path jarPath) throws IOException {
-        try (DurationTracker ignored =
+        try (final DurationTracker ignored =
                 new DurationTracker(duration -> log.info("Decompiling completed in {}!", duration))) {
             log.info("Decompiling final JAR file.");
             this.handleGui(gui -> gui.updateStatusBox("Decompiling... This will take a while!"));
@@ -238,11 +236,11 @@ public class Processor {
     }
 
     private void cleanup() {
-        if (this.remapper != null && this.remapper instanceof final Cleanup cleanup) {
+        if (this.remapper instanceof final Cleanup cleanup) {
             cleanup.cleanup();
         }
 
-        if (this.decompiler != null && this.decompiler instanceof final Cleanup cleanup) {
+        if (this.decompiler instanceof final Cleanup cleanup) {
             cleanup.cleanup();
         }
     }
