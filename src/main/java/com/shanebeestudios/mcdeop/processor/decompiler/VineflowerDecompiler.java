@@ -10,7 +10,8 @@ public class VineflowerDecompiler implements Decompiler {
         final String[] args = {
             "-asc=1", // Encode non-ASCII characters in string and character literals as Unicode escapes
             "-tcs=1", // Simplify boolean constants in ternary operations
-            "-jvn=1", // Use jad variable naming
+            "-jvn=1", // Use jad local variable naming
+            "-jpr=1", // Use jad parameter variable naming
             jarPath.toAbsolutePath().toString(),
             outputDir.toAbsolutePath().toString()
         };
