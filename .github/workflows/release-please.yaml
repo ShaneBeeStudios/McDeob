@@ -1,41 +1,44 @@
 name: release-please
 on:
-  push:
-    branches:
-      - master
+    push:
+        branches:
+            - master
 
 permissions:
-  contents: write
-  pull-requests: write
+    contents: write
+    pull-requests: write
 
 jobs:
-  release-please:
-    runs-on: macos-latest
-    steps:
-      - uses: google-github-actions/release-please-action@v3
-        id: release
-        with:
-          release-type: maven
-          include-v-in-tag: false
-      - uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # v4
-        # these if statements ensure that a publication only occurs when
-        # a new release is created:
-        if: ${{ steps.release.outputs.release_created }}
-      # Build jar
-      - name: Set up JDK 17
-        if: ${{ steps.release.outputs.release_created }}
-        uses: actions/setup-java@v3
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-          cache: maven
-      - name: Build with Maven
-        if: ${{ steps.release.outputs.release_created }}
-        run: mvn -B package --file pom.xml
-      - name: Upload Release Artifact
-        if: ${{ steps.release.outputs.release_created }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh release upload ${{ steps.release.outputs.tag_name }} target/McDeob*.jar
-          gh release upload ${{ steps.release.outputs.tag_name }} target/*.dmg
+    release-please:
+        runs-on: ubuntu-latest
+        steps:
+            -   uses: google-github-actions/release-please-action@v3
+                id: release
+                with:
+                    release-type: simple
+                    extra-files: build.gradle.kts
+                    include-v-in-tag: false
+            -   uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # v4
+                # these if statements ensure that a publication only occurs when
+                # a new release is created:
+                if: ${{ steps.release.outputs.release_created }}
+            # Build jar
+            -   name: Set up JDK 17
+                if: ${{ steps.release.outputs.release_created }}
+                uses: actions/setup-java@v3
+                with:
+                    java-version: '17'
+                    distribution: 'temurin'
+                    cache: gradle
+            -   name: Run chmod to make gradlew executable
+                run: chmod +x ./gradlew
+            -   name: Build with Gradle
+                uses: gradle/gradle-build-action@a0fdbb009a74ec1b2c24a464d8fa3d86dacedfba
+                with:
+                    arguments: build
+            -   name: Upload Release Artifact
+                if: ${{ steps.release.outputs.release_created }}
+                env:
+                    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                run: |
+                    gh release upload ${{ steps.release.outputs.tag_name }} libs/McDeob*.jar
