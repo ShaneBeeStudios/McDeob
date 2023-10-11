@@ -31,8 +31,10 @@ jobs:
                     distribution: 'temurin'
                     cache: gradle
             -   name: Run chmod to make gradlew executable
+                if: ${{ steps.release.outputs.release_created }}
                 run: chmod +x ./gradlew
             -   name: Build with Gradle
+                if: ${{ steps.release.outputs.release_created }}
                 uses: gradle/gradle-build-action@62cce3c597efd445cd71ee868887b8b1117703a7
                 with:
                     arguments: build
