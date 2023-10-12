@@ -7,7 +7,6 @@ import com.shanebeestudios.mcdeop.processor.remapper.ReconstructRemapper;
 import com.shanebeestudios.mcdeop.processor.remapper.Remapper;
 import com.shanebeestudios.mcdeop.util.DurationTracker;
 import com.shanebeestudios.mcdeop.util.FileUtil;
-import com.shanebeestudios.mcdeop.util.RequestUtil;
 import com.shanebeestudios.mcdeop.util.Util;
 import java.io.IOException;
 import java.net.URL;
@@ -19,6 +18,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.function.Consumer;
 import lombok.extern.slf4j.Slf4j;
+import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import okio.BufferedSink;
@@ -29,9 +29,12 @@ import org.jetbrains.annotations.Nullable;
 public class Processor {
     private final ResourceRequest request;
     private final ProcessorOptions options;
+
     private final App app;
+    private final OkHttpClient httpClient;
     private final Remapper remapper;
     private final Decompiler decompiler;
+
     private final Path jarPath;
     private final Path mappingsPath;
     private final Path remappedJar;
@@ -41,10 +44,11 @@ public class Processor {
     private Processor(final ResourceRequest request, final ProcessorOptions options, final App app) {
         this.request = request;
         this.options = options;
-        this.app = app;
 
+        this.app = app;
         this.remapper = new ReconstructRemapper();
         this.decompiler = new VineflowerDecompiler();
+        this.httpClient = Util.createHttpClient();
 
         final Path dataFolderPath = this.getDataFolder();
         this.jarPath = dataFolderPath.resolve("source.jar");
@@ -90,12 +94,12 @@ public class Processor {
     }
 
     private void downloadFile(final URL url, final Path path, final String fileType) throws IOException {
-        try (DurationTracker ignored = new DurationTracker(
+        try (final DurationTracker ignored = new DurationTracker(
                 duration -> log.info("Successfully downloaded {} file in {}!", fileType, duration))) {
             log.info("Downloading {} file from Mojang...", fileType);
             final Request httpRequest = new Request.Builder().url(url).build();
 
-            try (Response response = RequestUtil.CLIENT.newCall(httpRequest).execute()) {
+            try (final Response response = this.httpClient.newCall(httpRequest).execute()) {
                 if (response.body() == null) {
                     throw new IOException("Response body was null");
                 }
