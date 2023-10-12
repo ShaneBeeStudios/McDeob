@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
@@ -31,23 +32,26 @@ public class Processor {
     private final App app;
     private final Remapper remapper;
     private final Decompiler decompiler;
-    private final Path dataFolderPath;
     private final Path jarPath;
     private final Path mappingsPath;
     private final Path remappedJar;
+    private final Path decompiledJarPath;
+    private final Path decompiledZipPath;
 
     private Processor(final ResourceRequest request, final ProcessorOptions options, final App app) {
         this.request = request;
         this.options = options;
         this.app = app;
 
-        this.dataFolderPath = this.getCorrectDataFolder();
-        this.jarPath = this.dataFolderPath.resolve("source.jar");
-        this.mappingsPath = this.dataFolderPath.resolve("mappings.txt");
-        this.remappedJar = this.dataFolderPath.resolve("remapped.jar");
-
         this.remapper = new ReconstructRemapper();
         this.decompiler = new VineflowerDecompiler();
+
+        final Path dataFolderPath = this.getDataFolder();
+        this.jarPath = dataFolderPath.resolve("source.jar");
+        this.mappingsPath = dataFolderPath.resolve("mappings.txt");
+        this.remappedJar = dataFolderPath.resolve("remapped.jar");
+        this.decompiledJarPath = dataFolderPath.resolve("decompiled");
+        this.decompiledZipPath = dataFolderPath.resolve(Path.of("decompiled.zip"));
     }
 
     public static void runProcessor(final ResourceRequest request, final ProcessorOptions options, final App app) {
@@ -62,9 +66,11 @@ public class Processor {
         }
     }
 
-    private Path getCorrectDataFolder() {
-        final String versionFolder =
-                this.request.type().getName() + "-" + this.request.getVersion().getId();
+    private Path getDataFolder() {
+        final String versionFolder = String.format(
+                "%s-%s",
+                this.request.type().name().toLowerCase(Locale.ENGLISH),
+                this.request.getVersion().getId());
         final Path folderPath = Util.getBaseDataFolder().resolve(versionFolder);
 
         try {
@@ -77,6 +83,10 @@ public class Processor {
 
     private void handleGui(final Consumer<App> guiConsumer) {
         this.getApp().ifPresent(guiConsumer);
+    }
+
+    private void setGuiStatusMessage(final String statusMessage) {
+        this.handleGui(gui -> gui.updateStatusBox(statusMessage));
     }
 
     private void downloadFile(final URL url, final Path path, final String fileType) throws IOException {
@@ -110,8 +120,9 @@ public class Processor {
                     "Failed to find JAR URL for version {}-{}",
                     this.request.type(),
                     this.request.getVersion().getId());
-            this.handleGui(gui -> gui.updateStatusBox("Failed to find JAR URL for version " + this.request.type() + "-"
-                    + this.request.getVersion().getId()));
+            this.setGuiStatusMessage(String.format(
+                    "Failed to find JAR URL for version %s-%s",
+                    this.request.type(), this.request.getVersion().getId()));
             return false;
         }
 
@@ -120,24 +131,84 @@ public class Processor {
                     "Failed to find mappings URL for version {}-{}",
                     this.request.type(),
                     this.request.getVersion().getId());
-            this.handleGui(gui -> gui.updateStatusBox("Failed to find mappings URL for version " + this.request.type()
-                    + "-" + this.request.getVersion().getId()));
+            this.setGuiStatusMessage(String.format(
+                    "Failed to find mappings URL for version %s-%s",
+                    this.request.type(), this.request.getVersion().getId()));
             return false;
         }
 
         return true;
     }
 
-    @Nullable protected URL getJarUrl() {
+    @Nullable private URL getJarUrl() {
         return this.request.getJar().orElse(null);
     }
 
-    @Nullable protected URL getMappingsUrl() {
+    @Nullable private URL getMappingsUrl() {
         return this.request.getMappings().orElse(null);
     }
 
-    protected Optional<App> getApp() {
+    private Optional<App> getApp() {
         return Optional.ofNullable(this.app);
+    }
+
+    private CompletableFuture<Void> downloadJar() {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                this.downloadFile(this.getJarUrl(), this.jarPath, "JAR");
+            } catch (final IOException e) {
+                throw new CompletionException(e);
+            }
+
+            return null;
+        });
+    }
+
+    private CompletableFuture<Void> downloadMappings() {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                this.downloadFile(this.getMappingsUrl(), this.mappingsPath, "mappings");
+            } catch (final IOException exception) {
+                throw new CompletionException(exception);
+            }
+
+            return null;
+        });
+    }
+
+    private void remapJar() {
+        try (final DurationTracker ignored =
+                new DurationTracker(duration -> log.info("Remapping completed in {}!", duration))) {
+            this.setGuiStatusMessage("Remapping...");
+
+            if (!Files.exists(this.remappedJar)) {
+                log.info("Remapping {} file...", this.jarPath.getFileName());
+                this.remapper.remap(this.jarPath, this.mappingsPath, this.remappedJar);
+            } else {
+                log.info("{} already remapped... skipping mapping.", this.remappedJar.getFileName());
+            }
+        }
+    }
+
+    private void decompileJar(final Path jarPath) throws IOException {
+        try (final DurationTracker ignored =
+                new DurationTracker(duration -> log.info("Decompiling completed in {}!", duration))) {
+            log.info("Decompiling final JAR file.");
+            this.setGuiStatusMessage("Decompiling... This will take a while!");
+
+            FileUtil.remove(this.decompiledJarPath);
+            Files.createDirectories(this.decompiledJarPath);
+
+            this.decompiler.decompile(jarPath, this.decompiledJarPath);
+
+            if (this.options.isZipDecompileOutput()) {
+                // Pack the decompiled files into a zip file
+                log.info("Packing decompiled files into {}", this.decompiledZipPath);
+                this.setGuiStatusMessage("Packing decompiled files ...");
+                FileUtil.remove(this.decompiledZipPath);
+                FileUtil.zip(this.decompiledJarPath, this.decompiledZipPath);
+            }
+        }
     }
 
     public void init() {
@@ -155,7 +226,7 @@ public class Processor {
             this.handleGui(App::toggleControls);
 
             // Download the JAR and mappings files
-            this.handleGui(gui -> gui.updateStatusBox("Downloading JAR & MAPPINGS..."));
+            this.setGuiStatusMessage("Downloading JAR & MAPPINGS...");
             CompletableFuture.allOf(this.downloadJar(), this.downloadMappings()).join();
 
             if (this.options.isRemap()) {
@@ -173,69 +244,7 @@ public class Processor {
         }
     }
 
-    public CompletableFuture<Void> downloadJar() {
-        return CompletableFuture.supplyAsync(() -> {
-            try {
-                this.downloadFile(this.getJarUrl(), this.jarPath, "JAR");
-            } catch (final IOException e) {
-                throw new CompletionException(e);
-            }
-
-            return null;
-        });
-    }
-
-    public CompletableFuture<Void> downloadMappings() {
-        return CompletableFuture.supplyAsync(() -> {
-            try {
-                this.downloadFile(this.getMappingsUrl(), this.mappingsPath, "mappings");
-            } catch (final IOException exception) {
-                throw new CompletionException(exception);
-            }
-
-            return null;
-        });
-    }
-
-    public void remapJar() {
-        try (final DurationTracker ignored =
-                new DurationTracker(duration -> log.info("Remapping completed in {}!", duration))) {
-            this.handleGui(gui -> gui.updateStatusBox("Remapping..."));
-
-            if (!Files.exists(this.remappedJar)) {
-                log.info("Remapping {} file...", this.jarPath.getFileName());
-                this.remapper.remap(this.jarPath, this.mappingsPath, this.remappedJar);
-            } else {
-                log.info("{} already remapped... skipping mapping.", this.remappedJar.getFileName());
-            }
-        }
-    }
-
-    public void decompileJar(final Path jarPath) throws IOException {
-        try (final DurationTracker ignored =
-                new DurationTracker(duration -> log.info("Decompiling completed in {}!", duration))) {
-            log.info("Decompiling final JAR file.");
-            this.handleGui(gui -> gui.updateStatusBox("Decompiling... This will take a while!"));
-
-            final String cleanJarName = "decompiled";
-            final Path decompileJarDir = this.dataFolderPath.resolve(cleanJarName);
-            FileUtil.remove(decompileJarDir);
-            Files.createDirectories(decompileJarDir);
-
-            this.decompiler.decompile(jarPath, decompileJarDir);
-
-            if (this.options.isZipDecompileOutput()) {
-                // Pack the decompiled files into a zip file
-                final Path zipFilePath = this.dataFolderPath.resolve(Path.of(cleanJarName + ".zip"));
-                log.info("Packing decompiled files into {}", zipFilePath);
-                this.handleGui(gui -> gui.updateStatusBox("Packing decompiled files ..."));
-                FileUtil.remove(zipFilePath);
-                FileUtil.zip(decompileJarDir, zipFilePath);
-            }
-        }
-    }
-
-    private void cleanup() {
+    public void cleanup() {
         if (this.remapper instanceof final Cleanup cleanup) {
             cleanup.cleanup();
         }

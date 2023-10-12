@@ -145,11 +145,10 @@ public class App extends JFrame {
     public void start(final ResourceRequest request, final ProcessorOptions options) {
         this.getControlButton().setReady(false);
 
-        final App app = this;
         final Thread thread = new Thread("Processor") {
             @Override
             public void run() {
-                Processor.runProcessor(request, options, app);
+                Processor.runProcessor(request, options, App.this);
             }
         };
         thread.start();
