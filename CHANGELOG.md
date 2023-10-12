@@ -1,5 +1,21 @@
 # Changelog
 
+## [2.5.0](https://github.com/Timmi6790/McDeob/compare/2.4.0...2.5.0) (2023-10-12)
+
+
+### Features
+
+* enabled jpr for VineflowerDecompiler ([9d96a2c](https://github.com/Timmi6790/McDeob/commit/9d96a2c0d8065d8f2d399abcdaeaa93153ae6f96))
+* migrate maven to gradle ([4eb86a1](https://github.com/Timmi6790/McDeob/commit/4eb86a1fae84d713dad8e56967d221ca57c38208))
+
+
+### Bug Fixes
+
+* **deps:** update dependency com.diffplug.spotless:spotless-maven-plugin to v2.40.0 ([a7c8ce5](https://github.com/Timmi6790/McDeob/commit/a7c8ce55cc8032aed65bb904d924abf7569b0b9b))
+* **deps:** update dependency org.projectlombok:lombok to v1.18.30 ([d335abe](https://github.com/Timmi6790/McDeob/commit/d335abed521cebebb8c317ea852476bf7d1d82da))
+* **deps:** update dependency org.slf4j:slf4j-simple to v2.0.9 ([7d4437c](https://github.com/Timmi6790/McDeob/commit/7d4437cabb661342959a8051f00ecebc599ecaed))
+* **deps:** update dependency org.vineflower:vineflower to v1.9.3 ([a944979](https://github.com/Timmi6790/McDeob/commit/a944979307f44918694e23cd044dffc5a23bac87))
+
 ## [2.4.0](https://github.com/Timmi6790/McDeob/compare/2.3.0...2.4.0) (2023-07-26)
 
 
