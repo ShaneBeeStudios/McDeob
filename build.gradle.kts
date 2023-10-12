@@ -41,7 +41,7 @@ application {
 
 group = "com.shanebeestudios"
 // x-release-please-start-version
-version = "2.4.0"
+version = "2.5.0"
 // x-release-please-end
 description = "McDeob"
 java.sourceCompatibility = JavaVersion.VERSION_17
