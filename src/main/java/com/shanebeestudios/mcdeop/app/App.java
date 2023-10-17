@@ -143,12 +143,20 @@ public class App extends JFrame {
     }
 
     public void start(final ResourceRequest request, final ProcessorOptions options) {
+        // Disable GUI controls
         this.getControlButton().setReady(false);
+        this.toggleControls();
 
         final Thread thread = new Thread("Processor") {
             @Override
             public void run() {
-                Processor.runProcessor(request, options, App.this);
+                try {
+                    Processor.runProcessor(request, options, App.this.statusBox::setText);
+                } finally {
+                    // Enable GUI controls
+                    App.this.toggleControls();
+                    App.this.controlButton.reset();
+                }
             }
         };
         thread.start();

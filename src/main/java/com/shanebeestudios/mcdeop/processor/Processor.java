@@ -1,6 +1,5 @@
 package com.shanebeestudios.mcdeop.processor;
 
-import com.shanebeestudios.mcdeop.app.App;
 import com.shanebeestudios.mcdeop.processor.decompiler.Decompiler;
 import com.shanebeestudios.mcdeop.processor.decompiler.VineflowerDecompiler;
 import com.shanebeestudios.mcdeop.processor.remapper.ReconstructRemapper;
@@ -16,7 +15,6 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
-import java.util.function.Consumer;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -30,7 +28,8 @@ public class Processor {
     private final ResourceRequest request;
     private final ProcessorOptions options;
 
-    private final App app;
+    @Nullable private final ResponseConsumer responseConsumer;
+
     private final OkHttpClient httpClient;
     private final Remapper remapper;
     private final Decompiler decompiler;
@@ -41,11 +40,14 @@ public class Processor {
     private final Path decompiledJarPath;
     private final Path decompiledZipPath;
 
-    private Processor(final ResourceRequest request, final ProcessorOptions options, final App app) {
+    private Processor(
+            final ResourceRequest request,
+            final ProcessorOptions options,
+            @Nullable final ResponseConsumer responseConsumer) {
         this.request = request;
         this.options = options;
 
-        this.app = app;
+        this.responseConsumer = responseConsumer;
         this.remapper = new ReconstructRemapper();
         this.decompiler = new VineflowerDecompiler();
         this.httpClient = Util.createHttpClient();
@@ -58,9 +60,12 @@ public class Processor {
         this.decompiledZipPath = dataFolderPath.resolve(Path.of("decompiled.zip"));
     }
 
-    public static void runProcessor(final ResourceRequest request, final ProcessorOptions options, final App app) {
+    public static void runProcessor(
+            final ResourceRequest request,
+            final ProcessorOptions options,
+            @Nullable final ResponseConsumer responseConsumer) {
         try {
-            final Processor processor = new Processor(request, options, app);
+            final Processor processor = new Processor(request, options, responseConsumer);
             processor.init();
             processor.cleanup();
         } catch (final Exception e) {
@@ -85,12 +90,12 @@ public class Processor {
         return folderPath;
     }
 
-    private void handleGui(final Consumer<App> guiConsumer) {
-        this.getApp().ifPresent(guiConsumer);
+    private Optional<ResponseConsumer> getResponseConsumer() {
+        return Optional.ofNullable(this.responseConsumer);
     }
 
-    private void setGuiStatusMessage(final String statusMessage) {
-        this.handleGui(gui -> gui.updateStatusBox(statusMessage));
+    private void sendNewResponse(final String statusMessage) {
+        this.getResponseConsumer().ifPresent(consumer -> consumer.onStatusUpdate(statusMessage));
     }
 
     private void downloadFile(final URL url, final Path path, final String fileType) throws IOException {
@@ -124,7 +129,7 @@ public class Processor {
                     "Failed to find JAR URL for version {}-{}",
                     this.request.type(),
                     this.request.getVersion().getId());
-            this.setGuiStatusMessage(String.format(
+            this.sendNewResponse(String.format(
                     "Failed to find JAR URL for version %s-%s",
                     this.request.type(), this.request.getVersion().getId()));
             return false;
@@ -135,7 +140,7 @@ public class Processor {
                     "Failed to find mappings URL for version {}-{}",
                     this.request.type(),
                     this.request.getVersion().getId());
-            this.setGuiStatusMessage(String.format(
+            this.sendNewResponse(String.format(
                     "Failed to find mappings URL for version %s-%s",
                     this.request.type(), this.request.getVersion().getId()));
             return false;
@@ -150,10 +155,6 @@ public class Processor {
 
     @Nullable private URL getMappingsUrl() {
         return this.request.getMappings().orElse(null);
-    }
-
-    private Optional<App> getApp() {
-        return Optional.ofNullable(this.app);
     }
 
     private CompletableFuture<Void> downloadJar() {
@@ -183,7 +184,7 @@ public class Processor {
     private void remapJar() {
         try (final DurationTracker ignored =
                 new DurationTracker(duration -> log.info("Remapping completed in {}!", duration))) {
-            this.setGuiStatusMessage("Remapping...");
+            this.sendNewResponse("Remapping...");
 
             if (!Files.exists(this.remappedJar)) {
                 log.info("Remapping {} file...", this.jarPath.getFileName());
@@ -198,7 +199,7 @@ public class Processor {
         try (final DurationTracker ignored =
                 new DurationTracker(duration -> log.info("Decompiling completed in {}!", duration))) {
             log.info("Decompiling final JAR file.");
-            this.setGuiStatusMessage("Decompiling... This will take a while!");
+            this.sendNewResponse("Decompiling... This will take a while!");
 
             FileUtil.remove(this.decompiledJarPath);
             Files.createDirectories(this.decompiledJarPath);
@@ -208,7 +209,7 @@ public class Processor {
             if (this.options.isZipDecompileOutput()) {
                 // Pack the decompiled files into a zip file
                 log.info("Packing decompiled files into {}", this.decompiledZipPath);
-                this.setGuiStatusMessage("Packing decompiled files ...");
+                this.sendNewResponse("Packing decompiled files ...");
                 FileUtil.remove(this.decompiledZipPath);
                 FileUtil.zip(this.decompiledJarPath, this.decompiledZipPath);
             }
@@ -220,17 +221,12 @@ public class Processor {
             return;
         }
 
-        try (DurationTracker ignored = new DurationTracker(duration -> {
+        try (final DurationTracker ignored = new DurationTracker(duration -> {
             log.info("Completed in {}!", duration);
-            this.handleGui(gui -> {
-                gui.updateStatusBox(String.format("Completed in %s!", duration));
-                gui.getControlButton().reset();
-            });
+            this.sendNewResponse(String.format("Completed in %s!", duration));
         })) {
-            this.handleGui(App::toggleControls);
-
             // Download the JAR and mappings files
-            this.setGuiStatusMessage("Downloading JAR & MAPPINGS...");
+            this.sendNewResponse("Downloading JAR & MAPPINGS...");
             CompletableFuture.allOf(this.downloadJar(), this.downloadMappings()).join();
 
             if (this.options.isRemap()) {
@@ -243,8 +239,6 @@ public class Processor {
 
         } catch (final IOException e) {
             log.error("Failed to run Processor!", e);
-        } finally {
-            this.handleGui(App::toggleControls);
         }
     }
 
