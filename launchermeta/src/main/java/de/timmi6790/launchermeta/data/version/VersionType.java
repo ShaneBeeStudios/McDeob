@@ -1,4 +1,4 @@
-package com.shanebeestudios.mcdeop.launchermeta.data.version;
+package de.timmi6790.launchermeta.data.version;
 
 public enum VersionType {
     RELEASE,

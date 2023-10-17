@@ -1,8 +1,8 @@
 package com.shanebeestudios.mcdeop;
 
-import com.shanebeestudios.mcdeop.launchermeta.LauncherMetaManager;
-import com.shanebeestudios.mcdeop.launchermeta.data.release.ReleaseManifest;
-import com.shanebeestudios.mcdeop.launchermeta.data.version.Version;
+import de.timmi6790.launchermeta.LauncherMetaManager;
+import de.timmi6790.launchermeta.data.release.ReleaseManifest;
+import de.timmi6790.launchermeta.data.version.Version;
 import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.util.List;

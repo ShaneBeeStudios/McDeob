@@ -1,4 +1,4 @@
-package com.shanebeestudios.mcdeop.launchermeta.data.version;
+package de.timmi6790.launchermeta.data.version;
 
 import java.util.List;
 import lombok.Builder;

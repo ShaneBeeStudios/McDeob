@@ -1,13 +1,13 @@
-package com.shanebeestudios.mcdeop.launchermeta;
+package de.timmi6790.launchermeta;
 
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.shanebeestudios.mcdeop.launchermeta.data.release.ReleaseManifest;
-import com.shanebeestudios.mcdeop.launchermeta.data.version.Version;
-import com.shanebeestudios.mcdeop.launchermeta.data.version.VersionManifest;
-import com.shanebeestudios.mcdeop.util.Util;
+import de.timmi6790.launchermeta.data.release.ReleaseManifest;
+import de.timmi6790.launchermeta.data.version.Version;
+import de.timmi6790.launchermeta.data.version.VersionManifest;
+import de.timmi6790.util.RequestUtil;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -31,7 +31,7 @@ public class LauncherMetaManager {
             throw new IllegalStateException("Failed to parse version manifest url", e);
         }
 
-        this.httpClient = Util.createHttpClient();
+        this.httpClient = RequestUtil.createHttpClient();
     }
 
     private <T> T get(final URL url, final Class<T> clazz) throws IOException {
