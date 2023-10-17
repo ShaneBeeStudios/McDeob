@@ -1,10 +1,10 @@
 package com.shanebeestudios.mcdeop;
 
-import com.shanebeestudios.mcdeop.launchermeta.data.version.Version;
 import com.shanebeestudios.mcdeop.processor.Processor;
 import com.shanebeestudios.mcdeop.processor.ProcessorOptions;
 import com.shanebeestudios.mcdeop.processor.ResourceRequest;
 import com.shanebeestudios.mcdeop.processor.SourceType;
+import de.timmi6790.launchermeta.data.version.Version;
 import java.io.IOException;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;

@@ -5,10 +5,10 @@ import com.shanebeestudios.mcdeop.VersionManager;
 import com.shanebeestudios.mcdeop.app.components.ControlButton;
 import com.shanebeestudios.mcdeop.app.components.ProcessorOptionsGroup;
 import com.shanebeestudios.mcdeop.app.components.VersionBox;
-import com.shanebeestudios.mcdeop.launchermeta.data.version.Version;
 import com.shanebeestudios.mcdeop.processor.Processor;
 import com.shanebeestudios.mcdeop.processor.ProcessorOptions;
 import com.shanebeestudios.mcdeop.processor.ResourceRequest;
+import de.timmi6790.launchermeta.data.version.Version;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +34,7 @@ public class App extends JFrame {
         try {
             // If we're running on Mac, set the logo
             final Taskbar taskbar = Taskbar.getTaskbar();
-            taskbar.setIconImage(Icon.DOCK_LOGO_1024.getImage());
+            taskbar.setIconImage(com.shanebeestudios.mcdeop.app.Icon.DOCK_LOGO_1024.getImage());
         } catch (final Exception ignored) {
             // Else we set it this way
             this.setIconImages(Icon.LOGO_IMAGES);

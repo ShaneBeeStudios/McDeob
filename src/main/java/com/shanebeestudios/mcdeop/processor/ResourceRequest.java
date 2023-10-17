@@ -1,8 +1,8 @@
 package com.shanebeestudios.mcdeop.processor;
 
-import com.shanebeestudios.mcdeop.launchermeta.data.release.DownloadInfo;
-import com.shanebeestudios.mcdeop.launchermeta.data.release.ReleaseManifest;
-import com.shanebeestudios.mcdeop.launchermeta.data.version.Version;
+import de.timmi6790.launchermeta.data.release.DownloadInfo;
+import de.timmi6790.launchermeta.data.release.ReleaseManifest;
+import de.timmi6790.launchermeta.data.version.Version;
 import java.net.URL;
 import java.util.Optional;
 

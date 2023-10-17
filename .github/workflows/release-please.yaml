@@ -43,4 +43,4 @@ jobs:
                 env:
                     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                 run: |
-                    gh release upload ${{ steps.release.outputs.tag_name }} build/libs/McDeob*.jar
+                    gh release upload ${{ steps.release.outputs.tag_name }} build/libs/McDeob-*-all.jar

@@ -1,7 +1,7 @@
 package com.shanebeestudios.mcdeop.app.components;
 
 import com.shanebeestudios.mcdeop.VersionManager;
-import com.shanebeestudios.mcdeop.launchermeta.data.version.Version;
+import de.timmi6790.launchermeta.data.version.Version;
 import java.awt.*;
 import javax.swing.*;
 

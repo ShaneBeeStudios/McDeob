@@ -1,7 +1,7 @@
-package com.shanebeestudios.mcdeop.launchermeta.data.release;
+package de.timmi6790.launchermeta.data.release;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.shanebeestudios.mcdeop.launchermeta.data.version.Version;
+import de.timmi6790.launchermeta.data.version.Version;
 import lombok.Builder;
 import lombok.Data;
 import lombok.extern.jackson.Jacksonized;

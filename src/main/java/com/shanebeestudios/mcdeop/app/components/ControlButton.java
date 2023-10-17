@@ -2,11 +2,11 @@ package com.shanebeestudios.mcdeop.app.components;
 
 import com.shanebeestudios.mcdeop.VersionManager;
 import com.shanebeestudios.mcdeop.app.App;
-import com.shanebeestudios.mcdeop.launchermeta.data.release.ReleaseManifest;
-import com.shanebeestudios.mcdeop.launchermeta.data.version.Version;
 import com.shanebeestudios.mcdeop.processor.ProcessorOptions;
 import com.shanebeestudios.mcdeop.processor.ResourceRequest;
 import com.shanebeestudios.mcdeop.processor.SourceType;
+import de.timmi6790.launchermeta.data.release.ReleaseManifest;
+import de.timmi6790.launchermeta.data.version.Version;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

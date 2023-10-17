@@ -1,4 +1,4 @@
-package com.shanebeestudios.mcdeop.launchermeta.data.release;
+package de.timmi6790.launchermeta.data.release;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
