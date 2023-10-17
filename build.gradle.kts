@@ -35,7 +35,7 @@ dependencies {
     implementation("org.vineflower:vineflower:1.9.3")
     implementation("net.sf.jopt-simple:jopt-simple:5.0.4")
     implementation("org.slf4j:slf4j-simple:2.0.9")
-    implementation("com.squareup.okhttp3:okhttp:4.11.0")
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
 }
 
 allprojects {
