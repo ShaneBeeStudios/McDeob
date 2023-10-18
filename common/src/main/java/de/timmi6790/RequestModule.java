@@ -2,9 +2,9 @@ package de.timmi6790;
 
 import dagger.Module;
 import dagger.Provides;
+import javax.inject.Singleton;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import javax.inject.Singleton;
 
 @Module
 public class RequestModule {
