@@ -1,6 +1,5 @@
 package com.shanebeestudios.mcdeop;
 
-import com.shanebeestudios.mcdeop.app.App;
 import com.shanebeestudios.mcdeop.util.Util;
 import javax.swing.*;
 import lombok.extern.slf4j.Slf4j;
@@ -11,7 +10,7 @@ public class McDeob {
         if (args.length == 0) {
             startGUI();
         } else {
-            new CommandLineHandler(args).run();
+            new CommandLineHandler(DaggerMcDebobComponent.create().getVersionManager(), args).run();
         }
     }
 
@@ -42,6 +41,6 @@ public class McDeob {
             throw new RuntimeException(e);
         }
 
-        new App();
+        DaggerMcDebobComponent.create().getApp().create();
     }
 }

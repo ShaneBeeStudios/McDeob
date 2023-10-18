@@ -12,10 +12,12 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class CommandLineHandler {
+    private final VersionManager versionManager;
     private final OptionParser parser;
     private final OptionSet options;
 
-    public CommandLineHandler(final String[] args) {
+    public CommandLineHandler(final VersionManager versionManager, final String[] args) {
+        this.versionManager = versionManager;
         this.parser = this.createOptionsParser();
         this.options = this.parser.parse(args);
     }
@@ -49,8 +51,7 @@ public class CommandLineHandler {
 
         if (this.options.has("versions")) {
             System.out.println("Available Minecraft versions to deobfuscate:");
-            final VersionManager versionManager = new VersionManager();
-            for (final Version version : versionManager.getVersions()) {
+            for (final Version version : this.versionManager.getVersions()) {
                 System.out.println(" - " + version.getId());
             }
             return false;
@@ -86,12 +87,11 @@ public class CommandLineHandler {
             return;
         }
 
-        final VersionManager versionManager = new VersionManager();
-        versionManager
+        this.versionManager
                 .getVersion(versionString)
                 .map(version -> {
                     try {
-                        return versionManager.getReleaseManifest(version);
+                        return this.versionManager.getReleaseManifest(version);
                     } catch (final IOException e) {
                         log.error("Failed to fetch release manifest", e);
                     }

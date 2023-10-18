@@ -1,6 +1,6 @@
 package com.shanebeestudios.mcdeop;
 
-import de.timmi6790.launchermeta.LauncherMetaManager;
+import de.timmi6790.launchermeta.LauncherMeta;
 import de.timmi6790.launchermeta.data.release.ReleaseManifest;
 import de.timmi6790.launchermeta.data.version.Version;
 import java.io.IOException;
@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
+import javax.inject.Inject;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -17,10 +18,15 @@ public class VersionManager {
     private static final OffsetDateTime MINIMUM_RELEASE_TIME = OffsetDateTime.parse("2019-08-28T15:00:00Z");
     private static final Set<String> SPECIAL_VERSIONS = Set.of("1.14.4");
 
-    private final LauncherMetaManager launcherMetaManager = new LauncherMetaManager();
+    private final LauncherMeta launcherMeta;
 
     @Getter(lazy = true)
     private final List<Version> versions = this.fetchVersions();
+
+    @Inject
+    public VersionManager(final LauncherMeta launcherMeta) {
+        this.launcherMeta = launcherMeta;
+    }
 
     private boolean hasMappings(final Version version) {
         return version.getReleaseTime().isAfter(MINIMUM_RELEASE_TIME) || SPECIAL_VERSIONS.contains(version.getId());
@@ -29,7 +35,7 @@ public class VersionManager {
     private List<Version> fetchVersions() {
         final List<Version> fetchedVersions;
         try {
-            fetchedVersions = this.launcherMetaManager.getVersionManifest().getVersions();
+            fetchedVersions = this.launcherMeta.getVersionManifest().getVersions();
         } catch (final IOException e) {
             log.error("Failed to fetch version manifest", e);
             return List.of();
@@ -59,6 +65,6 @@ public class VersionManager {
     }
 
     public ReleaseManifest getReleaseManifest(final Version version) throws IOException {
-        return this.launcherMetaManager.getReleaseManifest(version);
+        return this.launcherMeta.getReleaseManifest(version);
     }
 }

@@ -12,6 +12,7 @@ import de.timmi6790.launchermeta.data.version.Version;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import javax.inject.Inject;
 import javax.swing.*;
 import lombok.Getter;
 import mx.kenzie.mirror.Mirror;
@@ -28,8 +29,9 @@ public class App extends JFrame {
     private final JComboBox<Version> versionBox;
     private final JTextField statusBox;
 
-    public App() {
-        this.versionManager = new VersionManager();
+    @Inject
+    public App(final VersionManager versionManager) {
+        this.versionManager = versionManager;
 
         try {
             // If we're running on Mac, set the logo
@@ -57,11 +59,6 @@ public class App extends JFrame {
         this.statusBox.setEditable(false);
 
         this.controlButton = new ControlButton(this, this.versionManager);
-
-        this.createLayout();
-        this.pack();
-        this.setupWindow();
-        this.setVisible(true);
     }
 
     public static java.util.List<Component> getAllComponents(final Container c) {
@@ -160,6 +157,13 @@ public class App extends JFrame {
             }
         };
         thread.start();
+    }
+
+    public void create() {
+        this.createLayout();
+        this.pack();
+        this.setupWindow();
+        this.setVisible(true);
     }
 
     @Override

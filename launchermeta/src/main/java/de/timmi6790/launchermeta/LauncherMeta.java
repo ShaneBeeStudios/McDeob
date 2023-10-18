@@ -7,13 +7,13 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import de.timmi6790.launchermeta.data.release.ReleaseManifest;
 import de.timmi6790.launchermeta.data.version.Version;
 import de.timmi6790.launchermeta.data.version.VersionManifest;
-import de.timmi6790.util.RequestUtil;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import javax.inject.Inject;
 import okhttp3.*;
 
-public class LauncherMetaManager {
+public class LauncherMeta {
     private static final String VERSION_MANIFEST_URL = "https://launchermeta.mojang.com/mc/game/version_manifest.json";
 
     private final OkHttpClient httpClient;
@@ -24,14 +24,15 @@ public class LauncherMetaManager {
 
     private final URL versionManifestUrl;
 
-    public LauncherMetaManager() {
+    @Inject
+    public LauncherMeta(final OkHttpClient httpClient) {
         try {
             this.versionManifestUrl = new URL(VERSION_MANIFEST_URL);
         } catch (final MalformedURLException e) {
             throw new IllegalStateException("Failed to parse version manifest url", e);
         }
 
-        this.httpClient = RequestUtil.createHttpClient();
+        this.httpClient = httpClient;
     }
 
     private <T> T get(final URL url, final Class<T> clazz) throws IOException {
