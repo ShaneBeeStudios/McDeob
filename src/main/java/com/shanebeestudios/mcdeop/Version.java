@@ -15,6 +15,8 @@ public enum Version {
     CLIENT_LATEST_SNAPSHOT(Type.CLIENT, "Latest_Snapshot", null, null),
 
     // Release
+    SERVER_1_20_4(Type.SERVER, "1.20.4", "8dd1a28015f51b1803213892b50b7b4fc76e594d", "c1cafe916dd8b58ed1fe0564fc8f786885224e62"),
+    CLIENT_1_20_4(Type.CLIENT, "1.20.4", "fd19469fed4a4b4c15b2d5133985f0e3e7816a8a", "be76ecc174ea25580bdc9bf335481a5192d9f3b7"),
     SERVER_1_20_3(Type.SERVER, "1.20.3", "4fb536bfd4a83d61cdbaf684b8d311e66e7d4c49", "c1cafe916dd8b58ed1fe0564fc8f786885224e62"),
     CLIENT_1_20_3(Type.CLIENT, "1.20.3", "b178a327a96f2cf1c9f98a45e5588d654a3e4369","be76ecc174ea25580bdc9bf335481a5192d9f3b7"),
     SERVER_1_20_2(Type.SERVER, "1.20.2", "5b868151bd02b41319f54c8d4061b8cae84e665c", "dced504a9b5df367ddd3477adac084cea8024ba4"),
