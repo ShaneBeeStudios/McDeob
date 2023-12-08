@@ -2,3 +2,6 @@
 
 # IntelliJ IDEA
 .idea
+
+deobf-work/*
+target/*
