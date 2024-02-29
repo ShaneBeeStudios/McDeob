@@ -19,20 +19,9 @@
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
         </repository>
-        <repository>
-            <id>kenzie</id>
-            <name>Kenzie's Repository</name>
-            <url>https://repo.kenzie.mx/releases</url>
-        </repository>
     </repositories>
 
     <dependencies>
-        <dependency>
-            <groupId>mx.kenzie</groupId>
-            <artifactId>mirror</artifactId>
-            <version>5.0.3</version>
-            <scope>compile</scope>
-        </dependency>
         <dependency>
             <groupId>io.github.lxgaming</groupId>
             <artifactId>reconstruct-common</artifactId>

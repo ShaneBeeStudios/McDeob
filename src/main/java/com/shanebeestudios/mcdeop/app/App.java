@@ -3,7 +3,6 @@ package com.shanebeestudios.mcdeop.app;
 import com.shanebeestudios.mcdeop.Processor;
 import com.shanebeestudios.mcdeop.Version;
 import com.shanebeestudios.mcdeop.util.Util;
-import mx.kenzie.mirror.Mirror;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,6 +11,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.lang.reflect.Field;
 
 @SuppressWarnings({"SameParameterValue", "unchecked", "rawtypes", "FieldCanBeLocal"})
 public class App extends JFrame {
@@ -55,7 +55,10 @@ public class App extends JFrame {
         setTitle("McDeob");
 
         try { // Window title hack for GTK
-            Mirror.of(Toolkit.getDefaultToolkit()).unsafe().field("awtAppClassName").set("McDeob");
+            Toolkit defaultToolkit = Toolkit.getDefaultToolkit();
+            Field nameField = defaultToolkit.getClass().getDeclaredField("awtAppClassName");
+            nameField.setAccessible(true);
+            nameField.set(defaultToolkit, "McDeob");
         } catch (Exception ignored) {
             // We're probably just not on XToolkit
         }
@@ -158,7 +161,7 @@ public class App extends JFrame {
         int width = (int) (getSize().width * 0.90);
         this.removeComponentListener(statusBoxListener);
         statusBoxListener = hookSize(() ->
-                statusBox.setBounds((getSize().width / 2) - (width / 2), 190, width, 30));
+            statusBox.setBounds((getSize().width / 2) - (width / 2), 190, width, 30));
 
         currentVerBox.setText("Version: " + version);
         currentVerBox.setForeground(new Color(13, 193, 47));
