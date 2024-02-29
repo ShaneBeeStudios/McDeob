@@ -12,6 +12,7 @@ import java.io.IOException;
 public class McDeob {
 
     public static void main(String[] args) {
+        Version.initVersions();
         if (args.length == 0) {
             try {
                 if (Util.isRunningMacOS()) {
@@ -34,11 +35,11 @@ public class McDeob {
         parser.accepts("help", "Shows help and exits");
         parser.accepts("versions", "Prints a list of all Minecraft versions available to deobfuscate");
         parser.accepts("version", "Minecraft version for which we're deobfuscating")
-                .withRequiredArg()
-                .ofType(String.class);
+            .withRequiredArg()
+            .ofType(String.class);
         parser.accepts("type", "What we should deobfuscate: client or server")
-                .withRequiredArg()
-                .ofType(String.class);
+            .withRequiredArg()
+            .ofType(String.class);
         parser.accepts("decompile", "Marks that we should decompile the deobfuscated source");
 
         OptionSet options = parser.parse(args);
@@ -72,19 +73,21 @@ public class McDeob {
         String versionString = (String) options.valueOf("version");
         String typeString = (String) options.valueOf("type");
 
+        Version.Type type;
         try {
-            Version.Type.valueOf(typeString.toUpperCase());
+            type = Version.Type.valueOf(typeString.toUpperCase());
         } catch (IllegalArgumentException e) {
             Logger.error("Invalid type specified, shutting down...");
             System.exit(1);
+            return;
         }
 
-        Version.Type type = Version.Type.valueOf(typeString.toUpperCase());
-        Version version = Version.getByVersion(versionString, type);
+        Version version = Version.getByVersion(versionString);
         if (version == null) {
             Logger.error("Invalid or unsupported version was specified, shutting down...");
             System.exit(1);
         }
+        version.setType(type);
 
         boolean decompile = options.has("decompile");
 
