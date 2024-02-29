@@ -27,7 +27,6 @@ import java.util.stream.Stream;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
-@SuppressWarnings("ResultOfMethodCallIgnored")
 public class Processor {
     private static final URL LATEST_INFO;
 
@@ -78,6 +77,7 @@ public class Processor {
         this.reconstruct = new Reconstruct(new ReconConfig());
     }
 
+    @SuppressWarnings("CallToPrintStackTrace")
     public void init() {
         try {
             long start = System.currentTimeMillis();
@@ -192,10 +192,10 @@ public class Processor {
 
         // Setup FernFlower to properly decompile the jar file
         String[] args = new String[]{
-                "-dgs=1", "-hdc=0", "-rbr=0",
-                "-asc=1", "-udv=0", "-rsy=1",
-                remappedJar.toAbsolutePath().toString(),
-                decompileDir.toAbsolutePath().toString()
+            "-dgs=1", "-hdc=0", "-rbr=0",
+            "-asc=1", "-udv=0", "-rsy=1",
+            remappedJar.toAbsolutePath().toString(),
+            decompileDir.toAbsolutePath().toString()
         };
 
         ConsoleDecompiler.main(args);
@@ -204,6 +204,7 @@ public class Processor {
         try (final Stream<Path> stream = Files.list(decompileDir)) {
             for (final Path path : (Iterable<Path>) stream::iterator) {
                 final String filename = path.getFileName().toString();
+                if (!filename.contains(".jar")) continue;
                 final int index = filename.lastIndexOf('.');
                 Files.move(path, path.resolveSibling(Path.of(filename.substring(0, index) + ".zip")));
             }
