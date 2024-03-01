@@ -17,12 +17,12 @@ import java.lang.reflect.Field;
 public class App extends JFrame {
 
     private JButton startButton;
-    private JRadioButton server;
-    private JRadioButton client;
+    private JRadioButton serverRadioButton;
+    private JRadioButton clientRadioButton;
+    private JToggleButton snapshotToggleButton;
     private JCheckBox decompile;
     private JComboBox<String> versionBox;
     private JTextField statusBox;
-    private JTextField currentVerBox;
 
     public App() {
         init();
@@ -44,7 +44,7 @@ public class App extends JFrame {
         createTitle();
         createTypeButton();
         createVersionPopup();
-        createDeobOption();
+        createDecompileButton();
         createStatusBox();
         createStartButton();
     }
@@ -73,7 +73,7 @@ public class App extends JFrame {
         setLayout(null);
     }
 
-    private ComponentListener hookSize(final Runnable sizeTask) {
+    private void hookSize(final Runnable sizeTask) {
         final ComponentListener listener = new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
@@ -83,7 +83,6 @@ public class App extends JFrame {
 
         this.addComponentListener(listener);
         sizeTask.run();
-        return listener;
     }
 
     private void createTitle() {
@@ -94,77 +93,61 @@ public class App extends JFrame {
     }
 
     private void createTypeButton() {
-        server = new JRadioButton("Server");
-        client = new JRadioButton("Client");
-        hookSize(() -> server.setBounds(getSize().width / 2 + 10, 60, 100, 20));
-        hookSize(() -> client.setBounds(getSize().width / 2 - (100 - 10), 60, 100, 20));
-        client.setSelected(true);
+        this.serverRadioButton = new JRadioButton("Server");
+        this.clientRadioButton = new JRadioButton("Client");
+        this.snapshotToggleButton = new JToggleButton("Toggle Snapshots");
+        this.snapshotToggleButton.setSelected(false);
+        this.snapshotToggleButton.addActionListener(new SnapshotButtonListener());
+
+        hookSize(() -> this.serverRadioButton.setBounds(getSize().width / 2 + 10, 60, 100, 20));
+        hookSize(() -> this.clientRadioButton.setBounds(getSize().width / 2 - (100 - 10), 60, 100, 20));
+        hookSize(() -> this.snapshotToggleButton.setBounds((getSize().width / 2) - 100, 90, 200, 30));
+        this.clientRadioButton.setSelected(true);
         ButtonGroup typeGroup = new ButtonGroup();
-        typeGroup.add(server);
-        typeGroup.add(client);
-        add(server);
-        add(client);
+        typeGroup.add(this.serverRadioButton);
+        typeGroup.add(this.clientRadioButton);
+        add(this.serverRadioButton);
+        add(this.clientRadioButton);
+        add(this.snapshotToggleButton);
+    }
+
+    private void setupVersions(boolean showSnapshots) {
+        this.versionBox.removeAllItems();
+        for (Version version : Version.getVersions()) {
+            if (version.getReleaseType().equalsIgnoreCase("snapshot") && !showSnapshots) continue;
+            else if (version.getReleaseType().equalsIgnoreCase("release") && showSnapshots) continue;
+            this.versionBox.addItem(version.getVersion().replace("_", " "));
+        }
     }
 
     private void createVersionPopup() {
-        versionBox = new JComboBox();
-        for (Version version : Version.values()) {
-            if (version.getType() == Version.Type.SERVER) {
-                versionBox.addItem(version.getVersion().replace("_", " "));
-            }
-        }
-        versionBox.setSelectedIndex(0);
-        versionBox.setBackground(Color.lightGray);
-        hookSize(() -> versionBox.setBounds((getSize().width / 2) - versionBox.getWidth() / 2, 95, versionBox.getPreferredSize().width, 25));
+        this.versionBox = new JComboBox();
+        setupVersions(false);
+        this.versionBox.setSelectedIndex(0);
+        this.versionBox.setBackground(Color.lightGray);
+        hookSize(() -> versionBox.setBounds((getSize().width / 2) - 100, 125, 200, 30));
         add(versionBox);
     }
 
-    private void createDeobOption() {
+    private void createDecompileButton() {
         decompile = new JCheckBox("Decompile?");
-        int decompileHeight;
-        if (Util.isRunningMacOS()) {
-            decompileHeight = 30;
-        } else {
-            // fixes some weird overlap with the status box
-            decompileHeight = 30;
-        }
-        hookSize(() -> decompile.setBounds((getSize().width / 2) - 60, 125, 120, decompileHeight));
-        decompile.setSelected(false);
+        hookSize(() -> decompile.setBounds((getSize().width / 2) - 60, 165, 120, 30));
+        this.decompile.setSelected(false);
         add(decompile);
     }
-
-    private transient ComponentListener statusBoxListener;
 
     private void createStatusBox() {
         statusBox = new JTextField("Status!");
         statusBox.setEditable(false);
-        statusBoxListener = hookSize(() -> {
+        hookSize(() -> {
             int width = (int) (getSize().width * 0.90);
-            statusBox.setBounds((getSize().width / 2) - (width / 2), 160, width, 30);
+            statusBox.setBounds((getSize().width / 2) - (width / 2), 200, width, 30);
         });
         add(statusBox);
     }
 
     public void updateStatusBox(String string) {
         statusBox.setText(string);
-    }
-
-    public void addVersionBox(String version) {
-        if (currentVerBox == null) {
-            currentVerBox = new JTextField();
-            currentVerBox.setEditable(false);
-            currentVerBox.setHorizontalAlignment(SwingConstants.CENTER);
-            hookSize(() -> currentVerBox.setBounds((getSize().width / 2) - 110, 150, 220, 30));
-            add(currentVerBox);
-        }
-        // Shift status box down
-        int width = (int) (getSize().width * 0.90);
-        this.removeComponentListener(statusBoxListener);
-        statusBoxListener = hookSize(() ->
-            statusBox.setBounds((getSize().width / 2) - (width / 2), 190, width, 30));
-
-        currentVerBox.setText("Version: " + version);
-        currentVerBox.setForeground(new Color(13, 193, 47));
     }
 
     private void createStartButton() {
@@ -180,7 +163,7 @@ public class App extends JFrame {
             hDivided = Math.round(h / 1.25F);
         }
         hookSize(() -> startButton.setBounds((getSize().width / 2) - (w / 2), ((getSize().height / 5) * 4) - hDivided, w, h));
-        startButton.addActionListener(new ButtonListener());
+        startButton.addActionListener(new StartButtonListener());
         add(startButton);
     }
 
@@ -194,11 +177,12 @@ public class App extends JFrame {
     }
 
     public void toggleControls() {
-        startButton.setEnabled(!startButton.isEnabled());
-        decompile.setEnabled(!decompile.isEnabled());
-        versionBox.setEnabled(!versionBox.isEnabled());
-        server.setEnabled(!server.isEnabled());
-        client.setEnabled(!client.isEnabled());
+        this.startButton.setEnabled(!this.startButton.isEnabled());
+        this.decompile.setEnabled(!this.decompile.isEnabled());
+        this.versionBox.setEnabled(!this.versionBox.isEnabled());
+        this.serverRadioButton.setEnabled(!this.serverRadioButton.isEnabled());
+        this.clientRadioButton.setEnabled(!this.clientRadioButton.isEnabled());
+        this.snapshotToggleButton.setEnabled(!this.snapshotToggleButton.isEnabled());
     }
 
     private void start(Version version, boolean shouldDecompile) {
@@ -213,25 +197,49 @@ public class App extends JFrame {
         thread.start();
     }
 
-    class ButtonListener implements ActionListener {
+    public void fail() {
+        toggleControls();
+        updateButton("INVALID VERSION!", Color.RED);
+        getToolkit().beep();
+        Timer timer = new Timer(1000, e1 -> {
+            updateButton("Start!");
+            toggleControls();
+        });
+        timer.setRepeats(false);
+        timer.start();
+    }
 
+    class StartButtonListener implements ActionListener {
+
+        @SuppressWarnings("DataFlowIssue")
         @Override
-        public void actionPerformed(ActionEvent e) {
-            if (e.getSource() == startButton) {
-                Version.Type type = server.isSelected() ? Version.Type.SERVER : Version.Type.CLIENT;
-                Version version = Version.getByVersion(((String) versionBox.getSelectedItem()).replace(" ", "_"), type);
+        public void actionPerformed(ActionEvent event) {
+            if (event.getSource() == startButton) {
+                Version version = Version.getByVersion(((String) versionBox.getSelectedItem()).replace(" ", "_"));
                 if (!startButton.getText().equalsIgnoreCase("Start!")) return;
                 if (version == null) {
-                    updateButton("INVALID VERSION!", Color.RED);
-                    getToolkit().beep();
-                    Timer timer = new Timer(1000, e1 -> updateButton("Start!"));
-                    timer.setRepeats(false);
-                    timer.start();
+                    fail();
                 } else {
-                    boolean decomp = decompile.isSelected();
+                    version.setType(serverRadioButton.isEnabled() ? Version.Type.SERVER : Version.Type.CLIENT);
                     updateButton("Starting...", Color.BLUE);
-                    start(version, decomp);
+                    start(version, decompile.isSelected());
                 }
+            }
+        }
+    }
+
+    class SnapshotButtonListener implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent event) {
+            if (snapshotToggleButton.isSelected()) {
+                snapshotToggleButton.setSelected(true);
+                snapshotToggleButton.setText("Toggle Releases");
+                setupVersions(true);
+            } else {
+                snapshotToggleButton.setSelected(false);
+                snapshotToggleButton.setText("Toggle Snapshots");
+                setupVersions(false);
             }
         }
     }
