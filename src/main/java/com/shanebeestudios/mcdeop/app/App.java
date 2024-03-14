@@ -220,7 +220,7 @@ public class App extends JFrame {
                 if (version == null) {
                     fail();
                 } else {
-                    version.setType(serverRadioButton.isEnabled() ? Version.Type.SERVER : Version.Type.CLIENT);
+                    version.setType(serverRadioButton.isSelected() ? Version.Type.SERVER : Version.Type.CLIENT);
                     updateButton("Starting...", Color.BLUE);
                     start(version, decompile.isSelected());
                 }
