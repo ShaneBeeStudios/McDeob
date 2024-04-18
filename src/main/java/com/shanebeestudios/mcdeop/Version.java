@@ -6,15 +6,14 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.Collection;
-import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.TreeMap;
 
 public class Version {
 
     // Static Stuff
-    private static final Map<String, Version> VERSION_MAP = new TreeMap<>(Collections.reverseOrder());
+    private static final Map<String, Version> VERSION_MAP = new LinkedHashMap<>();
 
     public static void initVersions() {
         JSONObject versionManifest;
@@ -34,7 +33,7 @@ public class Version {
 
             // Mappings not available before 1.14.4, so we exit
             if (version.equalsIgnoreCase("1.14.4")) {
-                return;
+                break;
             }
         }
     }
