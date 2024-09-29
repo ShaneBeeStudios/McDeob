@@ -4,7 +4,10 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
@@ -28,6 +31,18 @@ public class Util {
         final JSONObject jsonObject = new JSONObject(new JSONTokener(in));
         in.close();
         return jsonObject;
+    }
+
+    public static File copyInputStreamToFile(InputStream inputStream, String pathName) throws IOException {
+        File returnFile = new File(pathName);
+        try (FileOutputStream outputStream = new FileOutputStream(returnFile, false)) {
+            int read;
+            byte[] bytes = new byte[8192];
+            while ((read = inputStream.read(bytes)) != -1) {
+                outputStream.write(bytes, 0, read);
+            }
+        }
+        return returnFile;
     }
 
 }

@@ -4,10 +4,16 @@ import com.shanebeestudios.mcdeop.app.App;
 import com.shanebeestudios.mcdeop.util.Logger;
 import com.shanebeestudios.mcdeop.util.TimeStamp;
 import com.shanebeestudios.mcdeop.util.Util;
-import io.github.lxgaming.reconstruct.common.Reconstruct;
+import net.md_5.specialsource.Jar;
+import net.md_5.specialsource.JarMapping;
+import net.md_5.specialsource.JarRemapper;
+import net.md_5.specialsource.SpecialSource;
+import net.md_5.specialsource.provider.JarProvider;
+import net.md_5.specialsource.provider.JointProvider;
 import org.jetbrains.java.decompiler.main.decompiler.ConsoleDecompiler;
 
 import java.awt.*;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -15,6 +21,8 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Stream;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
@@ -25,9 +33,9 @@ public class Processor {
     private final boolean decompile;
     private final App app;
 
-    Path jarPath;
-    Path mappingsPath;
-    Path remappedJar;
+    private Path jarPath;
+    private Path mappingsPath;
+    private Path remappedJar;
 
     private String minecraftJarName;
     private String mappingsName;
@@ -147,8 +155,28 @@ public class Processor {
 
         if (!Files.exists(remappedJar)) {
             Logger.info("Remapping %s file...", this.minecraftJarName);
-            Reconstruct reconstruct = new Reconstruct(new ReconConfig(this));
-            reconstruct.load();
+
+            try {
+                // SpecialSource remapping
+                JarMapping jarMapping = new JarMapping();
+                jarMapping.loadMappings(new File(this.mappingsPath.toUri()));
+
+                JointProvider inheritanceProvider = new JointProvider();
+                jarMapping.setFallbackInheritanceProvider(inheritanceProvider);
+
+                Jar inJar = Jar.init(new File(this.jarPath.toUri()));
+
+                SpecialSource.kill_lvt = true;
+                JarRemapper jarRemapper = new JarRemapper(jarMapping);
+
+                Jar internal = getInternalJars(inJar);
+                inheritanceProvider.add(new JarProvider(internal));
+                jarRemapper.remapJar(internal, new File(this.remappedJar.toUri()));
+                inJar.close();
+                internal.close();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
 
             TimeStamp timeStamp = TimeStamp.fromNow(start);
             Logger.info("Remapping completed in %s!", timeStamp);
@@ -170,7 +198,7 @@ public class Processor {
         // Setup FernFlower to properly decompile the jar file
         String[] args = new String[]{
             "-dgs=1", "-hdc=0", "-rbr=0",
-            "-asc=1", "-udv=0", "-rsy=1",
+            "-asc=1", "-udv=0", "-rsy=1", "-aoa=1",
             this.remappedJar.toAbsolutePath().toString(),
             decompileDir.toAbsolutePath().toString()
         };
@@ -196,6 +224,36 @@ public class Processor {
         this.mappingsPath = null;
         this.remappedJar = null;
         System.gc();
+    }
+
+    // Server jars have a bundled setup now
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    private Jar getInternalJars(Jar jarFile) {
+        String ver = this.version.getVersion();
+
+        // Client and older server's don't use the bundler
+        if (!jarFile.containsResource("META-INF/versions/" + ver + "/server-" + ver + ".jar")) {
+            return jarFile;
+        } else {
+            try {
+                List<File> files = new ArrayList<>();
+
+                // Include Mojang libraries and server jar
+                for (String entryName : jarFile.getEntryNames()) {
+                    if ((entryName.contains("server-") || entryName.contains("libraries/com/mojang")) && entryName.contains(".jar")) {
+                        String pathName = this.dataFolderPath + "/" + entryName.substring(entryName.lastIndexOf('/') + 1);
+                        File file = Util.copyInputStreamToFile(jarFile.getResource(entryName), pathName);
+                        files.add(file);
+                    }
+                }
+                Jar internalJar = Jar.init(files);
+                // Cleanup files now that they're jars
+                files.forEach(File::delete);
+                return internalJar;
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
 }
