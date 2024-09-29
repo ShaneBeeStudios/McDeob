@@ -25,10 +25,9 @@ public class Processor {
     private final boolean decompile;
     private final App app;
 
-    private Reconstruct reconstruct;
-    private Path jarPath;
-    private Path mappingsPath;
-    private Path remappedJar;
+    Path jarPath;
+    Path mappingsPath;
+    Path remappedJar;
 
     private String minecraftJarName;
     private String mappingsName;
@@ -74,7 +73,6 @@ public class Processor {
             this.minecraftJarName = String.format("minecraft_%s_%s.jar", versionTypeName, versionName);
             this.mappingsName = String.format("mappings_%s_%s.txt", versionTypeName, versionName);
             this.mappedJarName = String.format("remapped_%s_%s.jar", versionTypeName, versionName);
-            this.reconstruct = new Reconstruct(new ReconConfig());
 
             downloadJar();
             downloadMappings();
@@ -149,10 +147,8 @@ public class Processor {
 
         if (!Files.exists(remappedJar)) {
             Logger.info("Remapping %s file...", this.minecraftJarName);
-            this.reconstruct.getConfig().setInputPath(this.jarPath.toAbsolutePath());
-            this.reconstruct.getConfig().setMappingPath(this.mappingsPath.toAbsolutePath());
-            this.reconstruct.getConfig().setOutputPath(this.remappedJar.toAbsolutePath());
-            this.reconstruct.load();
+            Reconstruct reconstruct = new Reconstruct(new ReconConfig(this));
+            reconstruct.load();
 
             TimeStamp timeStamp = TimeStamp.fromNow(start);
             Logger.info("Remapping completed in %s!", timeStamp);
@@ -199,7 +195,6 @@ public class Processor {
         this.jarPath = null;
         this.mappingsPath = null;
         this.remappedJar = null;
-        this.reconstruct = null;
         System.gc();
     }
 

@@ -3,25 +3,28 @@ package com.shanebeestudios.mcdeop;
 import io.github.lxgaming.reconstruct.common.configuration.Config;
 
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 public class ReconConfig implements Config {
 
     private int threads = Runtime.getRuntime().availableProcessors();
-    Path input, output, map;
+    private Path input, output, map;
 
-
+    public ReconConfig(Processor processor) {
+        this.input = processor.jarPath;
+        this.output = processor.remappedJar;
+        this.map = processor.mappingsPath;
+    }
 
     @Override
     public boolean isDebug() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isTrace() {
-        return false;
+        return true;
     }
 
     @Override
@@ -71,14 +74,7 @@ public class ReconConfig implements Config {
 
     @Override
     public Collection<String> getExcludedPackages() {
-        List<String> exclude = new ArrayList<>();
-        exclude.add("com.google.");
-        exclude.add("io.netty.");
-        exclude.add("it.unimi.dsi.fastutil.");
-        exclude.add("javax.");
-        exclude.add("joptsimple.");
-        exclude.add("org.apache.");
-        return exclude;
+        return List.of("com.google.", "io.netty.", "it.unimi.dsi.fastutil.", "javax.", "joptsimple.", "org.apache.");
     }
 
 }
