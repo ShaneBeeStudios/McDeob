@@ -20,7 +20,7 @@ jobs:
       uses: actions/setup-java@v4.4.0
       with:
         java-version: 16
-        distribution: ''
+        distribution: 'temurin'
     - name: Build with Maven
       run: mvn -B package --file pom.xml
     - name: Upload a Build Artifact
