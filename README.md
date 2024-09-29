@@ -32,7 +32,8 @@ You can use these files personally however you see fit, but you are not permitte
 That said, you may **NOT** upload the resulting files to something like GitHub.
 
 ## Preview
-![](https://i.imgur.com/eOSuIGr.png)
+<img width="612" alt="Screenshot 2024-09-29 at 2 16 19 PM" src="https://github.com/user-attachments/assets/46bc9dc6-0ef8-43ec-983b-024c434ddf6d">
+
 
 ## Compiling
 If you wish to compile this yourself, simply clone the repo and run `mvn clean package`.   
