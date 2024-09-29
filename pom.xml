@@ -79,7 +79,7 @@
                         <manifest>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>libs/</classpathPrefix>
-                            <mainClass>com.shanebeestudios.mcdeop.McDeob</mainClass>
+                            <mainClass>com.shanebeestudios.mcdeob.McDeob</mainClass>
                             <!-- -NSRequiresAquaSystemAppearance False  -->
                         </manifest>
                     </archive>
@@ -112,7 +112,7 @@
                     </dmg>
                     <plist>
                         <CFBundleIconFile>src/main/resources/images/1024.icns</CFBundleIconFile>
-                        <JVMMainClassName>com.shanebeestudios.mcdeop.McDeob</JVMMainClassName>
+                        <JVMMainClassName>com.shanebeestudios.mcdeob.McDeob</JVMMainClassName>
                     </plist>
                 </configuration>
                 <executions>

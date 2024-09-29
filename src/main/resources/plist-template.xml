@@ -11,7 +11,7 @@
         <key>CFBundleIconFile</key>
         <string>1024.icns</string>
         <key>CFBundleIdentifier</key>
-        <string>com.shanebeestudios.mcdeop.McDeob</string>
+        <string>com.shanebeestudios.mcdeob.McDeob</string>
         <key>CFBundleDisplayName</key>
         <string>McDeob</string>
         <key>CFBundleInfoDictionaryVersion</key>
@@ -38,7 +38,7 @@
         <key>JVMRuntimePath</key>
         <string></string>
         <key>JVMMainClassName</key>
-        <string>com.shanebeestudios.mcdeop.McDeob</string>
+        <string>com.shanebeestudios.mcdeob.McDeob</string>
         <key>NSRequiresAquaSystemAppearance</key>
         <string>NO</string>
         <key>JVMClassPaths</key>

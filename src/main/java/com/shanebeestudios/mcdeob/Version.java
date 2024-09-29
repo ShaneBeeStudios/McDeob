@@ -1,6 +1,6 @@
-package com.shanebeestudios.mcdeop;
+package com.shanebeestudios.mcdeob;
 
-import com.shanebeestudios.mcdeop.util.Util;
+import com.shanebeestudios.mcdeob.util.Util;
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONObject;
 

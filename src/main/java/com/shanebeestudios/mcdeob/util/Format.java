@@ -1,4 +1,4 @@
-package com.shanebeestudios.mcdeop.util;
+package com.shanebeestudios.mcdeob.util;
 
 @SuppressWarnings("unused")
 public class Format extends java.awt.Color {

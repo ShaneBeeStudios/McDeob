@@ -1,8 +1,8 @@
-package com.shanebeestudios.mcdeop.app;
+package com.shanebeestudios.mcdeob.app;
 
-import com.shanebeestudios.mcdeop.Processor;
-import com.shanebeestudios.mcdeop.Version;
-import com.shanebeestudios.mcdeop.util.Util;
+import com.shanebeestudios.mcdeob.Processor;
+import com.shanebeestudios.mcdeob.Version;
+import com.shanebeestudios.mcdeob.util.Util;
 
 import javax.swing.*;
 import java.awt.*;

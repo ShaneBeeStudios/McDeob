@@ -1,8 +1,8 @@
-package com.shanebeestudios.mcdeop;
+package com.shanebeestudios.mcdeob;
 
-import com.shanebeestudios.mcdeop.app.App;
-import com.shanebeestudios.mcdeop.util.Logger;
-import com.shanebeestudios.mcdeop.util.Util;
+import com.shanebeestudios.mcdeob.app.App;
+import com.shanebeestudios.mcdeob.util.Logger;
+import com.shanebeestudios.mcdeob.util.Util;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 
