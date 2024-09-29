@@ -45,7 +45,7 @@
         <dependency>
             <groupId>net.md-5</groupId>
             <artifactId>SpecialSource</artifactId>
-            <version>1.11.5-20240330.001248-1</version>
+            <version>1.11.5-SNAPSHOT</version>
         </dependency>
     </dependencies>
 
