@@ -1,5 +1,11 @@
 package com.shanebeestudios.mcdeob.util;
 
+import com.shanebeestudios.mcdeob.Processor;
+import net.md_5.specialsource.Jar;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.java.decompiler.main.decompiler.ConsoleDecompiler;
+import org.jetbrains.java.decompiler.main.decompiler.ThreadedPrintStreamLogger;
+import org.jetbrains.java.decompiler.main.extern.IFernflowerLogger;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
@@ -11,6 +17,13 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Stream;
 
 public class Util {
 
@@ -43,6 +56,85 @@ public class Util {
             }
         }
         return returnFile;
+    }
+
+    /**
+     * Create a FernFlower decompiler
+     *
+     * @param source      Source path for decompiling
+     * @param destination Destination path for where file will output
+     * @return A new decompiler
+     */
+    public static @NotNull ConsoleDecompiler getConsoleDecompiler(Path source, Path destination) {
+        Map<String, Object> settings = new LinkedHashMap<>();
+        settings.put("dgs", 1);
+        settings.put("hdc", 0);
+        settings.put("rbr", 0);
+        settings.put("asc", 1);
+        settings.put("udv", 0);
+        settings.put("rsy", 1);
+        settings.put("aoa", 1);
+        IFernflowerLogger logger = new ThreadedPrintStreamLogger(System.out);
+        ConsoleDecompiler decompiler = new ConsoleDecompiler(new File(destination.toUri()), settings, logger);
+        decompiler.addSource(new File(source.toUri()));
+        return decompiler;
+    }
+
+    public static void renameJarsToZips(Path directory) {
+        try (final Stream<Path> stream = Files.list(directory)) {
+            for (final Path path : (Iterable<Path>) stream::iterator) {
+                final String filename = path.getFileName().toString();
+                if (!filename.contains(".jar")) continue;
+                final int index = filename.lastIndexOf('.');
+                Files.move(path, path.resolveSibling(Path.of(filename.substring(0, index) + ".zip")));
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Get the server/client jar.
+     * <p>Newer versions of the Minecraft server have bundled several
+     * jars inside the main server.jar file.</p>
+     *
+     * @param processor Processor that holds data for file paths
+     * @return Internal jar files inside Minecraft jars
+     */
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    public static Jar getInternalJars(Processor processor) {
+        Jar jarFile;
+        try {
+            jarFile = Jar.init(new File(processor.getJarPath().toUri()));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        String ver = processor.getVersion().getVersion();
+
+        // Client and older server's don't use the bundler
+        if (!jarFile.containsResource("META-INF/versions/" + ver + "/server-" + ver + ".jar")) {
+            return jarFile;
+        } else {
+            try {
+                List<File> files = new ArrayList<>();
+
+                // Include Mojang libraries and server jar
+                for (String entryName : jarFile.getEntryNames()) {
+                    if ((entryName.contains("server-") || entryName.contains("libraries/com/mojang")) && entryName.contains(".jar")) {
+                        String pathName = processor.getDataFolderPath() + "/" + entryName.substring(entryName.lastIndexOf('/') + 1);
+                        File file = Util.copyInputStreamToFile(jarFile.getResource(entryName), pathName);
+                        files.add(file);
+                    }
+                }
+                Jar internalJar = Jar.init(files);
+                // Cleanup files now that they're jars
+                files.forEach(File::delete);
+                jarFile.close();
+                return internalJar;
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
 }

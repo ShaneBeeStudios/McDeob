@@ -21,9 +21,6 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Stream;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
@@ -33,6 +30,7 @@ public class Processor {
     private final boolean decompile;
     private final App app;
 
+    private final Path dataFolderPath;
     private Path jarPath;
     private Path mappingsPath;
     private Path remappedJar;
@@ -40,8 +38,6 @@ public class Processor {
     private String minecraftJarName;
     private String mappingsName;
     private String mappedJarName;
-
-    private Path dataFolderPath = Paths.get("deobf-work");
 
     public Processor(Version version, boolean decompile, App app) {
         this.version = version;
@@ -51,11 +47,25 @@ public class Processor {
             // If running on macOS, put the output directory in the user home directory.
             // This is due to how macOS APPs work — their '.' directory resolves to one inside the APP itself.
             this.dataFolderPath = Paths.get(System.getProperty("user.home"), "McDeob");
+        } else {
+            this.dataFolderPath = Paths.get("deobf-work");
         }
         try {
             Files.createDirectories(this.dataFolderPath);
         } catch (IOException ignore) {
         }
+    }
+
+    public Path getDataFolderPath() {
+        return this.dataFolderPath;
+    }
+
+    public Version getVersion() {
+        return this.version;
+    }
+
+    public Path getJarPath() {
+        return this.jarPath;
     }
 
     @SuppressWarnings("CallToPrintStackTrace")
@@ -66,11 +76,8 @@ public class Processor {
             // Prepare version and check if valid
             String versionName = this.version.getVersion();
             if (!this.version.prepareVersion()) {
-                if (this.app != null) {
-                    this.app.fail();
-                } else {
-                    System.out.println("Invalid version: " + versionName);
-                }
+                if (this.app != null) this.app.fail();
+                System.out.println("Invalid version: " + versionName);
                 return;
             }
             if (this.app != null) {
@@ -164,16 +171,14 @@ public class Processor {
                 JointProvider inheritanceProvider = new JointProvider();
                 jarMapping.setFallbackInheritanceProvider(inheritanceProvider);
 
-                Jar inJar = Jar.init(new File(this.jarPath.toUri()));
-
                 SpecialSource.kill_lvt = true;
                 JarRemapper jarRemapper = new JarRemapper(jarMapping);
 
-                Jar internal = getInternalJars(inJar);
-                inheritanceProvider.add(new JarProvider(internal));
-                jarRemapper.remapJar(internal, new File(this.remappedJar.toUri()));
-                inJar.close();
-                internal.close();
+                Jar internalJars = Util.getInternalJars(this);
+
+                inheritanceProvider.add(new JarProvider(internalJars));
+                jarRemapper.remapJar(internalJars, new File(this.remappedJar.toUri()));
+                internalJars.close();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -192,28 +197,14 @@ public class Processor {
             this.app.updateStatusBox("Decompiling... This will take a while!");
             this.app.updateButton("Decompiling...", Color.BLUE);
         }
-        final Path decompileDir = this.dataFolderPath.resolve("final-decompile");
-        Files.createDirectories(decompileDir);
+        final Path decompileDir = Files.createDirectories(this.dataFolderPath.resolve("final-decompile"));
 
-        // Setup FernFlower to properly decompile the jar file
-        String[] args = new String[]{
-            "-dgs=1", "-hdc=0", "-rbr=0",
-            "-asc=1", "-udv=0", "-rsy=1", "-aoa=1",
-            this.remappedJar.toAbsolutePath().toString(),
-            decompileDir.toAbsolutePath().toString()
-        };
-
-        ConsoleDecompiler.main(args);
+        // Setup and run FernFlower
+        ConsoleDecompiler decompiler = Util.getConsoleDecompiler(this.remappedJar, decompileDir);
+        decompiler.decompileContext();
 
         // Rename jar file to zip
-        try (final Stream<Path> stream = Files.list(decompileDir)) {
-            for (final Path path : (Iterable<Path>) stream::iterator) {
-                final String filename = path.getFileName().toString();
-                if (!filename.contains(".jar")) continue;
-                final int index = filename.lastIndexOf('.');
-                Files.move(path, path.resolveSibling(Path.of(filename.substring(0, index) + ".zip")));
-            }
-        }
+        Util.renameJarsToZips(decompileDir);
 
         TimeStamp timeStamp = TimeStamp.fromNow(start);
         Logger.info("Decompiling completed in %s!", timeStamp);
@@ -224,36 +215,6 @@ public class Processor {
         this.mappingsPath = null;
         this.remappedJar = null;
         System.gc();
-    }
-
-    // Server jars have a bundled setup now
-    @SuppressWarnings("ResultOfMethodCallIgnored")
-    private Jar getInternalJars(Jar jarFile) {
-        String ver = this.version.getVersion();
-
-        // Client and older server's don't use the bundler
-        if (!jarFile.containsResource("META-INF/versions/" + ver + "/server-" + ver + ".jar")) {
-            return jarFile;
-        } else {
-            try {
-                List<File> files = new ArrayList<>();
-
-                // Include Mojang libraries and server jar
-                for (String entryName : jarFile.getEntryNames()) {
-                    if ((entryName.contains("server-") || entryName.contains("libraries/com/mojang")) && entryName.contains(".jar")) {
-                        String pathName = this.dataFolderPath + "/" + entryName.substring(entryName.lastIndexOf('/') + 1);
-                        File file = Util.copyInputStreamToFile(jarFile.getResource(entryName), pathName);
-                        files.add(file);
-                    }
-                }
-                Jar internalJar = Jar.init(files);
-                // Cleanup files now that they're jars
-                files.forEach(File::delete);
-                return internalJar;
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
     }
 
 }

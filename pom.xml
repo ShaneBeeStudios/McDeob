@@ -16,6 +16,10 @@
 
     <repositories>
         <repository>
+            <id>paper-repo</id>
+            <url>https://repo.papermc.io/repository/maven-public/</url>
+        </repository>
+        <repository>
             <id>spigot-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/public/</url>
         </repository>
@@ -27,11 +31,6 @@
     </repositories>
 
     <dependencies>
-        <dependency>
-            <groupId>com.github.fesh0r</groupId>
-            <artifactId>fernflower</artifactId>
-            <version>e19aab61ce</version>
-        </dependency>
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
@@ -46,6 +45,11 @@
             <groupId>net.md-5</groupId>
             <artifactId>SpecialSource</artifactId>
             <version>1.11.5-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>io.papermc</groupId>
+            <artifactId>patched-spigot-fernflower</artifactId>
+            <version>0.1+build.13</version>
         </dependency>
     </dependencies>
 
