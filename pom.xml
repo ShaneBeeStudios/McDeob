@@ -53,6 +53,40 @@
         </dependency>
     </dependencies>
 
+    <profiles>
+        <profile>
+            <id>macos</id>
+            <build>
+                <plugins>
+                    <!-- This is for packaging a macOS app -->
+                    <plugin>
+                        <groupId>de.perdian.maven.plugins</groupId>
+                        <artifactId>macosappbundler-maven-plugin</artifactId>
+                        <version>1.18.0</version>
+                        <configuration>
+                            <dmg>
+                                <generate>true</generate>
+                                <appendVersion>false</appendVersion>
+                                <dmgFileName>${project.name}-${project.version}-macOS</dmgFileName>
+                            </dmg>
+                            <plist>
+                                <CFBundleIconFile>src/main/resources/images/1024.icns</CFBundleIconFile>
+                                <JVMMainClassName>com.shanebeestudios.mcdeob.McDeob</JVMMainClassName>
+                            </plist>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>bundle</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
     <build>
         <resources>
             <resource>
@@ -103,31 +137,7 @@
                     </execution>
                 </executions>
             </plugin>
-            <!-- This is for packaging a macOS app -->
-            <plugin>
-                <groupId>de.perdian.maven.plugins</groupId>
-                <artifactId>macosappbundler-maven-plugin</artifactId>
-                <version>1.18.0</version>
-                <configuration>
-                    <dmg>
-                        <generate>true</generate>
-                        <appendVersion>false</appendVersion>
-                        <dmgFileName>${project.name}-${project.version}-macOS</dmgFileName>
-                    </dmg>
-                    <plist>
-                        <CFBundleIconFile>src/main/resources/images/1024.icns</CFBundleIconFile>
-                        <JVMMainClassName>com.shanebeestudios.mcdeob.McDeob</JVMMainClassName>
-                    </plist>
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>bundle</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
+
         </plugins>
     </build>
 
