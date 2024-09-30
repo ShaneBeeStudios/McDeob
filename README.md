@@ -41,9 +41,9 @@ Super Simple!!!
 
 ## Tools
 This application uses 2 different tools for the processing of the jar files
-1) [**SpecialSource by md-5**](https://github.com/md-5/SpecialSource) = This tool remaps the Minecraft jar using Minecraft's mappings. 
-2) [**Vineflower**](https://github.com/Vineflower/vineflower) = This tool is used to decompile the jar file (class files) into usable .java files.
+1) [**SpecialSource**](https://github.com/md-5/SpecialSource) by md-5 = This tool remaps the Minecraft jar using Mojang's mappings. 
+2) [**FernFlower**](https://github.com/PaperMC/patched-spigot-fernflower) = This tool is used to decompile the jar file (class files) into usable .java files.
 
 ## License
-This tool shades in both [**SpecialSource**](https://github.com/md-5/SpecialSource) and [**Vineflower**](https://github.com/Vineflower/vineflower),
+This tool shades in both [**SpecialSource**](https://github.com/md-5/SpecialSource) and [**FernFlower**](https://github.com/PaperMC/patched-spigot-fernflower),
 please see their repos for the appropriate licenses. 
