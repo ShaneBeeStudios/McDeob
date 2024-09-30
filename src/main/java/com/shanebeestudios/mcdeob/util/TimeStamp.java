@@ -21,7 +21,8 @@ public class TimeStamp {
         final StringBuilder sb = new StringBuilder();
         if (minutes > 0) {
             sb.append(minutes);
-            sb.append(minutes == 1 ? " minute, " : " minutes, ");
+            sb.append(minutes == 1 ? " minute" : " minutes");
+            if (seconds > 0) sb.append(", ");
         }
 
         if (seconds > 0) {
