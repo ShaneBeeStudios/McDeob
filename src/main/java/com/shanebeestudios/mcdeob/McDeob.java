@@ -62,11 +62,13 @@ public class McDeob {
 
         if (!options.has("version")) {
             Logger.error("No version specified, shutting down...");
+            Logger.warn("See '-versions' for available versions");
             System.exit(1);
         }
 
         if (!options.has("type")) {
             Logger.error("No type specified, shutting down...");
+            Logger.warn("Please use '-type' and 'server' or 'client'.");
             System.exit(1);
         }
 
@@ -77,14 +79,16 @@ public class McDeob {
         try {
             type = Version.Type.valueOf(typeString.toUpperCase());
         } catch (IllegalArgumentException e) {
-            Logger.error("Invalid type specified, shutting down...");
+            Logger.error("Invalid type specified: '%s'", typeString);
+            Logger.warn("Please use '-type' and 'server' or 'client'.");
             System.exit(1);
             return;
         }
 
         Version version = Version.getByVersion(versionString);
         if (version == null) {
-            Logger.error("Invalid or unsupported version was specified, shutting down...");
+            Logger.error("Invalid or unsupported version was specified: '%s'", versionString);
+            Logger.warn("See '-versions' for available versions");
             System.exit(1);
         }
         version.setType(type);
