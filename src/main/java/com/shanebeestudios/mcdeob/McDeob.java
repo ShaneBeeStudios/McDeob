@@ -12,7 +12,7 @@ import java.io.IOException;
 public class McDeob {
 
     public static void main(String[] args) {
-        Version.initVersions();
+        //Version.initVersions();
         if (args.length == 0) {
             try {
                 if (Util.isRunningMacOS()) {
@@ -52,6 +52,8 @@ public class McDeob {
             System.exit(0);
         }
 
+        // Initialize versions after help might have been used
+        Version.initVersions();
         if (options.has("versions")) {
             System.out.println("Available Minecraft versions to deobfuscate:");
             for (Version version : Version.getVersions()) {

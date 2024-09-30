@@ -13,9 +13,9 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.lang.reflect.Field;
 
-@SuppressWarnings({"SameParameterValue", "unchecked", "rawtypes", "FieldCanBeLocal"})
 public class App extends JFrame {
 
+    private JLabel titleLabel;
     private JButton startButton;
     private JRadioButton serverRadioButton;
     private JRadioButton clientRadioButton;
@@ -25,11 +25,17 @@ public class App extends JFrame {
     private JTextField statusBox;
 
     public App() {
-        init();
-        setVisible(true);
+        // Create window and components
+        startSetup();
+
+        // Initialize versions
+        Version.initVersions();
+
+        // Update window after versions initialized
+        finishSetup();
     }
 
-    private void init() {
+    private void startSetup() {
         if (Util.isRunningMacOS()) {
             // If we're running on Mac, set the logo
             Taskbar.getTaskbar().setIconImage(Icon.getLogoForMacOs());
@@ -38,18 +44,20 @@ public class App extends JFrame {
             setIconImages(Icon.getLogoImages());
         }
 
-        setupWindow(500, 335);
+        setupWindow();
         createTitle();
         createTypeButton();
         createVersionPopup();
         createDecompileButton();
         createStatusBox();
         createStartButton();
+        setVisible(true);
+        toggleControls();
     }
 
-    private void setupWindow(int width, int height) {
+    private void setupWindow() {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        setSize(width, height);
+        setSize(500, 335);
         setTitle("McDeob");
 
         try { // Window title hack for GTK
@@ -71,23 +79,12 @@ public class App extends JFrame {
         setLayout(null);
     }
 
-    private void hookSize(final Runnable sizeTask) {
-        final ComponentListener listener = new ComponentAdapter() {
-            @Override
-            public void componentResized(ComponentEvent e) {
-                sizeTask.run();
-            }
-        };
-
-        this.addComponentListener(listener);
-        sizeTask.run();
-    }
-
     private void createTitle() {
-        JLabel label = new JLabel("Let's start de-obfuscating some Minecraft", SwingConstants.CENTER);
-        label.setHorizontalTextPosition(SwingConstants.CENTER);
-        hookSize(() -> label.setBounds(0, 10, getSize().width, 50));
-        add(label);
+        this.titleLabel = new JLabel("Initializing versions, please wait...", SwingConstants.CENTER);
+        this.titleLabel.setForeground(Util.TITLE_LOADING_COLOR);
+        this.titleLabel.setHorizontalTextPosition(SwingConstants.CENTER);
+        hookSize(() -> this.titleLabel.setBounds(0, 10, getSize().width, 50));
+        add(this.titleLabel);
     }
 
     private void createTypeButton() {
@@ -119,8 +116,9 @@ public class App extends JFrame {
     }
 
     private void createVersionPopup() {
-        this.versionBox = new JComboBox();
-        setupVersions(false);
+        this.versionBox = new JComboBox<>();
+        //setupVersions(false);
+        this.versionBox.addItem("Initializing Versions");
         this.versionBox.setSelectedIndex(0);
         this.versionBox.setBackground(Color.lightGray);
         hookSize(() -> versionBox.setBounds((getSize().width / 2) - 100, 125, 200, 30));
@@ -205,6 +203,26 @@ public class App extends JFrame {
         });
         timer.setRepeats(false);
         timer.start();
+    }
+
+    private void finishSetup() {
+        setupVersions(false);
+        assert this.titleLabel != null;
+        this.titleLabel.setText("Let's start de-obfuscating some Minecraft");
+        this.titleLabel.setForeground(Util.TITLE_READY_COLOR);
+        toggleControls();
+    }
+
+    private void hookSize(final Runnable sizeTask) {
+        final ComponentListener listener = new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                sizeTask.run();
+            }
+        };
+
+        this.addComponentListener(listener);
+        sizeTask.run();
     }
 
     class StartButtonListener implements ActionListener {

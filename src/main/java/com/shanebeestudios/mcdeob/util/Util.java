@@ -9,6 +9,7 @@ import org.jetbrains.java.decompiler.main.extern.IFernflowerLogger;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
+import java.awt.*;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -26,6 +27,9 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 public class Util {
+
+    public static final Color TITLE_LOADING_COLOR = new Color(227, 184, 43);
+    public static final Color TITLE_READY_COLOR = new Color(63, 199, 82);
 
     public static boolean isRunningMacOS() {
         return System.getProperty("os.name").contains("Mac OS");
