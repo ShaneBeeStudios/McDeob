@@ -30,14 +30,12 @@ public class App extends JFrame {
     }
 
     private void init() {
-        try {
+        if (Util.isRunningMacOS()) {
             // If we're running on Mac, set the logo
-            Taskbar taskbar = Taskbar.getTaskbar();
-            assert Icon.DOCK_LOGO_1024 != null;
-            taskbar.setIconImage(Icon.DOCK_LOGO_1024.getImage());
-        } catch (Exception ignored) {
+            Taskbar.getTaskbar().setIconImage(Icon.getLogoForMacOs());
+        } else {
             // Else we set it this way
-            setIconImages(Icon.LOGO_IMAGES);
+            setIconImages(Icon.getLogoImages());
         }
 
         setupWindow(500, 335);
