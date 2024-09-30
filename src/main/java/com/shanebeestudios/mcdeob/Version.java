@@ -14,6 +14,8 @@ public class Version {
 
     // Static Stuff
     private static final Map<String, Version> VERSION_MAP = new LinkedHashMap<>();
+    private static final Map<String, Version> RELEASE_MAP = new LinkedHashMap<>();
+    private static final Map<String, Version> SNAPSHOT_MAP = new LinkedHashMap<>();
 
     public static void initVersions() {
         JSONObject versionManifest;
@@ -25,21 +27,36 @@ public class Version {
 
         for (Object o : versionManifest.getJSONArray("versions")) {
             JSONObject versionObject = (JSONObject) o;
-            String version = versionObject.getString("id");
-            String releaseType = versionObject.getString("type");
+            String id = versionObject.getString("id");
+            String type = versionObject.getString("type");
             String url = versionObject.getString("url");
 
-            VERSION_MAP.put(version, new Version(version, releaseType, url));
+            ReleaseType releaseType = type.equalsIgnoreCase("release") ? ReleaseType.RELEASE : ReleaseType.SNAPSHOT;
+            Version version = new Version(id, releaseType, url);
+            VERSION_MAP.put(id, version);
+            if (releaseType == ReleaseType.RELEASE) {
+                RELEASE_MAP.put(id, version);
+            } else {
+                SNAPSHOT_MAP.put(id, version);
+            }
 
             // Mappings not available before 1.14.4, so we exit
-            if (version.equalsIgnoreCase("1.14.4")) {
+            if (id.equalsIgnoreCase("1.14.4")) {
                 break;
             }
         }
     }
 
-    public static Collection<Version> getVersions() {
+    public static Collection<Version> getAllVersions() {
         return VERSION_MAP.values();
+    }
+
+    public static Collection<Version> getReleaseVersions() {
+        return RELEASE_MAP.values();
+    }
+
+    public static Collection<Version> getSnapshotVersions() {
+        return SNAPSHOT_MAP.values();
     }
 
     @Nullable
@@ -49,14 +66,14 @@ public class Version {
 
     // Class Stuff
     private final String version;
-    private final String releaseType;
+    private final ReleaseType releaseType;
     private final String url;
 
     private Type type;
     private String jarURL;
     private String mapURL;
 
-    public Version(String version, String releaseType, String url) {
+    public Version(String version, ReleaseType releaseType, String url) {
         this.version = version;
         this.releaseType = releaseType;
         this.url = url;
@@ -82,7 +99,7 @@ public class Version {
         return this.version;
     }
 
-    public String getReleaseType() {
+    public ReleaseType getReleaseType() {
         return this.releaseType;
     }
 
@@ -105,6 +122,15 @@ public class Version {
     public enum Type {
         SERVER,
         CLIENT;
+
+        public String getName() {
+            return name().toLowerCase(Locale.ROOT);
+        }
+    }
+
+    public enum ReleaseType {
+        RELEASE,
+        SNAPSHOT;
 
         public String getName() {
             return name().toLowerCase(Locale.ROOT);

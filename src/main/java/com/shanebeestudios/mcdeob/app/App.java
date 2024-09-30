@@ -108,16 +108,13 @@ public class App extends JFrame {
 
     private void setupVersions(boolean showSnapshots) {
         this.versionBox.removeAllItems();
-        for (Version version : Version.getVersions()) {
-            if (version.getReleaseType().equalsIgnoreCase("snapshot") && !showSnapshots) continue;
-            else if (version.getReleaseType().equalsIgnoreCase("release") && showSnapshots) continue;
-            this.versionBox.addItem(version.getVersion().replace("_", " "));
+        for (Version version : showSnapshots ? Version.getSnapshotVersions() : Version.getReleaseVersions()) {
+            this.versionBox.addItem(version.getVersion());
         }
     }
 
     private void createVersionPopup() {
         this.versionBox = new JComboBox<>();
-        //setupVersions(false);
         this.versionBox.addItem("Initializing Versions");
         this.versionBox.setSelectedIndex(0);
         this.versionBox.setBackground(Color.lightGray);
@@ -227,11 +224,10 @@ public class App extends JFrame {
 
     class StartButtonListener implements ActionListener {
 
-        @SuppressWarnings("DataFlowIssue")
         @Override
         public void actionPerformed(ActionEvent event) {
             if (event.getSource() == startButton) {
-                Version version = Version.getByVersion(((String) versionBox.getSelectedItem()).replace(" ", "_"));
+                Version version = Version.getByVersion(((String) versionBox.getSelectedItem()));
                 if (!startButton.getText().equalsIgnoreCase("Start!")) return;
                 if (version == null) {
                     fail();

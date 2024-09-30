@@ -34,6 +34,8 @@ public class McDeob {
         OptionParser parser = new OptionParser();
         parser.accepts("help", "Shows help and exits");
         parser.accepts("versions", "Prints a list of all Minecraft versions available to deobfuscate");
+        parser.accepts("releases", "Prints a list of all Minecraft full releases available to deobfuscate");
+        parser.accepts("snapshots", "Prints a list of all Minecraft snapshots available to deobfuscate");
         parser.accepts("version", "Minecraft version for which we're deobfuscating")
             .withRequiredArg()
             .ofType(String.class);
@@ -56,7 +58,21 @@ public class McDeob {
         Version.initVersions();
         if (options.has("versions")) {
             System.out.println("Available Minecraft versions to deobfuscate:");
-            for (Version version : Version.getVersions()) {
+            for (Version version : Version.getAllVersions()) {
+                System.out.println(" - " + version.getVersion() + " (" + version.getReleaseType().getName() + ")");
+            }
+            System.exit(0);
+        }
+        if (options.has("releases")) {
+            System.out.println("Available Minecraft full releases to deobfuscate:");
+            for (Version version : Version.getReleaseVersions()) {
+                System.out.println(" - " + version.getVersion());
+            }
+            System.exit(0);
+        }
+        if (options.has("snapshots")) {
+            System.out.println("Available Minecraft snapshots to deobfuscate:");
+            for (Version version : Version.getSnapshotVersions()) {
                 System.out.println(" - " + version.getVersion());
             }
             System.exit(0);
