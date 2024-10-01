@@ -71,13 +71,12 @@ public class Util {
      */
     public static @NotNull ConsoleDecompiler getConsoleDecompiler(Path source, Path destination) {
         Map<String, Object> settings = new LinkedHashMap<>();
-        settings.put("dgs", 1);
-        settings.put("hdc", 0);
-        settings.put("rbr", 0);
-        settings.put("asc", 1);
-        settings.put("udv", 0);
-        settings.put("rsy", 1);
-        settings.put("aoa", 1);
+        settings.put("dgs", "1");
+        settings.put("hdc", "0");
+        settings.put("asc", "1");
+        settings.put("udv", "0");
+        settings.put("rsy", "1");
+        settings.put("aoa", "1");
         IFernflowerLogger logger = new ThreadedPrintStreamLogger(System.out);
         ConsoleDecompiler decompiler = new ConsoleDecompiler(new File(destination.toUri()), settings, logger);
         decompiler.addSource(new File(source.toUri()));
