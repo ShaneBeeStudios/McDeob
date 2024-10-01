@@ -71,12 +71,12 @@ public class Util {
      */
     public static @NotNull ConsoleDecompiler getConsoleDecompiler(Path source, Path destination) {
         Map<String, Object> settings = new LinkedHashMap<>();
-        settings.put("dgs", "1");
-        settings.put("hdc", "0");
-        settings.put("asc", "1");
-        settings.put("udv", "0");
-        settings.put("rsy", "1");
-        settings.put("aoa", "1");
+        settings.put("dgs", "1"); // decompile generic signatures
+        settings.put("hdc", "0"); // hide empty default constructor
+        settings.put("asc", "1"); // encode non-ASCII characters in string and character literals as Unicode escapes
+        settings.put("udv", "0"); // reconstruct variable names from debug information, if present
+        settings.put("rsy", "1"); // hide synthetic class members
+        settings.put("aoa", "1"); // (not listed in FernFlower's list)
         IFernflowerLogger logger = new ThreadedPrintStreamLogger(System.out);
         ConsoleDecompiler decompiler = new ConsoleDecompiler(new File(destination.toUri()), settings, logger);
         decompiler.addSource(new File(source.toUri()));
