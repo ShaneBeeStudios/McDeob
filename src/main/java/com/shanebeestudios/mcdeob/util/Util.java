@@ -3,9 +3,6 @@ package com.shanebeestudios.mcdeob.util;
 import com.shanebeestudios.mcdeob.Processor;
 import net.md_5.specialsource.Jar;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.java.decompiler.main.decompiler.ConsoleDecompiler;
-import org.jetbrains.java.decompiler.main.decompiler.ThreadedPrintStreamLogger;
-import org.jetbrains.java.decompiler.main.extern.IFernflowerLogger;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
@@ -62,14 +59,7 @@ public class Util {
         return returnFile;
     }
 
-    /**
-     * Create a FernFlower decompiler
-     *
-     * @param source      Source path for decompiling
-     * @param destination Destination path for where file will output
-     * @return A new decompiler
-     */
-    public static @NotNull ConsoleDecompiler getConsoleDecompiler(Path source, Path destination) {
+    public static @NotNull Map<String, Object> getDecompilerParams() {
         Map<String, Object> settings = new LinkedHashMap<>();
         settings.put("dgs", "1"); // decompile generic signatures
         settings.put("hdc", "0"); // hide empty default constructor
@@ -77,10 +67,7 @@ public class Util {
         settings.put("udv", "0"); // reconstruct variable names from debug information, if present
         settings.put("rsy", "1"); // hide synthetic class members
         settings.put("aoa", "1"); // (not listed in FernFlower's list)
-        IFernflowerLogger logger = new ThreadedPrintStreamLogger(System.out);
-        ConsoleDecompiler decompiler = new ConsoleDecompiler(new File(destination.toUri()), settings, logger);
-        decompiler.addSource(new File(source.toUri()));
-        return decompiler;
+        return settings;
     }
 
     public static void renameJarsToZips(Path directory) {

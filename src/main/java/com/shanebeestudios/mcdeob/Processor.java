@@ -1,6 +1,7 @@
 package com.shanebeestudios.mcdeob;
 
 import com.shanebeestudios.mcdeob.app.App;
+import com.shanebeestudios.mcdeob.util.AppLogger;
 import com.shanebeestudios.mcdeob.util.Logger;
 import com.shanebeestudios.mcdeob.util.TimeStamp;
 import com.shanebeestudios.mcdeob.util.Util;
@@ -190,18 +191,22 @@ public class Processor {
         }
     }
 
+    @SuppressWarnings("resource")
     public void decompileJar() throws IOException {
         long start = System.currentTimeMillis();
         Logger.info("Decompiling final JAR file.");
         if (this.app != null) {
-            this.app.updateStatusBox("Decompiling... This will take a while!");
+            this.app.updateStatusBox("Decompiler starting...");
             this.app.updateButton("Decompiling...", Color.BLUE);
         }
         final Path decompileDir = Files.createDirectories(this.dataFolderPath.resolve("final-decompile"));
 
         // Setup and run FernFlower
-        ConsoleDecompiler decompiler = Util.getConsoleDecompiler(this.remappedJar, decompileDir);
+        AppLogger appLogger = new AppLogger(this.app);
+        ConsoleDecompiler decompiler = new ConsoleDecompiler(new File(decompileDir.toUri()), Util.getDecompilerParams(), appLogger);
+        decompiler.addSource(new File(this.remappedJar.toUri()));
         decompiler.decompileContext();
+        appLogger.stopLogging();
 
         // Rename jar file to zip
         Util.renameJarsToZips(decompileDir);
