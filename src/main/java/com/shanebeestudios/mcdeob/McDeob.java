@@ -3,6 +3,7 @@ package com.shanebeestudios.mcdeob;
 import com.shanebeestudios.mcdeob.app.App;
 import com.shanebeestudios.mcdeob.util.Logger;
 import com.shanebeestudios.mcdeob.util.Util;
+import joptsimple.OptionException;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 
@@ -44,8 +45,13 @@ public class McDeob {
             .ofType(String.class);
         parser.accepts("decompile", "Marks that we should decompile the deobfuscated source");
 
-        OptionSet options = parser.parse(args);
-        if (options.has("help")) {
+        OptionSet options = null;
+        try {
+            options = parser.parse(args);
+        } catch (OptionException ex) {
+            Logger.warn("Failed to parse arguments, available arguments:");
+        }
+        if (options == null || options.has("help")) {
             try {
                 parser.printHelpOn(System.out);
             } catch (IOException e) {
