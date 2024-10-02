@@ -18,6 +18,16 @@ public class Logger {
     private static final String CYAN = "\u001B[36m";
     private static final String WHITE = "\u001B[37m";
 
+    public static void trace(String trace) {
+        LocalDateTime now = LocalDateTime.now();
+        String th = Thread.currentThread().getName();
+        System.out.println("[" + DTF.format(now) + " " + CYAN + th + WHITE + " TRACE" + "]: " + trace);
+    }
+
+    public static void trace(String format, Object... args) {
+        trace(String.format(format, args));
+    }
+
     public static void info(String info) {
         LocalDateTime now = LocalDateTime.now();
         String th = Thread.currentThread().getName();
