@@ -15,6 +15,7 @@ then it will proceed to remap the jar and optionally decompile it. Simply unzip 
 ## Requirements
 - A computer
 - Java 16+
+- 3GB of RAM (recommended minimum)
 - A few minutes of your time
 
 ## Running
