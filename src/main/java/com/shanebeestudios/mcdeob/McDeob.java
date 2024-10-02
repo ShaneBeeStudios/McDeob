@@ -12,7 +12,7 @@ import java.io.IOException;
 public class McDeob {
 
     public static void main(String[] args) {
-        //Version.initVersions();
+        Util.printSystemInfo();
         if (args.length == 0) {
             try {
                 if (Util.isRunningMacOS()) {

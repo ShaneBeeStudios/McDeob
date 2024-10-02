@@ -127,4 +127,18 @@ public class Util {
         }
     }
 
+    public static void printSystemInfo() {
+        Thread.currentThread().setName("McDeob");
+        long maxMemory = Runtime.getRuntime().maxMemory();
+        Logger.info("Memory: %sMB", maxMemory / 1024 / 1024);
+        String javaVersion = System.getProperty("java.vm.version");
+        String javaName = System.getProperty("java.vm.name");
+        String javaVendor = System.getProperty("java.vm.vendor");
+        Logger.info("Java: %s [%s - %s]", javaVersion, javaVendor, javaName);
+        String osArch = System.getProperty("os.arch");
+        String osName = System.getProperty("os.name");
+        String osVersion = System.getProperty("os.version");
+        Logger.info("OS: %s [%s - v.%s]", osName,osArch, osVersion);
+    }
+
 }
