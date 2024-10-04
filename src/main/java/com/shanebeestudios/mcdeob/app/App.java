@@ -21,7 +21,7 @@ public class App extends JFrame {
     private JRadioButton clientRadioButton;
     private JToggleButton snapshotToggleButton;
     private JCheckBox decompile;
-    private JComboBox<String> versionBox;
+    private JComboBox<Version> versionBox;
     private JTextField statusBox;
 
     public App() {
@@ -109,14 +109,12 @@ public class App extends JFrame {
     private void setupVersions(boolean showSnapshots) {
         this.versionBox.removeAllItems();
         for (Version version : showSnapshots ? Version.getSnapshotVersions() : Version.getReleaseVersions()) {
-            this.versionBox.addItem(version.getVersion());
+            this.versionBox.addItem(version);
         }
     }
 
     private void createVersionPopup() {
         this.versionBox = new JComboBox<>();
-        this.versionBox.addItem("Initializing Versions");
-        this.versionBox.setSelectedIndex(0);
         this.versionBox.setBackground(Color.lightGray);
         hookSize(() -> versionBox.setBounds((getSize().width / 2) - 100, 125, 200, 30));
         add(versionBox);
@@ -227,7 +225,7 @@ public class App extends JFrame {
         @Override
         public void actionPerformed(ActionEvent event) {
             if (event.getSource() == startButton) {
-                Version version = Version.getByVersion(((String) versionBox.getSelectedItem()));
+                Version version = (Version) App.this.versionBox.getSelectedItem();
                 if (!startButton.getText().equalsIgnoreCase("Start!")) return;
                 if (version == null) {
                     fail();
