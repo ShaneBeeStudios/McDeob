@@ -12,38 +12,46 @@
 This tool will download the appropriate Minecraft server/client jar along with the mappings for that version, 
 then it will proceed to remap the jar and optionally decompile it. Simply unzip that file to find all your remapped/decompiled Minecraft code.
 
-## Requirements
+## Requirements:
 - A computer
 - Java 16+
 - 3GB of RAM (recommended minimum)
 - A few minutes of your time
 
-## Running
+## Running:
 Details for installing and running **McDeob** can be found on the [**WIKI**](https://github.com/ShaneBeeStudios/McDeob/wiki)
 
 ### Note:
-The remapping process takes around 2 minutes (give or take). Currently there is no progress in the app, so just wait til the app says it's completed.   
-The decompiling process takes about 30 seconds (give or take). Currently there is no progress in the app, so just wait til the app says it's completed.    
+The remapping process takes around 6 seconds (give or take). Currently there is no progress in the app, so just wait til the app says it's completed.   
+The decompiling process takes about 30 seconds (give or take).        
 (These numbers are based on a test run on my Mac (MacbookPro with M1 chip), times may vary on other machines.)
 
-### SUPER IMPORTANT NOTE
+## SUPER IMPORTANT NOTE:
 The files output by this app are for your own personal use only.   
-The mappings used to decompile are provided by Mojang, but come with a hefty copyright from Microsoft.   
+The mappings used to de-obfuscate are provided by Mojang, but come with a hefty copyright from Microsoft.   
 You can use these files personally however you see fit, but you are not permitted to distribute them, since they do contain proprietery Minecraft code.    
 That said, you may **NOT** upload the resulting files to something like GitHub.
 
-## Preview
+## Mappings:
+### 1.14.4+:
+- All versions are included (releases and snapshots)
+- These verions use Mojang mappings (as that is when Mojang started distributing their mappings)
+### 1.13.2-:
+- Includes only last release per major release for 1.7.10 to 1.13.2 (Mappings are manually generated and it's a time consuming process)
+- These versions use Searge mappings (the ones Forge uses) and they're awful (Classes are all remapped, but only a small amount of fields/methods are remapped).
+
+## Preview:
 <img width="612" alt="Screenshot 2024-09-29 at 2 16 19 PM" src="https://github.com/user-attachments/assets/46bc9dc6-0ef8-43ec-983b-024c434ddf6d">
 
 
-## Building/Compiling
+## Building/Compiling:
 If you wish to compile the jar yourself, simply clone the repo and run:    
 `mvn clean package`       
 If you want the macOS APP and DMG file run:    
 `mvn clean package -P macos`     
 Super Simple!!!
 
-## Tools
+## Tools:
 This application uses 2 different tools for the processing of the jar files
 1) [**SpecialSource**](https://github.com/md-5/SpecialSource) by md-5 = This tool remaps the Minecraft jar using Mojang's mappings. 
 2) [**FernFlower**](https://github.com/PaperMC/patched-spigot-fernflower) = This tool is used to decompile the jar file (class files) into usable .java files.
