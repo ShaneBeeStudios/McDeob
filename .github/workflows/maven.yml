@@ -27,8 +27,16 @@ jobs:
       uses: actions/upload-artifact@v4.4.0
       with:
         # Artifact name
-        name: McDeob-Artifact
+        name: McDeob-Jar
         # A file, directory or wildcard pattern that describes what to upload
         path: |
           target/McDeob*.jar
+    - name: Upload a macOS Build Artifact
+      uses: actions/upload-artifact@v4.4.0
+      with:
+        # Artifact name
+        name: McDeob-macOS
+        # A file, directory or wildcard pattern that describes what to upload
+        path: |
           target/*.dmg
+    
