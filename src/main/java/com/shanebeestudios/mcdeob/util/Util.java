@@ -127,6 +127,22 @@ public class Util {
         }
     }
 
+    @SuppressWarnings("MismatchedQueryAndUpdateOfStringBuilder")
+    public static void stripFileFromJar(Path path, String fileName) {
+        try {
+            Process p = Runtime.getRuntime().exec(new String[]{"zip", "-d", path.toAbsolutePath().toString(), fileName});
+            BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
+
+            // This does nothing, but for some reason without it, it won't strip out the files?!?!?!
+            String line;
+            StringBuilder sb = new StringBuilder();
+            while ((line = reader.readLine()) != null) {
+                sb.append(line).append("\n");
+            }
+        } catch (IOException ignore) {
+        }
+    }
+
     public static void printSystemInfo() {
         Thread.currentThread().setName("McDeob");
         long maxMemory = Runtime.getRuntime().maxMemory();
@@ -138,7 +154,7 @@ public class Util {
         String osArch = System.getProperty("os.arch");
         String osName = System.getProperty("os.name");
         String osVersion = System.getProperty("os.version");
-        Logger.info("OS: %s [%s - v.%s]", osName,osArch, osVersion);
+        Logger.info("OS: %s [%s - v.%s]", osName, osArch, osVersion);
     }
 
 }
