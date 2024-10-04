@@ -37,14 +37,17 @@ public class Util {
      *
      * @param url URL to grab data from
      * @return JsonObject with retrieved data
-     * @throws IOException Error thrown if data cannot be retrieved
      */
-    public static JSONObject getJsonFromURL(String url) throws IOException {
-        URLConnection connection = new URL(url).openConnection();
-        BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-        final JSONObject jsonObject = new JSONObject(new JSONTokener(in));
-        in.close();
-        return jsonObject;
+    public static JSONObject getJsonFromURL(String url) {
+        try {
+            URLConnection connection = new URL(url).openConnection();
+            BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            final JSONObject jsonObject = new JSONObject(new JSONTokener(in));
+            in.close();
+            return jsonObject;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static File copyInputStreamToFile(InputStream inputStream, String pathName) throws IOException {
