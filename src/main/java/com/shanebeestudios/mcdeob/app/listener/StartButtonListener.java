@@ -1,6 +1,6 @@
 package com.shanebeestudios.mcdeob.app.listener;
 
-import com.shanebeestudios.mcdeob.Version;
+import com.shanebeestudios.mcdeob.version.Version;
 import com.shanebeestudios.mcdeob.app.App;
 
 import java.awt.*;

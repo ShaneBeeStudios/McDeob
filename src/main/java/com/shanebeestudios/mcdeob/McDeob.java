@@ -3,6 +3,8 @@ package com.shanebeestudios.mcdeob;
 import com.shanebeestudios.mcdeob.app.App;
 import com.shanebeestudios.mcdeob.util.Logger;
 import com.shanebeestudios.mcdeob.util.Util;
+import com.shanebeestudios.mcdeob.version.Version;
+import com.shanebeestudios.mcdeob.version.Versions;
 import joptsimple.OptionException;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
@@ -61,24 +63,24 @@ public class McDeob {
         }
 
         // Initialize versions after help might have been used
-        Version.initVersions();
+        Versions.initVersions();
         if (options.has("versions")) {
             System.out.println("Available Minecraft versions to deobfuscate:");
-            for (Version version : Version.getAllVersions()) {
+            for (Version version : Versions.getAllVersions()) {
                 System.out.println(" - " + version.getVersion() + " (" + version.getReleaseType().getName() + ")");
             }
             System.exit(0);
         }
         if (options.has("releases")) {
             System.out.println("Available Minecraft full releases to deobfuscate:");
-            for (Version version : Version.getReleaseVersions()) {
+            for (Version version : Versions.getReleaseVersions()) {
                 System.out.println(" - " + version.getVersion());
             }
             System.exit(0);
         }
         if (options.has("snapshots")) {
             System.out.println("Available Minecraft snapshots to deobfuscate:");
-            for (Version version : Version.getSnapshotVersions()) {
+            for (Version version : Versions.getSnapshotVersions()) {
                 System.out.println(" - " + version.getVersion());
             }
             System.exit(0);
@@ -109,7 +111,7 @@ public class McDeob {
             return;
         }
 
-        Version version = Version.getByVersion(versionString);
+        Version version = Versions.getByVersion(versionString);
         if (version == null) {
             Logger.error("Invalid or unsupported version was specified: '%s'", versionString);
             Logger.warn("See '-versions' for available versions");

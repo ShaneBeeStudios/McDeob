@@ -5,6 +5,7 @@ import com.shanebeestudios.mcdeob.util.AppLogger;
 import com.shanebeestudios.mcdeob.util.Logger;
 import com.shanebeestudios.mcdeob.util.TimeStamp;
 import com.shanebeestudios.mcdeob.util.Util;
+import com.shanebeestudios.mcdeob.version.Version;
 import net.md_5.specialsource.Jar;
 import net.md_5.specialsource.JarMapping;
 import net.md_5.specialsource.JarRemapper;

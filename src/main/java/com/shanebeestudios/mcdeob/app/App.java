@@ -1,10 +1,11 @@
 package com.shanebeestudios.mcdeob.app;
 
 import com.shanebeestudios.mcdeob.Processor;
-import com.shanebeestudios.mcdeob.Version;
 import com.shanebeestudios.mcdeob.app.listener.SnapshotButtonListener;
 import com.shanebeestudios.mcdeob.app.listener.StartButtonListener;
 import com.shanebeestudios.mcdeob.util.Util;
+import com.shanebeestudios.mcdeob.version.Version;
+import com.shanebeestudios.mcdeob.version.Versions;
 
 import javax.swing.*;
 import java.awt.*;
@@ -29,7 +30,7 @@ public class App extends JFrame {
         startSetup();
 
         // Initialize versions
-        Version.initVersions();
+        Versions.initVersions();
 
         // Update window after versions initialized
         finishSetup();
@@ -108,7 +109,7 @@ public class App extends JFrame {
 
     public void setupVersions(boolean showSnapshots) {
         this.versionBox.removeAllItems();
-        for (Version version : showSnapshots ? Version.getSnapshotVersions() : Version.getReleaseVersions()) {
+        for (Version version : showSnapshots ? Versions.getSnapshotVersions() : Versions.getReleaseVersions()) {
             this.versionBox.addItem(version);
         }
     }
