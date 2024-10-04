@@ -2,12 +2,12 @@ package com.shanebeestudios.mcdeob.app;
 
 import com.shanebeestudios.mcdeob.Processor;
 import com.shanebeestudios.mcdeob.Version;
+import com.shanebeestudios.mcdeob.app.listener.SnapshotButtonListener;
+import com.shanebeestudios.mcdeob.app.listener.StartButtonListener;
 import com.shanebeestudios.mcdeob.util.Util;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
@@ -20,7 +20,7 @@ public class App extends JFrame {
     private JRadioButton serverRadioButton;
     private JRadioButton clientRadioButton;
     private JToggleButton snapshotToggleButton;
-    private JCheckBox decompile;
+    private JCheckBox decompileCheckbox;
     private JComboBox<Version> versionBox;
     private JTextField statusBox;
 
@@ -92,7 +92,7 @@ public class App extends JFrame {
         this.clientRadioButton = new JRadioButton("Client");
         this.snapshotToggleButton = new JToggleButton("Toggle Snapshots");
         this.snapshotToggleButton.setSelected(false);
-        this.snapshotToggleButton.addActionListener(new SnapshotButtonListener());
+        this.snapshotToggleButton.addActionListener(new SnapshotButtonListener(this));
 
         hookSize(() -> this.serverRadioButton.setBounds(getSize().width / 2 + 10, 60, 100, 20));
         hookSize(() -> this.clientRadioButton.setBounds(getSize().width / 2 - (100 - 10), 60, 100, 20));
@@ -106,7 +106,7 @@ public class App extends JFrame {
         add(this.snapshotToggleButton);
     }
 
-    private void setupVersions(boolean showSnapshots) {
+    public void setupVersions(boolean showSnapshots) {
         this.versionBox.removeAllItems();
         for (Version version : showSnapshots ? Version.getSnapshotVersions() : Version.getReleaseVersions()) {
             this.versionBox.addItem(version);
@@ -121,10 +121,10 @@ public class App extends JFrame {
     }
 
     private void createDecompileButton() {
-        this.decompile = new JCheckBox("Decompile?");
-        hookSize(() -> this.decompile.setBounds((getSize().width / 2) - 60, 165, 120, 30));
-        this.decompile.setSelected(false);
-        add(this.decompile);
+        this.decompileCheckbox = new JCheckBox("Decompile?");
+        hookSize(() -> this.decompileCheckbox.setBounds((getSize().width / 2) - 60, 165, 120, 30));
+        this.decompileCheckbox.setSelected(false);
+        add(this.decompileCheckbox);
     }
 
     private void createStatusBox() {
@@ -154,7 +154,7 @@ public class App extends JFrame {
             hDivided = Math.round(h / 1.25F);
         }
         hookSize(() -> this.startButton.setBounds((getSize().width / 2) - (w / 2), ((getSize().height / 5) * 4) - hDivided, w, h));
-        this.startButton.addActionListener(new StartButtonListener());
+        this.startButton.addActionListener(new StartButtonListener(this));
         add(this.startButton);
     }
 
@@ -169,14 +169,14 @@ public class App extends JFrame {
 
     public void toggleControls() {
         this.startButton.setEnabled(!this.startButton.isEnabled());
-        this.decompile.setEnabled(!this.decompile.isEnabled());
+        this.decompileCheckbox.setEnabled(!this.decompileCheckbox.isEnabled());
         this.versionBox.setEnabled(!this.versionBox.isEnabled());
         this.serverRadioButton.setEnabled(!this.serverRadioButton.isEnabled());
         this.clientRadioButton.setEnabled(!this.clientRadioButton.isEnabled());
         this.snapshotToggleButton.setEnabled(!this.snapshotToggleButton.isEnabled());
     }
 
-    private void start(Version version, boolean shouldDecompile) {
+    public void start(Version version, boolean shouldDecompile) {
         Thread thread = new Thread("Processor") {
             @Override
             public void run() {
@@ -207,6 +207,26 @@ public class App extends JFrame {
         toggleControls();
     }
 
+    public JButton getStartButton() {
+        return this.startButton;
+    }
+
+    public JRadioButton getServerRadioButton() {
+        return this.serverRadioButton;
+    }
+
+    public JToggleButton getSnapshotToggleButton() {
+        return this.snapshotToggleButton;
+    }
+
+    public JCheckBox getDecompileCheckbox() {
+        return this.decompileCheckbox;
+    }
+
+    public JComboBox<Version> getVersionBox() {
+        return this.versionBox;
+    }
+
     private void hookSize(final Runnable sizeTask) {
         final ComponentListener listener = new ComponentAdapter() {
             @Override
@@ -217,40 +237,6 @@ public class App extends JFrame {
 
         this.addComponentListener(listener);
         sizeTask.run();
-    }
-
-    class StartButtonListener implements ActionListener {
-
-        @Override
-        public void actionPerformed(ActionEvent event) {
-            if (event.getSource() == App.this.startButton) {
-                Version version = (Version) App.this.versionBox.getSelectedItem();
-                if (!App.this.startButton.getText().equalsIgnoreCase("Start!")) return;
-                if (version == null) {
-                    fail();
-                } else {
-                    version.setType(App.this.serverRadioButton.isSelected() ? Version.Type.SERVER : Version.Type.CLIENT);
-                    updateButton("Starting...", Color.BLUE);
-                    start(version, App.this.decompile.isSelected());
-                }
-            }
-        }
-    }
-
-    class SnapshotButtonListener implements ActionListener {
-
-        @Override
-        public void actionPerformed(ActionEvent event) {
-            if (App.this.snapshotToggleButton.isSelected()) {
-                App.this.snapshotToggleButton.setSelected(true);
-                App.this.snapshotToggleButton.setText("Toggle Releases");
-                setupVersions(true);
-            } else {
-                App.this.snapshotToggleButton.setSelected(false);
-                App.this.snapshotToggleButton.setText("Toggle Snapshots");
-                setupVersions(false);
-            }
-        }
     }
 
 }
