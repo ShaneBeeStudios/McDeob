@@ -1,6 +1,5 @@
 package com.shanebeestudios.mcdeob;
 
-import com.shanebeestudios.mcdeob.util.Logger;
 import com.shanebeestudios.mcdeob.util.Util;
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONObject;
