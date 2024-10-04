@@ -22,7 +22,7 @@ jobs:
         java-version: '23.0.0+37'
         distribution: 'temurin'
     - name: Build with Maven
-      run: mvn -B package --file pom.xml
+      run: mvn -B package -P macos --file pom.xml
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v4.4.0
       with:
