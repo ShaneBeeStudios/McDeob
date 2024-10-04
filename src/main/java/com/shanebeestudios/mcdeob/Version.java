@@ -93,7 +93,6 @@ public class Version {
     public boolean prepareVersion() {
         JSONObject versionInfo = Util.getJsonFromURL(this.url);
         JSONObject downloads = versionInfo.getJSONObject("downloads");
-        Logger.info("Downloads: " + downloads.toString(2));
         if (downloads.has("server_mappings")) {
             String typeName = this.type.getName();
             this.jarURL = downloads.getJSONObject(typeName).getString("url");
