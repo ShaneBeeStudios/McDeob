@@ -116,34 +116,34 @@ public class App extends JFrame {
     private void createVersionPopup() {
         this.versionBox = new JComboBox<>();
         this.versionBox.setBackground(Color.lightGray);
-        hookSize(() -> versionBox.setBounds((getSize().width / 2) - 100, 125, 200, 30));
-        add(versionBox);
+        hookSize(() -> this.versionBox.setBounds((getSize().width / 2) - 100, 125, 200, 30));
+        add(this.versionBox);
     }
 
     private void createDecompileButton() {
-        decompile = new JCheckBox("Decompile?");
-        hookSize(() -> decompile.setBounds((getSize().width / 2) - 60, 165, 120, 30));
+        this.decompile = new JCheckBox("Decompile?");
+        hookSize(() -> this.decompile.setBounds((getSize().width / 2) - 60, 165, 120, 30));
         this.decompile.setSelected(false);
-        add(decompile);
+        add(this.decompile);
     }
 
     private void createStatusBox() {
-        statusBox = new JTextField("Status!");
-        statusBox.setEditable(false);
+        this.statusBox = new JTextField("Status!");
+        this.statusBox.setEditable(false);
         hookSize(() -> {
             int width = (int) (getSize().width * 0.90);
-            statusBox.setBounds((getSize().width / 2) - (width / 2), 200, width, 30);
+            this.statusBox.setBounds((getSize().width / 2) - (width / 2), 200, width, 30);
         });
-        add(statusBox);
+        add(this.statusBox);
     }
 
     public void updateStatusBox(String string) {
-        statusBox.setText(string);
+        this.statusBox.setText(string);
     }
 
     private void createStartButton() {
-        startButton = new JButton("Start!");
-        startButton.setToolTipText("test");
+        this.startButton = new JButton("Start!");
+        this.startButton.setToolTipText("test");
         int w = 200;
         int h = 50;
         int hDivided;
@@ -153,9 +153,9 @@ public class App extends JFrame {
             // makes the spacing of the button look better on windows
             hDivided = Math.round(h / 1.25F);
         }
-        hookSize(() -> startButton.setBounds((getSize().width / 2) - (w / 2), ((getSize().height / 5) * 4) - hDivided, w, h));
-        startButton.addActionListener(new StartButtonListener());
-        add(startButton);
+        hookSize(() -> this.startButton.setBounds((getSize().width / 2) - (w / 2), ((getSize().height / 5) * 4) - hDivided, w, h));
+        this.startButton.addActionListener(new StartButtonListener());
+        add(this.startButton);
     }
 
     public void updateButton(String string) {
@@ -163,8 +163,8 @@ public class App extends JFrame {
     }
 
     public void updateButton(String string, Color color) {
-        startButton.setText(string);
-        startButton.setForeground(color);
+        this.startButton.setText(string);
+        this.startButton.setForeground(color);
     }
 
     public void toggleControls() {
@@ -177,11 +177,10 @@ public class App extends JFrame {
     }
 
     private void start(Version version, boolean shouldDecompile) {
-        App app = this;
         Thread thread = new Thread("Processor") {
             @Override
             public void run() {
-                Processor processor = new Processor(version, shouldDecompile, app);
+                Processor processor = new Processor(version, shouldDecompile, App.this);
                 processor.init();
             }
         };
@@ -224,15 +223,15 @@ public class App extends JFrame {
 
         @Override
         public void actionPerformed(ActionEvent event) {
-            if (event.getSource() == startButton) {
+            if (event.getSource() == App.this.startButton) {
                 Version version = (Version) App.this.versionBox.getSelectedItem();
-                if (!startButton.getText().equalsIgnoreCase("Start!")) return;
+                if (!App.this.startButton.getText().equalsIgnoreCase("Start!")) return;
                 if (version == null) {
                     fail();
                 } else {
-                    version.setType(serverRadioButton.isSelected() ? Version.Type.SERVER : Version.Type.CLIENT);
+                    version.setType(App.this.serverRadioButton.isSelected() ? Version.Type.SERVER : Version.Type.CLIENT);
                     updateButton("Starting...", Color.BLUE);
-                    start(version, decompile.isSelected());
+                    start(version, App.this.decompile.isSelected());
                 }
             }
         }
@@ -242,13 +241,13 @@ public class App extends JFrame {
 
         @Override
         public void actionPerformed(ActionEvent event) {
-            if (snapshotToggleButton.isSelected()) {
-                snapshotToggleButton.setSelected(true);
-                snapshotToggleButton.setText("Toggle Releases");
+            if (App.this.snapshotToggleButton.isSelected()) {
+                App.this.snapshotToggleButton.setSelected(true);
+                App.this.snapshotToggleButton.setText("Toggle Releases");
                 setupVersions(true);
             } else {
-                snapshotToggleButton.setSelected(false);
-                snapshotToggleButton.setText("Toggle Snapshots");
+                App.this.snapshotToggleButton.setSelected(false);
+                App.this.snapshotToggleButton.setText("Toggle Snapshots");
                 setupVersions(false);
             }
         }
