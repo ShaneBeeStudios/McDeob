@@ -152,4 +152,9 @@ public class Version {
         }
     }
 
+    @Override
+    public String toString() {
+        return this.version;
+    }
+
 }
