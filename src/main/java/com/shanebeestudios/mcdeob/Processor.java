@@ -180,6 +180,11 @@ public class Processor {
                 inheritanceProvider.add(new JarProvider(internalJars));
                 jarRemapper.remapJar(internalJars, new File(this.remappedJar.toUri()));
                 internalJars.close();
+
+                if (this.version.isSearge()) {
+                    // Some versions like 1.12.2 include this nasty giant package
+                    Util.stripFileFromJar(this.remappedJar, "it/*");
+                }
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
