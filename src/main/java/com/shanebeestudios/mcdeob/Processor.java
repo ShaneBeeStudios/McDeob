@@ -182,7 +182,7 @@ public class Processor {
                 jarRemapper.remapJar(internalJars, new File(this.remappedJar.toUri()));
                 internalJars.close();
 
-                if (this.version.isSearge()) {
+                if (this.version.getMappingType() == Version.MappingType.SEARGE) {
                     // Some versions like 1.12.2 include this nasty giant package
                     Util.stripFileFromJar(this.remappedJar, "it/*");
                 }

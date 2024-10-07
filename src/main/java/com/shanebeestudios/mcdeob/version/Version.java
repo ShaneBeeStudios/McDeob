@@ -10,28 +10,28 @@ public class Version {
     private final String version;
     private final ReleaseType releaseType;
     private final String url;
-    private final boolean searge;
+    private final MappingType mappingType;
 
     private Type type;
     private String jarURL;
     private String mapURL;
 
-    public Version(String version, ReleaseType releaseType, String url, boolean searge) {
+    public Version(String version, ReleaseType releaseType, String url, MappingType mappingType) {
         this.version = version;
         this.releaseType = releaseType;
         this.url = url;
-        this.searge = searge;
+        this.mappingType = mappingType;
     }
 
     public boolean prepareVersion() {
         JSONObject versionInfo = Util.getJsonFromURL(this.url);
         JSONObject downloads = versionInfo.getJSONObject("downloads");
-        if (downloads.has("server_mappings")) {
+        if (this.mappingType == MappingType.MOJANG) {
             String typeName = this.type.getName();
             this.jarURL = downloads.getJSONObject(typeName).getString("url");
             this.mapURL = downloads.getJSONObject(typeName + "_mappings").getString("url");
             return true;
-        } else if (this.searge) {
+        } else if (this.mappingType == MappingType.SEARGE) {
             String typeName = this.type.getName();
             this.jarURL = downloads.getJSONObject(typeName).getString("url");
             this.mapURL = String.format("https://raw.githubusercontent.com/ShaneBeeStudios/Mappings/refs/heads/main/mappings/mappings_%s_%s.txt", typeName, this.version);
@@ -64,8 +64,8 @@ public class Version {
         return this.mapURL;
     }
 
-    public boolean isSearge() {
-        return this.searge;
+    public MappingType getMappingType() {
+        return this.mappingType;
     }
 
     public enum Type {
@@ -84,6 +84,11 @@ public class Version {
         public String getName() {
             return name().toLowerCase(Locale.ROOT);
         }
+    }
+
+    public enum MappingType {
+        MOJANG,
+        SEARGE
     }
 
     @Override

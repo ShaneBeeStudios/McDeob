@@ -20,7 +20,7 @@ public class Versions {
         JSONObject mojangManifest = Util.getJsonFromURL("https://launchermeta.mojang.com/mc/game/version_manifest.json");
         JSONObject seargeManifest = Util.getJsonFromURL("https://raw.githubusercontent.com/ShaneBeeStudios/Mappings/refs/heads/main/mappings/versions.json");
 
-        boolean searge = false;
+        Version.MappingType mappingType = Version.MappingType.MOJANG;
         List<String> seargeVersions = new ArrayList<>();
         for (Object o : seargeManifest.getJSONArray("versions")) {
             seargeVersions.add(o.toString());
@@ -32,12 +32,12 @@ public class Versions {
             String type = versionObject.getString("type");
             String url = versionObject.getString("url");
 
-            if (searge && !seargeVersions.contains(id)) {
+            if (mappingType == Version.MappingType.SEARGE && !seargeVersions.contains(id)) {
                 continue;
             }
 
             Version.ReleaseType releaseType = type.equalsIgnoreCase("release") ? Version.ReleaseType.RELEASE : Version.ReleaseType.SNAPSHOT;
-            Version version = new Version(id, releaseType, url, searge);
+            Version version = new Version(id, releaseType, url, mappingType);
             VERSION_MAP.put(id, version);
             if (releaseType == Version.ReleaseType.RELEASE) {
                 RELEASE_MAP.put(id, version);
@@ -48,7 +48,7 @@ public class Versions {
             // Mojang mappings not available before 1.14.4
             // so we use searge mappings
             if (id.equalsIgnoreCase("1.14.4")) {
-                searge = true;
+                mappingType = Version.MappingType.SEARGE;
             }
         }
     }
