@@ -28,6 +28,7 @@ public class Util {
 
     public static final Color TITLE_LOADING_COLOR = new Color(227, 184, 43);
     public static final Color TITLE_READY_COLOR = new Color(63, 199, 82);
+    public static final Color TITLE_FAIL_COLOR = new Color(204, 25, 25);
 
     public static boolean isRunningMacOS() {
         return System.getProperty("os.name").contains("Mac OS");

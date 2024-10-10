@@ -16,7 +16,7 @@ import java.lang.reflect.Field;
 
 public class App extends JFrame {
 
-    private JLabel titleLabel;
+    private JLabel infoLineLabel;
     private JButton startButton;
     private JRadioButton serverRadioButton;
     private JRadioButton clientRadioButton;
@@ -31,8 +31,7 @@ public class App extends JFrame {
 
         // Initialize versions
         if (!Versions.initVersions()) {
-            this.titleLabel.setText("Failed to load versions. Are you connected to the internet?");
-            this.titleLabel.setForeground(Color.RED);
+            updateInfoLine("Failed to load versions. Are you connected to the internet?", Util.TITLE_FAIL_COLOR);
             return;
         }
 
@@ -50,7 +49,7 @@ public class App extends JFrame {
         }
 
         setupWindow();
-        createTitle();
+        createInfoLine();
         createTypeButton();
         createVersionPopup();
         createDecompileButton();
@@ -84,12 +83,17 @@ public class App extends JFrame {
         setLayout(null);
     }
 
-    private void createTitle() {
-        this.titleLabel = new JLabel("Initializing versions, please wait...", SwingConstants.CENTER);
-        this.titleLabel.setForeground(Util.TITLE_LOADING_COLOR);
-        this.titleLabel.setHorizontalTextPosition(SwingConstants.CENTER);
-        hookSize(() -> this.titleLabel.setBounds(0, 10, getSize().width, 50));
-        add(this.titleLabel);
+    private void createInfoLine() {
+        this.infoLineLabel = new JLabel("Initializing versions, please wait...", SwingConstants.CENTER);
+        this.infoLineLabel.setForeground(Util.TITLE_LOADING_COLOR);
+        this.infoLineLabel.setHorizontalTextPosition(SwingConstants.CENTER);
+        hookSize(() -> this.infoLineLabel.setBounds(0, 10, getSize().width, 50));
+        add(this.infoLineLabel);
+    }
+
+    public void updateInfoLine(String text, Color color) {
+        this.infoLineLabel.setText(text);
+        this.infoLineLabel.setForeground(color);
     }
 
     private void createTypeButton() {
@@ -206,9 +210,7 @@ public class App extends JFrame {
 
     private void finishSetup() {
         setupVersions(false);
-        assert this.titleLabel != null;
-        this.titleLabel.setText("Let's start de-obfuscating some Minecraft");
-        this.titleLabel.setForeground(Util.TITLE_READY_COLOR);
+        updateInfoLine("Let's start de-obfuscating some Minecraft", Util.TITLE_READY_COLOR);
         toggleControls();
     }
 
