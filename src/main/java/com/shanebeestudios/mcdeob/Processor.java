@@ -3,7 +3,7 @@ package com.shanebeestudios.mcdeob;
 import com.shanebeestudios.mcdeob.app.App;
 import com.shanebeestudios.mcdeob.util.AppLogger;
 import com.shanebeestudios.mcdeob.util.Logger;
-import com.shanebeestudios.mcdeob.util.TimeStamp;
+import com.shanebeestudios.mcdeob.util.TimeSpan;
 import com.shanebeestudios.mcdeob.util.Util;
 import com.shanebeestudios.mcdeob.version.Version;
 import net.md_5.specialsource.Jar;
@@ -73,7 +73,7 @@ public class Processor {
     @SuppressWarnings("CallToPrintStackTrace")
     public void init() {
         try {
-            long start = System.currentTimeMillis();
+            TimeSpan timeSpan = TimeSpan.start();
 
             // Prepare version and check if valid
             String versionName = this.version.getVersion();
@@ -99,10 +99,10 @@ public class Processor {
             }
             cleanup();
 
-            TimeStamp timeStamp = TimeStamp.fromNow(start);
-            Logger.info("Completed in %s!", timeStamp);
+            timeSpan.finish();
+            Logger.info("Completed in %s!", timeSpan);
             if (this.app != null) {
-                this.app.updateStatusBox(String.format("Completed in %s!", timeStamp));
+                this.app.updateStatusBox(String.format("Completed in %s!", timeSpan));
                 this.app.updateButton("Start!");
                 this.app.toggleControls();
             }
@@ -112,7 +112,7 @@ public class Processor {
     }
 
     public void downloadJar() throws IOException {
-        long start = System.currentTimeMillis();
+        TimeSpan timeSpan = TimeSpan.start();
         Logger.info("Downloading JAR file from Mojang.");
         if (this.app != null) {
             this.app.updateStatusBox("Downloading JAR...");
@@ -129,12 +129,12 @@ public class Processor {
             Files.copy(inputStream, jarPath, REPLACE_EXISTING);
         }
 
-        TimeStamp timeStamp = TimeStamp.fromNow(start);
-        Logger.info("Successfully downloaded JAR file in %s!", timeStamp);
+        timeSpan.finish();
+        Logger.info("Successfully downloaded JAR file in %s!", timeSpan);
     }
 
     public void downloadMappings() throws IOException {
-        long start = System.currentTimeMillis();
+        TimeSpan timeSpan = TimeSpan.start();
         Logger.info("Downloading mappings file from Mojang...");
         if (this.app != null) {
             this.app.updateStatusBox("Downloading mappings...");
@@ -150,12 +150,12 @@ public class Processor {
             Files.copy(inputStream, this.mappingsPath, REPLACE_EXISTING);
         }
 
-        TimeStamp timeStamp = TimeStamp.fromNow(start);
-        Logger.info("Successfully downloaded mappings file in %s!", timeStamp);
+        timeSpan.finish();
+        Logger.info("Successfully downloaded mappings file in %s!", timeSpan);
     }
 
     public void remapJar() {
-        long start = System.currentTimeMillis();
+        TimeSpan timeSpan = TimeSpan.start();
         if (this.app != null) {
             this.app.updateStatusBox("Remapping...");
             this.app.updateButton("Remapping...", Color.BLUE);
@@ -190,8 +190,8 @@ public class Processor {
                 throw new RuntimeException(e);
             }
 
-            TimeStamp timeStamp = TimeStamp.fromNow(start);
-            Logger.info("Remapping completed in %s!", timeStamp);
+            timeSpan.finish();
+            Logger.info("Remapping completed in %s!", timeSpan);
         } else {
             Logger.info("%s already remapped... skipping mapping.", this.mappedJarName);
         }
@@ -199,7 +199,7 @@ public class Processor {
 
     @SuppressWarnings("resource")
     public void decompileJar() throws IOException {
-        long start = System.currentTimeMillis();
+        TimeSpan timeSpan = TimeSpan.start();
         Logger.info("Decompiling final JAR file.");
         if (this.app != null) {
             this.app.updateStatusBox("Decompiler starting...");
@@ -217,8 +217,8 @@ public class Processor {
         // Rename jar file to zip
         Util.renameJarsToZips(decompileDir);
 
-        TimeStamp timeStamp = TimeStamp.fromNow(start);
-        Logger.info("Decompiling completed in %s!", timeStamp);
+        timeSpan.finish();
+        Logger.info("Decompiling completed in %s!", timeSpan);
     }
 
     private void cleanup() {
