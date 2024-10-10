@@ -30,7 +30,11 @@ public class App extends JFrame {
         startSetup();
 
         // Initialize versions
-        Versions.initVersions();
+        if (!Versions.initVersions()) {
+            this.titleLabel.setText("Failed to load versions. Are you connected to the internet?");
+            this.titleLabel.setForeground(Color.RED);
+            return;
+        }
 
         // Update window after versions initialized
         finishSetup();
