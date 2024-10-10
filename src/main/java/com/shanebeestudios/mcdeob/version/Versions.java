@@ -1,5 +1,6 @@
 package com.shanebeestudios.mcdeob.version;
 
+import com.shanebeestudios.mcdeob.util.Logger;
 import com.shanebeestudios.mcdeob.util.Util;
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONObject;
@@ -16,14 +17,23 @@ public class Versions {
     private static final Map<String, Version> RELEASE_MAP = new LinkedHashMap<>();
     private static final Map<String, Version> SNAPSHOT_MAP = new LinkedHashMap<>();
 
-    public static void initVersions() {
+    public static boolean initVersions() {
         JSONObject mojangManifest = Util.getJsonFromURL("https://launchermeta.mojang.com/mc/game/version_manifest.json");
         JSONObject seargeManifest = Util.getJsonFromURL("https://raw.githubusercontent.com/ShaneBeeStudios/Mappings/refs/heads/main/mappings/versions.json");
 
+        if (mojangManifest == null) {
+            Logger.error("Failed to download version manifests.");
+            return false;
+        } else if (seargeManifest == null) {
+            Logger.error("Failed to download legacy version manifests.");
+        }
+
         Version.MappingType mappingType = Version.MappingType.MOJANG;
         List<String> seargeVersions = new ArrayList<>();
-        for (Object o : seargeManifest.getJSONArray("versions")) {
-            seargeVersions.add(o.toString());
+        if (seargeManifest != null) {
+            for (Object o : seargeManifest.getJSONArray("versions")) {
+                seargeVersions.add(o.toString());
+            }
         }
 
         for (Object o : mojangManifest.getJSONArray("versions")) {
@@ -51,6 +61,7 @@ public class Versions {
                 mappingType = Version.MappingType.SEARGE;
             }
         }
+        return true;
     }
 
     public static Collection<Version> getAllVersions() {

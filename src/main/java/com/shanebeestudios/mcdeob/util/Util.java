@@ -3,6 +3,7 @@ package com.shanebeestudios.mcdeob.util;
 import com.shanebeestudios.mcdeob.Processor;
 import net.md_5.specialsource.Jar;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
@@ -13,7 +14,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.URL;
+import java.net.URI;
 import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -27,6 +28,7 @@ public class Util {
 
     public static final Color TITLE_LOADING_COLOR = new Color(227, 184, 43);
     public static final Color TITLE_READY_COLOR = new Color(63, 199, 82);
+    public static final Color TITLE_FAIL_COLOR = new Color(204, 25, 25);
 
     public static boolean isRunningMacOS() {
         return System.getProperty("os.name").contains("Mac OS");
@@ -38,16 +40,19 @@ public class Util {
      * @param url URL to grab data from
      * @return JsonObject with retrieved data
      */
+    @Nullable
     public static JSONObject getJsonFromURL(String url) {
         try {
-            URLConnection connection = new URL(url).openConnection();
+            URLConnection connection = URI.create(url).toURL().openConnection();
             BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
             final JSONObject jsonObject = new JSONObject(new JSONTokener(in));
             in.close();
             return jsonObject;
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } catch (IOException ex) {
+            //noinspection CallToPrintStackTrace
+            ex.printStackTrace();
         }
+        return null;
     }
 
     public static File copyInputStreamToFile(InputStream inputStream, String pathName) throws IOException {
