@@ -3,6 +3,7 @@ package com.shanebeestudios.mcdeob.app;
 import com.shanebeestudios.mcdeob.Processor;
 import com.shanebeestudios.mcdeob.app.listener.SnapshotButtonListener;
 import com.shanebeestudios.mcdeob.app.listener.StartButtonListener;
+import com.shanebeestudios.mcdeob.util.TimeSpan;
 import com.shanebeestudios.mcdeob.util.Util;
 import com.shanebeestudios.mcdeob.version.Version;
 import com.shanebeestudios.mcdeob.version.Versions;
@@ -189,16 +190,28 @@ public class App extends JFrame {
         Thread thread = new Thread("Processor") {
             @Override
             public void run() {
-                Processor processor = new Processor(version, shouldDecompile, App.this);
+                Processor processor = new Processor(version, null, App.this, shouldDecompile, false);
                 processor.init();
             }
         };
         thread.start();
     }
 
-    public void fail() {
-        toggleControls();
-        updateButton("INVALID VERSION!", Color.RED);
+    public void fail(String failMessage) {
+        if (this.startButton.isEnabled()) toggleControls();
+        updateButton(failMessage, Color.RED);
+        getToolkit().beep();
+        Timer timer = new Timer(1000, e1 -> {
+            updateButton("Start!");
+            toggleControls();
+        });
+        timer.setRepeats(false);
+        timer.start();
+    }
+
+    public void finish(TimeSpan timeSpan) {
+        this.updateStatusBox(String.format("Completed in %s!", timeSpan));
+        updateButton("Completed!");
         getToolkit().beep();
         Timer timer = new Timer(1000, e1 -> {
             updateButton("Start!");

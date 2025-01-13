@@ -21,7 +21,7 @@ public class StartButtonListener implements ActionListener {
             Version version = (Version) this.app.getVersionBox().getSelectedItem();
             if (!this.app.getStartButton().getText().equalsIgnoreCase("Start!")) return;
             if (version == null) {
-                this.app.fail();
+                this.app.fail("Invalid version!");
             } else {
                 version.setType(this.app.getServerRadioButton().isSelected() ? Version.Type.SERVER : Version.Type.CLIENT);
                 this.app.updateButton("Starting...", Color.BLUE);
