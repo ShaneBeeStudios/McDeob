@@ -23,6 +23,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.io.FileOutputStream;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
@@ -114,19 +115,46 @@ public class Processor {
     public void downloadJar() throws IOException {
         long start = System.currentTimeMillis();
         Logger.info("Downloading JAR file from Mojang.");
-        if (this.app != null) {
-            this.app.updateStatusBox("Downloading JAR...");
-            this.app.updateButton("Downloading JAR...", Color.BLUE);
-        }
-
+        
         this.jarPath = this.dataFolderPath.resolve(this.minecraftJarName);
         final URL jarURL = new URL(this.version.getJarURL());
         final HttpURLConnection connection = (HttpURLConnection) jarURL.openConnection();
-        final long length = connection.getContentLengthLong();
-        if (Files.exists(jarPath) && Files.size(jarPath) == length) {
+        final long contentLength = connection.getContentLengthLong();
+
+        if (this.app != null) {
+            this.app.updateButton("Downloading JAR...", Color.BLUE);
+        }
+
+        if (Files.exists(jarPath) && Files.size(jarPath) == contentLength) {
             Logger.info("Already have JAR, skipping download.");
-        } else try (final InputStream inputStream = connection.getInputStream()) {
-            Files.copy(inputStream, jarPath, REPLACE_EXISTING);
+            if (this.app != null) {
+                this.app.resetProgressBar();
+            }
+            return;
+        }
+
+        try (final InputStream inputStream = connection.getInputStream()) {
+            // Create a buffered output stream
+            try (FileOutputStream outputStream = new FileOutputStream(this.jarPath.toFile())) {
+                byte[] buffer = new byte[4096];
+                long downloadedBytes = 0;
+                int bytesRead;
+
+                while ((bytesRead = inputStream.read(buffer)) != -1) {
+                    outputStream.write(buffer, 0, bytesRead);
+                    downloadedBytes += bytesRead;
+
+                    // Update progress
+                    if (this.app != null) {
+                        int progress = (int) ((downloadedBytes * 100) / contentLength);
+                        this.app.updateProgressBar(progress, 100, "Downloading JAR...");
+                    }
+                }
+            }
+        }
+
+        if (this.app != null) {
+            this.app.resetProgressBar();
         }
 
         TimeStamp timeStamp = TimeStamp.fromNow(start);
@@ -136,18 +164,45 @@ public class Processor {
     public void downloadMappings() throws IOException {
         long start = System.currentTimeMillis();
         Logger.info("Downloading mappings file from Mojang...");
-        if (this.app != null) {
-            this.app.updateStatusBox("Downloading mappings...");
-            this.app.updateButton("Downloading mappings...", Color.BLUE);
-        }
+        
         final URL mappingURL = new URL(this.version.getMapURL());
         final HttpURLConnection connection = (HttpURLConnection) mappingURL.openConnection();
-        final long length = connection.getContentLengthLong();
+        final long contentLength = connection.getContentLengthLong();
         this.mappingsPath = this.dataFolderPath.resolve(this.mappingsName);
-        if (Files.exists(this.mappingsPath) && Files.size(this.mappingsPath) == length) {
+
+        if (this.app != null) {
+            this.app.updateButton("Downloading mappings...", Color.BLUE);
+        }
+
+        if (Files.exists(this.mappingsPath) && Files.size(this.mappingsPath) == contentLength) {
             Logger.info("Already have mappings, skipping download.");
-        } else try (final InputStream inputStream = connection.getInputStream()) {
-            Files.copy(inputStream, this.mappingsPath, REPLACE_EXISTING);
+            if (this.app != null) {
+                this.app.resetProgressBar();
+            }
+            return;
+        }
+
+        try (final InputStream inputStream = connection.getInputStream()) {
+            // Create a buffered output stream
+            try (FileOutputStream outputStream = new FileOutputStream(this.mappingsPath.toFile())) {
+                byte[] buffer = new byte[4096];
+                long downloadedBytes = 0;
+                int bytesRead;
+
+                while ((bytesRead = inputStream.read(buffer)) != -1) {
+                    outputStream.write(buffer, 0, bytesRead);
+                    downloadedBytes += bytesRead;
+
+                    if (this.app != null) {
+                        int progress = (int) ((downloadedBytes * 100) / contentLength);
+                        this.app.updateProgressBar(progress, 100, "Downloading mappings...");
+                    }
+                }
+            }
+        }
+
+        if (this.app != null) {
+            this.app.resetProgressBar();
         }
 
         TimeStamp timeStamp = TimeStamp.fromNow(start);
@@ -157,7 +212,6 @@ public class Processor {
     public void remapJar() {
         long start = System.currentTimeMillis();
         if (this.app != null) {
-            this.app.updateStatusBox("Remapping...");
             this.app.updateButton("Remapping...", Color.BLUE);
         }
         this.remappedJar = this.dataFolderPath.resolve(this.mappedJarName);
@@ -166,27 +220,54 @@ public class Processor {
             Logger.info("Remapping %s file...", this.minecraftJarName);
 
             try {
-                // SpecialSource remapping
+                if (this.app != null) {
+                    this.app.updateStatusBox("Moving to Remapping");
+                }
+        
                 JarMapping jarMapping = new JarMapping();
+                
+                if (this.app != null) {
+                    this.app.updateProgressBar(10, 100, "Preparing mappings...");
+                }
                 jarMapping.loadMappings(new File(this.mappingsPath.toUri()));
 
+                if (this.app != null) {
+                    this.app.updateProgressBar(30, 100, "Setting up inheritance...");
+                }
                 JointProvider inheritanceProvider = new JointProvider();
                 jarMapping.setFallbackInheritanceProvider(inheritanceProvider);
 
                 SpecialSource.kill_lvt = true;
                 JarRemapper jarRemapper = new JarRemapper(jarMapping);
 
+                if (this.app != null) {
+                    this.app.updateProgressBar(50, 100, "Loading internal jars...");
+                }
                 Jar internalJars = Util.getInternalJars(this);
 
                 inheritanceProvider.add(new JarProvider(internalJars));
+
+                if (this.app != null) {
+                    this.app.updateProgressBar(70, 100, "Remapping JAR...");
+                }
                 jarRemapper.remapJar(internalJars, new File(this.remappedJar.toUri()));
+
+                if (this.app != null) {
+                    this.app.updateProgressBar(90, 100, "Finalizing...");
+                }
                 internalJars.close();
 
                 if (this.version.getMappingType() == Version.MappingType.SEARGE) {
-                    // Some versions like 1.12.2 include this nasty giant package
                     Util.stripFileFromJar(this.remappedJar, "it/*");
                 }
+                
+                if (this.app != null) {
+                    this.app.updateStatusBox("Remapping Complete");
+                }
             } catch (IOException e) {
+                if (this.app != null) {
+                    this.app.updateStatusBox("Remapping Failed");
+                }
                 throw new RuntimeException(e);
             }
 
@@ -194,6 +275,9 @@ public class Processor {
             Logger.info("Remapping completed in %s!", timeStamp);
         } else {
             Logger.info("%s already remapped... skipping mapping.", this.mappedJarName);
+            if (this.app != null) {
+                this.app.resetProgressBar();
+            }
         }
     }
 
@@ -207,18 +291,31 @@ public class Processor {
         }
         final Path decompileDir = Files.createDirectories(this.dataFolderPath.resolve("final-decompile"));
 
-        // Setup and run FernFlower
-        AppLogger appLogger = new AppLogger(this.app);
-        ConsoleDecompiler decompiler = new ConsoleDecompiler(new File(decompileDir.toUri()), Util.getDecompilerParams(), appLogger);
-        decompiler.addSource(new File(this.remappedJar.toUri()));
-        decompiler.decompileContext();
-        appLogger.stopLogging();
+        try {
+            if (this.app != null) {
+                this.app.updateStatusBox("Starting Decompilation");
+            }
+            // Setup and run FernFlower
+            AppLogger appLogger = new AppLogger(this.app);
+            ConsoleDecompiler decompiler = new ConsoleDecompiler(new File(decompileDir.toUri()), Util.getDecompilerParams(), appLogger);
+            decompiler.addSource(new File(this.remappedJar.toUri()));
+            decompiler.decompileContext();
+            appLogger.stopLogging();
 
-        // Rename jar file to zip
-        Util.renameJarsToZips(decompileDir);
+            // Rename jar file to zip
+            Util.renameJarsToZips(decompileDir);
 
-        TimeStamp timeStamp = TimeStamp.fromNow(start);
-        Logger.info("Decompiling completed in %s!", timeStamp);
+            TimeStamp timeStamp = TimeStamp.fromNow(start);
+            Logger.info("Decompiling completed in %s!", timeStamp);
+            if (this.app != null) {
+                this.app.updateStatusBox("Decompilation Complete");
+            }
+        } catch (Exception e) {
+            if (this.app != null) {
+                this.app.updateStatusBox("Decompilation Failed");
+            }
+            throw e;
+        }
     }
 
     private void cleanup() {

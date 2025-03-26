@@ -7,12 +7,14 @@ import org.jetbrains.java.decompiler.main.extern.IFernflowerLogger;
  * Custom logger for FernFlower
  * <p>Copied/Modifier from {@link org.jetbrains.java.decompiler.main.decompiler.ThreadedPrintStreamLogger}</p>
  */
+
 public class AppLogger extends IFernflowerLogger {
 
     private App app;
     private Thread statusThread;
     private int processedCount = 0;
     private int decompiledCount = 0;
+    private int currentStep = 0; 
 
     public AppLogger(App app) {
         this.app = app;
@@ -27,15 +29,18 @@ public class AppLogger extends IFernflowerLogger {
             while (this.app != null) {
                 if (this.processedCount != 0) {
                     if (this.decompiledCount == 0) {
-                        this.app.updateStatusBox("PreProcessing... (" + this.processedCount + " classes)");
+                        int progress = Math.min(100, (int)((this.processedCount / (double)this.processedCount) * 100));
+                        this.app.updateProgressBar(this.processedCount, this.processedCount, "PreProcessing...");
                     } else {
-                        this.app.updateStatusBox("Decompiling... (" + this.decompiledCount + " / " + this.processedCount + " classes)");
+                        int progress = Math.min(100, (int)((this.decompiledCount / (double)this.processedCount) * 100));
+                        this.app.updateProgressBar(progress, 100, "Decompiling...");
                     }
                 }
                 try {
                     Thread.sleep(50);
                 } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
+                    Thread.currentThread().interrupt();
+                    break;
                 }
             }
         });
@@ -44,9 +49,11 @@ public class AppLogger extends IFernflowerLogger {
 
     public void stopLogging() {
         if (this.app == null) return;
+        this.app.resetProgressBar();
         this.app = null;
         this.statusThread = null;
     }
+
 
     public void writeMessage(String message, Severity severity) {
         if (this.accepts(severity)) {
