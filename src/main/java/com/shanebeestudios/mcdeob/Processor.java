@@ -24,6 +24,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.io.FileOutputStream;
+import javax.swing.SwingUtilities;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
@@ -157,6 +158,7 @@ public class Processor {
             this.app.resetProgressBar();
         }
 
+
         TimeStamp timeStamp = TimeStamp.fromNow(start);
         Logger.info("Successfully downloaded JAR file in %s!", timeStamp);
     }
@@ -254,6 +256,11 @@ public class Processor {
 
                 if (this.app != null) {
                     this.app.updateProgressBar(90, 100, "Finalizing...");
+                    
+                    SwingUtilities.invokeLater(() -> {
+                        this.app.resetProgressBar();
+                        this.app.updateStatusBox("Remapping Complete");
+                    });
                 }
                 internalJars.close();
 
