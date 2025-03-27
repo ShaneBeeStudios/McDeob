@@ -14,7 +14,7 @@ public class AppLogger extends IFernflowerLogger {
     private Thread statusThread;
     private int processedCount = 0;
     private int decompiledCount = 0;
-    private int currentStep = 0; // New variable to track current step
+    private int totalClasses = 0;
 
     public AppLogger(App app) {
         this.app = app;
@@ -27,13 +27,18 @@ public class AppLogger extends IFernflowerLogger {
     private void startTimer() {
         this.statusThread = new Thread(() -> {
             while (this.app != null) {
-                if (this.processedCount != 0) {
-                    if (this.decompiledCount == 0) {
-                        int progress = Math.min(100, (int)((this.processedCount / (double)this.processedCount) * 100));
-                        this.app.updateProgressBar(Math.min(this.processedCount, 100), this.processedCount, "PreProcessing...");
+                if (totalClasses > 0) {
+                    if (processedCount < totalClasses) {
+                        // Preprocessing stage
+                        int progress = Math.min(99, (int)((processedCount / (double)totalClasses) * 100));
+                        this.app.updateProgressBar(progress, 100, "PreProcessing...");
+                    } else if (decompiledCount < totalClasses) {
+                        // Decompiling stage
+                        int progress = Math.min(99, (int)((decompiledCount / (double)totalClasses) * 100));
+                        this.app.updateProgressBar(progress, 100, "Decompiling...");
                     } else {
-                        int progress = Math.min(100, (int)((this.decompiledCount / (double)this.processedCount) * 100));
-                        this.app.updateProgressBar(Math.min(progress, 100), 100, "Decompiling...");
+                        // Completed
+                        this.app.updateProgressBar(100, 100, "Decompilation Complete");
                     }
                 }
                 try {
@@ -53,6 +58,7 @@ public class AppLogger extends IFernflowerLogger {
         this.app = null;
         this.statusThread = null;
     }
+
 
 
     public void writeMessage(String message, Severity severity) {
@@ -77,8 +83,8 @@ public class AppLogger extends IFernflowerLogger {
     public void startProcessingClass(String className) {
         if (this.accepts(Severity.INFO)) {
             this.writeMessage("PreProcessing class " + className, Severity.INFO);
+            totalClasses++;
         }
-
     }
 
     public void endProcessingClass() {
@@ -86,14 +92,12 @@ public class AppLogger extends IFernflowerLogger {
             this.writeMessage("... done", Severity.INFO);
             this.processedCount++;
         }
-
     }
 
     public void startReadingClass(String className) {
         if (this.accepts(Severity.INFO)) {
             this.writeMessage("Decompiling class " + className, Severity.INFO);
         }
-
     }
 
     public void endReadingClass() {
@@ -101,8 +105,8 @@ public class AppLogger extends IFernflowerLogger {
             this.writeMessage("... done", Severity.INFO);
             this.decompiledCount++;
         }
-
     }
+
 
     public void startClass(String className) {
         if (this.accepts(Severity.INFO)) {

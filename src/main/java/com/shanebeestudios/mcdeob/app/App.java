@@ -59,7 +59,6 @@ public class App extends JFrame {
             this.statusBox.setVisible(false);
         });
     }
-
     public void resetProgressBar() {
         SwingUtilities.invokeLater(() -> {
             this.progressBar.setValue(0);
