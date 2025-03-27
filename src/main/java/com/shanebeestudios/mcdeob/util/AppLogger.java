@@ -7,12 +7,14 @@ import org.jetbrains.java.decompiler.main.extern.IFernflowerLogger;
  * Custom logger for FernFlower
  * <p>Copied/Modifier from {@link org.jetbrains.java.decompiler.main.decompiler.ThreadedPrintStreamLogger}</p>
  */
+
 public class AppLogger extends IFernflowerLogger {
 
     private App app;
     private Thread statusThread;
     private int processedCount = 0;
     private int decompiledCount = 0;
+    private int totalClasses = 0;
 
     public AppLogger(App app) {
         this.app = app;
@@ -25,17 +27,25 @@ public class AppLogger extends IFernflowerLogger {
     private void startTimer() {
         this.statusThread = new Thread(() -> {
             while (this.app != null) {
-                if (this.processedCount != 0) {
-                    if (this.decompiledCount == 0) {
-                        this.app.updateStatusBox("PreProcessing... (" + this.processedCount + " classes)");
+                if (totalClasses > 0) {
+                    if (processedCount < totalClasses) {
+                        // Preprocessing stage
+                        int progress = Math.min(99, (int)((processedCount / (double)totalClasses) * 100));
+                        this.app.updateProgressBar(progress, 100, "PreProcessing...");
+                    } else if (decompiledCount < totalClasses) {
+                        // Decompiling stage
+                        int progress = Math.min(99, (int)((decompiledCount / (double)totalClasses) * 100));
+                        this.app.updateProgressBar(progress, 100, "Decompiling...");
                     } else {
-                        this.app.updateStatusBox("Decompiling... (" + this.decompiledCount + " / " + this.processedCount + " classes)");
+                        // Completed
+                        this.app.updateProgressBar(100, 100, "Decompilation Complete");
                     }
                 }
                 try {
                     Thread.sleep(50);
                 } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
+                    Thread.currentThread().interrupt();
+                    break;
                 }
             }
         });
@@ -44,9 +54,12 @@ public class AppLogger extends IFernflowerLogger {
 
     public void stopLogging() {
         if (this.app == null) return;
+        this.app.resetProgressBar();
         this.app = null;
         this.statusThread = null;
     }
+
+
 
     public void writeMessage(String message, Severity severity) {
         if (this.accepts(severity)) {
@@ -70,8 +83,8 @@ public class AppLogger extends IFernflowerLogger {
     public void startProcessingClass(String className) {
         if (this.accepts(Severity.INFO)) {
             this.writeMessage("PreProcessing class " + className, Severity.INFO);
+            totalClasses++;
         }
-
     }
 
     public void endProcessingClass() {
@@ -79,14 +92,12 @@ public class AppLogger extends IFernflowerLogger {
             this.writeMessage("... done", Severity.INFO);
             this.processedCount++;
         }
-
     }
 
     public void startReadingClass(String className) {
         if (this.accepts(Severity.INFO)) {
             this.writeMessage("Decompiling class " + className, Severity.INFO);
         }
-
     }
 
     public void endReadingClass() {
@@ -94,8 +105,8 @@ public class AppLogger extends IFernflowerLogger {
             this.writeMessage("... done", Severity.INFO);
             this.decompiledCount++;
         }
-
     }
+
 
     public void startClass(String className) {
         if (this.accepts(Severity.INFO)) {

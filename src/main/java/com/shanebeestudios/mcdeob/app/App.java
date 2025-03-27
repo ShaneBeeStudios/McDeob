@@ -16,6 +16,7 @@ import java.lang.reflect.Field;
 
 public class App extends JFrame {
 
+
     private JLabel titleLabel;
     private JButton startButton;
     private JRadioButton serverRadioButton;
@@ -23,6 +24,7 @@ public class App extends JFrame {
     private JToggleButton snapshotToggleButton;
     private JCheckBox decompileCheckbox;
     private JComboBox<Version> versionBox;
+    private JProgressBar progressBar;
     private JTextField statusBox;
 
     public App() {
@@ -34,6 +36,35 @@ public class App extends JFrame {
 
         // Update window after versions initialized
         finishSetup();
+    }
+
+    private void createProgressBar() {
+        this.progressBar = new JProgressBar(0, 100);
+        this.progressBar.setValue(0);
+        this.progressBar.setStringPainted(true);
+        hookSize(() -> {
+            int width = (int) (getSize().width * 0.90);
+            this.progressBar.setBounds((getSize().width / 2) - (width / 2), 200, width, 30);
+        });
+        this.progressBar.setVisible(false);
+        add(this.progressBar);
+    }
+
+    public void updateProgressBar(int current, int total, String message) {
+        SwingUtilities.invokeLater(() -> {
+            this.progressBar.setValue(current);
+            this.progressBar.setMaximum(total);
+            this.progressBar.setString(String.format("%s (%d%%)", message, current));
+            this.progressBar.setVisible(true);
+            this.statusBox.setVisible(false);
+        });
+    }
+    public void resetProgressBar() {
+        SwingUtilities.invokeLater(() -> {
+            this.progressBar.setValue(0);
+            this.progressBar.setVisible(false);
+            this.statusBox.setVisible(true);
+        });
     }
 
     private void startSetup() {
@@ -54,6 +85,7 @@ public class App extends JFrame {
         createStartButton();
         setVisible(true);
         toggleControls();
+        createProgressBar();
     }
 
     private void setupWindow() {
