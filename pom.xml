@@ -6,7 +6,7 @@
 
     <groupId>com.shanebeestudios</groupId>
     <artifactId>McDeob</artifactId>
-    <version>3.2.0</version>
+    <version>3.3.0</version>
 
     <properties>
         <maven.compiler.source>16</maven.compiler.source>
