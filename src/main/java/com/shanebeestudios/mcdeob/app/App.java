@@ -3,6 +3,7 @@ package com.shanebeestudios.mcdeob.app;
 import com.shanebeestudios.mcdeob.Processor;
 import com.shanebeestudios.mcdeob.app.listener.SnapshotButtonListener;
 import com.shanebeestudios.mcdeob.app.listener.StartButtonListener;
+import com.shanebeestudios.mcdeob.util.TimeSpan;
 import com.shanebeestudios.mcdeob.util.Util;
 import com.shanebeestudios.mcdeob.version.Version;
 import com.shanebeestudios.mcdeob.version.Versions;
@@ -16,7 +17,7 @@ import java.lang.reflect.Field;
 
 public class App extends JFrame {
 
-    private JLabel titleLabel;
+    private JLabel infoLineLabel;
     private JButton startButton;
     private JRadioButton serverRadioButton;
     private JRadioButton clientRadioButton;
@@ -30,7 +31,10 @@ public class App extends JFrame {
         startSetup();
 
         // Initialize versions
-        Versions.initVersions();
+        if (!Versions.initVersions()) {
+            updateInfoLine("Failed to load versions. Are you connected to the internet?", Util.TITLE_FAIL_COLOR);
+            return;
+        }
 
         // Update window after versions initialized
         finishSetup();
@@ -46,7 +50,7 @@ public class App extends JFrame {
         }
 
         setupWindow();
-        createTitle();
+        createInfoLine();
         createTypeButton();
         createVersionPopup();
         createDecompileButton();
@@ -80,12 +84,17 @@ public class App extends JFrame {
         setLayout(null);
     }
 
-    private void createTitle() {
-        this.titleLabel = new JLabel("Initializing versions, please wait...", SwingConstants.CENTER);
-        this.titleLabel.setForeground(Util.TITLE_LOADING_COLOR);
-        this.titleLabel.setHorizontalTextPosition(SwingConstants.CENTER);
-        hookSize(() -> this.titleLabel.setBounds(0, 10, getSize().width, 50));
-        add(this.titleLabel);
+    private void createInfoLine() {
+        this.infoLineLabel = new JLabel("Initializing versions, please wait...", SwingConstants.CENTER);
+        this.infoLineLabel.setForeground(Util.TITLE_LOADING_COLOR);
+        this.infoLineLabel.setHorizontalTextPosition(SwingConstants.CENTER);
+        hookSize(() -> this.infoLineLabel.setBounds(0, 10, getSize().width, 50));
+        add(this.infoLineLabel);
+    }
+
+    public void updateInfoLine(String text, Color color) {
+        this.infoLineLabel.setText(text);
+        this.infoLineLabel.setForeground(color);
     }
 
     private void createTypeButton() {
@@ -181,16 +190,28 @@ public class App extends JFrame {
         Thread thread = new Thread("Processor") {
             @Override
             public void run() {
-                Processor processor = new Processor(version, shouldDecompile, App.this);
+                Processor processor = new Processor(version, null, App.this, shouldDecompile, false);
                 processor.init();
             }
         };
         thread.start();
     }
 
-    public void fail() {
-        toggleControls();
-        updateButton("INVALID VERSION!", Color.RED);
+    public void fail(String failMessage) {
+        if (this.startButton.isEnabled()) toggleControls();
+        updateButton(failMessage, Color.RED);
+        getToolkit().beep();
+        Timer timer = new Timer(1000, e1 -> {
+            updateButton("Start!");
+            toggleControls();
+        });
+        timer.setRepeats(false);
+        timer.start();
+    }
+
+    public void finish(TimeSpan timeSpan) {
+        this.updateStatusBox(String.format("Completed in %s!", timeSpan));
+        updateButton("Completed!");
         getToolkit().beep();
         Timer timer = new Timer(1000, e1 -> {
             updateButton("Start!");
@@ -202,9 +223,7 @@ public class App extends JFrame {
 
     private void finishSetup() {
         setupVersions(false);
-        assert this.titleLabel != null;
-        this.titleLabel.setText("Let's start de-obfuscating some Minecraft");
-        this.titleLabel.setForeground(Util.TITLE_READY_COLOR);
+        updateInfoLine("Let's start de-obfuscating some Minecraft", Util.TITLE_READY_COLOR);
         toggleControls();
     }
 

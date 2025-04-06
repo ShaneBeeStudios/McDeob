@@ -46,6 +46,10 @@ public class McDeob {
             .withRequiredArg()
             .ofType(String.class);
         parser.accepts("decompile", "Marks that we should decompile the deobfuscated source");
+        parser.accepts("debug", "When enabled, will print more verbose errors");
+        parser.accepts("cachedjar", "The name of a jar file to use instead of downloading")
+            .withOptionalArg()
+            .ofType(String.class);
 
         OptionSet options = null;
         try {
@@ -120,9 +124,11 @@ public class McDeob {
         version.setType(type);
 
         boolean decompile = options.has("decompile");
+        boolean debug = options.has("debug");
+        String cachedjar = (String) options.valueOf("cachedjar");
 
         Thread processorThread = new Thread(() -> {
-            Processor processor = new Processor(version, decompile, null);
+            Processor processor = new Processor(version, cachedjar, null, decompile, debug);
             processor.init();
         }, "Processor");
         processorThread.start();
