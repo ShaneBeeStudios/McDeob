@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -160,7 +161,7 @@ public class Processor {
             final HttpURLConnection connection;
             long connectionContentLength;
             try {
-                final URL jarURL = new URL(this.version.getJarURL());
+                final URL jarURL = URI.create(this.version.getJarURL()).toURL();
                 connection = (HttpURLConnection) jarURL.openConnection();
                 connectionContentLength = connection.getContentLengthLong();
             } catch (IOException e) {
@@ -203,7 +204,7 @@ public class Processor {
 
         final HttpURLConnection connection;
         try {
-            final URL mappingURL = new URL(this.version.getMapURL());
+            final URL mappingURL = URI.create(this.version.getMapURL()).toURL();
             connection = (HttpURLConnection) mappingURL.openConnection();
         } catch (IOException e) {
             logException("Failed to open connection to Mojang servers", e);
