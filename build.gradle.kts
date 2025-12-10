@@ -37,8 +37,6 @@ tasks {
         options.compilerArgs.add("-Xlint:deprecation")
     }
     shadowJar {
-        enableAutoRelocation = true
-        relocationPrefix = "shaded-libs"
         archiveFileName = project.name + "-" + projectVersion + ".jar"
         manifest.attributes["Main-Class"] = "com.shanebeestudios.mcdeob.McDeob"
     }
