@@ -46,9 +46,14 @@ That said, you may **NOT** upload the resulting files to something like GitHub.
 
 ## Building/Compiling:
 If you wish to compile the jar yourself, simply clone the repo and run:    
-`mvn clean package`       
-If you want the macOS APP and DMG file run:    
-`mvn clean package -P macos`     
+`./gradlew jar`    
+
+If you wish to compile the macOS app, run:  
+`./gradlew createApp`  
+
+If you want the macOS app and DMG file, run:      
+`./gradlew createDmg`      
+
 Super Simple!!!
 
 ## Tools:

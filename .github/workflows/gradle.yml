@@ -1,0 +1,47 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+# This workflow will build a Java project with Gradle and cache/restore any dependencies to improve the workflow execution time
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-gradle
+
+name: Java CI with Gradle
+
+on:
+  push:
+    branches:
+      - master
+      - 'dev/**'
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v3.6.0
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4.2.1
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+      - name: Build with Gradle
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          arguments: build
+      - name: Upload a Build Artifact Jar
+        uses: actions/upload-artifact@master
+        with:
+          # Artifact name
+          name: McDeob-Java-Jar
+          # A file, directory or wildcard pattern that describes what to upload
+          path: build/libs/McDeob-*.jar
+      - name: Upload a Build Artifact macOS DMG
+        uses: actions/upload-artifact@master
+        with:
+          # Artifact name
+          name: McDeob-macOS-DMG
+          # A file, directory or wildcard pattern that describes what to upload
+          path: build/libs/McDeob-*.dmg
