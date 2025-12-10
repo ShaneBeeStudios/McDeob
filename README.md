@@ -1,6 +1,6 @@
 # McDeob
 
-[![Java CI with Maven](https://github.com/ShaneBeeStudios/McDeob/workflows/Java%20CI%20with%20Maven/badge.svg)](https://github.com/ShaneBeeStudios/McDeob/actions)
+[![Java CI with Gradle](https://github.com/ShaneBeeStudios/McDeob/actions/workflows/gradle.yml/badge.svg)](https://github.com/ShaneBeeStudios/McDeob/actions/workflows/gradle.yml)
 [![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/ShaneBeeStudios/McDeob?include_prereleases)](https://github.com/ShaneBeeStudios/McDeob/releases/latest)
 [![GitHub All Releases](https://img.shields.io/github/downloads/ShaneBeeStudios/McDeob/total)](https://github.com/ShaneBeeStudios/McDeob/releases)
 [![GitHub issues](https://img.shields.io/github/issues/ShaneBeeStudios/McDeob)](https://github.com/ShaneBeeStudios/McDeob/issues)
