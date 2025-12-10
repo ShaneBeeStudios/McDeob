@@ -57,7 +57,7 @@ macAppBundle {
     jarTask = "shadowJar"
     appOutputDir = "libs"
     dmgOutputDir = "libs"
-    dmgName = "McDeob-macOS-$projectVersion"
+    dmgName = "McDeob-$projectVersion-macOS"
     bundleExtras["CFBundleVersion"] = projectVersion
     bundleExtras["CFBundleShortVersionString"] = "Version"
     bundleExtras["NSRequiresAquaSystemAppearance"] = false
