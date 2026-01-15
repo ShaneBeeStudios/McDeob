@@ -1,6 +1,7 @@
 package com.shanebeestudios.mcdeob.version;
 
 import com.shanebeestudios.mcdeob.util.Util;
+import org.jetbrains.annotations.Nullable;
 import org.json.JSONObject;
 
 import java.util.Locale;
@@ -14,7 +15,7 @@ public class Version {
 
     private Type type;
     private String jarURL;
-    private String mapURL;
+    private @Nullable String mapURL;
 
     public Version(String version, ReleaseType releaseType, String url, MappingType mappingType) {
         this.version = version;
@@ -25,15 +26,19 @@ public class Version {
 
     public boolean prepareVersion() {
         JSONObject versionInfo = Util.getJsonFromURL(this.url);
+        if (versionInfo == null) return false;
+
         JSONObject downloads = versionInfo.getJSONObject("downloads");
-        if (this.mappingType == MappingType.MOJANG) {
-            String typeName = this.type.getName();
-            this.jarURL = downloads.getJSONObject(typeName).getString("url");
-            this.mapURL = downloads.getJSONObject(typeName + "_mappings").getString("url");
+        String typeName = this.type.getName();
+        this.jarURL = downloads.getJSONObject(typeName).getString("url");
+        if (this.mappingType == MappingType.UNOBFUSCATED) {
+            this.mapURL = null;
+            return true;
+        } else if (this.mappingType == MappingType.MOJANG) {
+            JSONObject mapObject = downloads.getJSONObject(typeName + "_mappings");
+            this.mapURL = mapObject.getString("url");
             return true;
         } else if (this.mappingType == MappingType.SEARGE) {
-            String typeName = this.type.getName();
-            this.jarURL = downloads.getJSONObject(typeName).getString("url");
             this.mapURL = String.format("https://raw.githubusercontent.com/ShaneBeeStudios/Mappings/refs/heads/main/mappings/mappings_%s_%s.txt", typeName, this.version);
             return true;
         }
@@ -60,7 +65,7 @@ public class Version {
         return this.jarURL;
     }
 
-    public String getMapURL() {
+    public @Nullable String getMapURL() {
         return this.mapURL;
     }
 
@@ -87,6 +92,7 @@ public class Version {
     }
 
     public enum MappingType {
+        UNOBFUSCATED,
         MOJANG,
         SEARGE
     }

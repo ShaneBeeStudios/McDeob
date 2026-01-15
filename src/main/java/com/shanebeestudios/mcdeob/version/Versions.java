@@ -28,7 +28,7 @@ public class Versions {
             Logger.error("Failed to download legacy version manifests.");
         }
 
-        Version.MappingType mappingType = Version.MappingType.MOJANG;
+        Version.MappingType mappingType = Version.MappingType.UNOBFUSCATED;
         List<String> seargeVersions = new ArrayList<>();
         if (seargeManifest != null) {
             for (Object o : seargeManifest.getJSONArray("versions")) {
@@ -46,8 +46,16 @@ public class Versions {
                 continue;
             }
 
+            // Jars were obfuscated before and including 1.21.11
+            // Jars since are no longer obfuscated
+            if (id.equalsIgnoreCase("1.21.11")) {
+                mappingType = Version.MappingType.MOJANG;
+            }
+
             Version.ReleaseType releaseType = type.equalsIgnoreCase("release") ? Version.ReleaseType.RELEASE : Version.ReleaseType.SNAPSHOT;
             Version version = new Version(id, releaseType, url, mappingType);
+
+
             VERSION_MAP.put(id, version);
             if (releaseType == Version.ReleaseType.RELEASE) {
                 RELEASE_MAP.put(id, version);

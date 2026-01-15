@@ -26,6 +26,7 @@ import java.util.stream.Stream;
 
 public class Util {
 
+    private static File TEMP_DIRECTORY;
     public static final Color TITLE_LOADING_COLOR = new Color(227, 184, 43);
     public static final Color TITLE_READY_COLOR = new Color(63, 199, 82);
     public static final Color TITLE_FAIL_COLOR = new Color(204, 25, 25);
@@ -67,12 +68,21 @@ public class Util {
         return returnFile;
     }
 
-    public static @NotNull Map<String, Object> getDecompilerParams() {
+    /**
+     * Get a set of params for the decompiler.
+     *
+     * @param reconstructVariables Whether to reconstruct variable names from debug information, if present.
+     *                             (This is required if params are obfuscated)
+     * @return Params for decompiler.
+     */
+    public static @NotNull Map<String, Object> getDecompilerParams(boolean reconstructVariables) {
         Map<String, Object> settings = new LinkedHashMap<>();
         settings.put("dgs", "1"); // decompile generic signatures
         settings.put("hdc", "0"); // hide empty default constructor
         settings.put("asc", "1"); // encode non-ASCII characters in string and character literals as Unicode escapes
-        settings.put("udv", "0"); // reconstruct variable names from debug information, if present
+        if (reconstructVariables) {
+            settings.put("udv", "0"); // reconstruct variable names from debug information, if present
+        }
         settings.put("rsy", "1"); // hide synthetic class members
         settings.put("aoa", "1"); // (not listed in FernFlower's list)
         return settings;
@@ -133,6 +143,50 @@ public class Util {
                 throw new RuntimeException(e);
             }
         }
+    }
+
+    public static List<File> getInternalFiles(Processor processor) {
+        Jar jarFile;
+        try {
+            jarFile = Jar.init(new File(processor.getJarPath().toUri()));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        try {
+            List<File> files = new ArrayList<>();
+
+            File temp = getTempDirectory(processor);
+
+            // Include Mojang libraries and server jar
+            for (String entryName : jarFile.getEntryNames()) {
+                if (entryName.contains("server-")) {
+                    String pathName = temp + "/" + entryName.substring(entryName.lastIndexOf('/') + 1);
+                    File file = Util.copyInputStreamToFile(jarFile.getResource(entryName), pathName);
+                    files.add(file);
+                }
+            }
+            return files;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static File getTempDirectory(Processor processor) {
+        if (TEMP_DIRECTORY != null) return TEMP_DIRECTORY;
+        TEMP_DIRECTORY = new File(processor.getDataFolderPath() + "/temp");
+        TEMP_DIRECTORY.mkdirs();
+        return TEMP_DIRECTORY;
+    }
+
+    /**
+     * Cleanup temp directory
+     */
+    public static void deleteTempDirectory() {
+        if (TEMP_DIRECTORY == null) return;
+        TEMP_DIRECTORY.listFiles(File::delete);
+        TEMP_DIRECTORY.delete();
+        TEMP_DIRECTORY = null;
     }
 
     @SuppressWarnings("MismatchedQueryAndUpdateOfStringBuilder")

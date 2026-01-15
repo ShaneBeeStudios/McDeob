@@ -42,7 +42,7 @@ public class Processor {
     private final Path dataFolderPath;
     private Path jarPath;
     private Path mappingsPath;
-    private Path remappedJar;
+    private @Nullable Path remappedJar;
 
     private String minecraftJarName;
     private String mappingsName;
@@ -120,9 +120,11 @@ public class Processor {
         }
 
         // Attempt to remap jar
-        if (!remapJar()) {
-            fail("Failed to remap jar.");
-            return;
+        if (this.version.getMappingType() != Version.MappingType.UNOBFUSCATED) {
+            if (!remapJar()) {
+                fail("Failed to remap jar.");
+                return;
+            }
         }
 
         // Attempt to decompile
@@ -195,6 +197,15 @@ public class Processor {
     }
 
     public boolean downloadMappings() {
+        String mapURL = this.version.getMapURL();
+        if (mapURL == null) {
+            if (this.version.getMappingType() == Version.MappingType.UNOBFUSCATED) {
+                Logger.info("No mappings file needed for this version.");
+            } else {
+                Logger.error("No mappings file found for this version.");
+            }
+            return true;
+        }
         TimeSpan timeSpan = TimeSpan.start();
         Logger.info("Downloading mappings file from Mojang...");
         this.appOption.ifPresent(app -> {
@@ -204,7 +215,7 @@ public class Processor {
 
         final HttpURLConnection connection;
         try {
-            final URL mappingURL = URI.create(this.version.getMapURL()).toURL();
+            final URL mappingURL = URI.create(mapURL).toURL();
             connection = (HttpURLConnection) mappingURL.openConnection();
         } catch (IOException e) {
             logException("Failed to open connection to Mojang servers", e);
@@ -297,8 +308,17 @@ public class Processor {
 
         // Setup and run FernFlower
         AppLogger appLogger = new AppLogger(this.appOption.orElse(null));
-        ConsoleDecompiler decompiler = new ConsoleDecompiler(new File(decompileDir.toUri()), Util.getDecompilerParams(), appLogger);
-        decompiler.addSource(new File(this.remappedJar.toUri()));
+        boolean obfuscated = this.version.getMappingType() != Version.MappingType.UNOBFUSCATED;
+
+        ConsoleDecompiler decompiler = new ConsoleDecompiler(new File(decompileDir.toUri()), Util.getDecompilerParams(obfuscated), appLogger);
+        if (obfuscated) {
+            decompiler.addSource(new File(this.remappedJar.toUri()));
+
+        } else {
+            for (File internalFile : Util.getInternalFiles(this)) {
+                decompiler.addSource(internalFile);
+            }
+        }
         decompiler.decompileContext();
         appLogger.stopLogging();
 
@@ -326,6 +346,7 @@ public class Processor {
         this.jarPath = null;
         this.mappingsPath = null;
         this.remappedJar = null;
+        Util.deleteTempDirectory();
         System.gc();
     }
 
