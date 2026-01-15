@@ -5,7 +5,7 @@ plugins {
 }
 
 // Version of McDeob
-val projectVersion = "3.3.0"
+val projectVersion = "3.4.0"
 java.sourceCompatibility = JavaVersion.VERSION_21
 
 repositories {
