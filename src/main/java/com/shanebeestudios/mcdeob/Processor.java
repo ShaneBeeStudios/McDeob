@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.java.decompiler.main.decompiler.ConsoleDecompiler;
 
-import java.awt.*;
+import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -312,9 +312,13 @@ public class Processor {
 
         ConsoleDecompiler decompiler = new ConsoleDecompiler(new File(decompileDir.toUri()), Util.getDecompilerParams(obfuscated), appLogger);
         if (obfuscated) {
+            assert this.remappedJar != null;
             decompiler.addSource(new File(this.remappedJar.toUri()));
-
+        } else if (this.version.getType() == Version.Type.CLIENT) {
+            // Client jar is not bundled
+            decompiler.addSource(new File(this.getJarPath().toUri()));
         } else {
+            // Server jar is bundled within itself
             for (File internalFile : Util.getInternalFiles(this)) {
                 decompiler.addSource(internalFile);
             }
